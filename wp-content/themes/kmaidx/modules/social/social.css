@@ -1,0 +1,8 @@
+.team-gallery .image-container {
+    border: 1px solid #dedede;
+}
+
+.team-gallery .info {
+    text-align: center;
+    padding: .5rem 0 1.5rem;
+}

@@ -1,0 +1,28 @@
+.weather-module .weather {
+    color:#FFF;
+}
+
+.weather-module .weather-inline-item {
+    display: inline-block;
+    padding:.5rem 1rem;
+    vertical-align: middle;
+}
+
+.weather-inline-item.w-icon {
+    padding: 0;
+    font-size: 1.3em;
+}
+
+.weather-block-item.w-icon {
+    padding: 0;
+    font-size: 2em;
+}
+
+.weather-module span.deg {
+    font-size: .5em;
+    vertical-align: super;
+}
+
+.entry-content .weather-module .weather {
+    color:#000;
+}

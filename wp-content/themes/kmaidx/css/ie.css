@@ -1,0 +1,27 @@
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    #navbar-header {
+        margin-top: 2.1rem !important;
+    }
+
+    #top.smaller div#navbar-header {
+        margin-top: 1.1rem !important;
+    }
+
+    .social a svg {
+        height:61px;
+    }
+
+    p.siteby {
+        margin-top:.75rem !important;
+        color:#FFF !important;
+    }
+
+    .card-image {
+        height: 268px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 334px;
+    }
+}
+
+

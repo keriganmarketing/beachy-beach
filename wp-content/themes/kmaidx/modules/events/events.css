@@ -1,0 +1,39 @@
+.dates {
+    display: inline-block;
+    margin: 3px;
+    background-color: rgba(100,100,100,.5);
+    border:1px solid rgba(0,0,0,.5);
+    text-align: center;
+}
+
+.box-date {
+    display: inline-block;
+
+    font-size: 20px;
+    text-transform: uppercase;
+    line-height: .9em;
+    padding:.5rem .75rem;
+
+}
+.box-date .day {
+    display: block;
+}
+.box-date .month {
+    display: block;
+    font-size:14px;
+}
+.dates .seperator {
+    display: inline-block;
+    padding:0 .25rem;
+}
+.title a {
+    font-size: 1.8rem;
+    padding:.25rem 1rem;
+}
+
+.event-item .content {
+    padding:1rem 0;
+}
+.event-item {
+    padding-bottom:1rem;
+}

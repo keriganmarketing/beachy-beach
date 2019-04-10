@@ -1,0 +1,13 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 203.2 156.3" style="enable-background:new 0 0 203.2 156.3;" xml:space="preserve">
+<style type="text/css">
+	rect, polyline, polygon, path {fill:none;stroke:#938E81;stroke-miterlimit:10;stroke-width:4}
+</style>
+<g>
+    <rect x="8.5" y="73.7" class="st0" width="187" height="37.8"/>
+    <rect x="108.1" y="40.8" class="st1" width="71.5" height="18.9"/>
+    <rect x="24.5" y="40.8" class="st1" width="71.5" height="18.9"/>
+    <polyline class="st2" points="179.6,127.6 179.6,111.5 24.5,111.9 24.5,128 	"/>
+    <polygon class="st1" points="11.5,73.3 22.2,59.6 181.9,59.6 192.5,73.3 	"/>
+</g>
+</svg>

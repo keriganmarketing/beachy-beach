@@ -1,0 +1,257 @@
+
+/** Properties **/
+
+.listing-tile-container {
+    background: #FFF;
+    border: 1px solid #999;
+    margin-bottom: 30px;
+}
+
+.listing-tile {
+    text-align: center;
+}
+
+.listing-tile .tile-section.price {
+    margin-top: 23px;
+    text-align: center;
+}
+
+.listing-tile span.price {
+    display: inline-block;
+    background: #FFF;
+    padding: 0 12px;
+    font-size: 1.5em;
+    line-height: 1em;
+    text-align: center;
+    font-weight: bold;
+    color: #24BEE4;
+}
+
+.listing-tile img {
+    width: 103%;
+    height: auto;
+    margin: -0.5% 0 0 -0.5%;
+}
+
+.listing-tile .icon svg, .listing-tile .icon img {
+    height: auto;
+    margin: 0;
+    border: 0;
+    color: #999;
+    fill: none;
+    stroke: #24BEE4 !important;
+    stroke-width: 10;
+    stroke-linejoin: round;
+    stroke-miterlimit: 10;
+    width: 25px;
+    max-width: 100%;
+}
+
+.listing-tile .icon-data {
+    display: block;
+}
+
+.listing-tile span.icon-label {
+    font-size: .6em;
+    display: block;
+}
+
+.listing-tile .icon-data {
+    display: block;
+    color: #555;
+    font-size: 1em;
+}
+
+.listing-tile span.mlsnum {
+    font-size: .7em;
+    font-family: 'Open Sans';
+    margin: 0;
+    padding: 5px 0 0;
+    color: #999;
+    display: block;
+}
+
+.tile-section {
+    margin: 10px 20px;
+}
+
+.listing-tile a.listing-link {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    bottom: 30px;
+    left: 15px;
+    right: 15px;
+    transition: all ease-out .5s;
+}
+
+.listing-tile a.listing-link:hover {
+    background:rgba(0,0,0,.1);
+}
+
+/* MAP */
+.map-search .listing-tile-container {
+    margin-bottom: 0;
+}
+
+.map-search .listing-tile a.listing-link {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+span.status-flag {
+    position: absolute;
+    padding: 2px 10px;
+    bottom: 0;
+    left:0;
+    right:0;
+    text-align: center;
+    color:#FFF;
+    font-size: .9em;
+    background-color: rgba(10,88,148,.5);
+}
+
+.search-bar-container form#mainsearch {
+    border-bottom: 1px solid #dedede;
+    margin-bottom: 10px;
+}
+
+.search-bar-container {
+    width: 100%;
+    padding: 0 0 20px;
+}
+.search-bar {
+    width:100%;
+    padding-bottom: 5px;
+}
+.form-inline .form-control {
+    width:100%;
+}
+
+.search-bar-container select {
+    height: 37px;
+}
+#advanced-menu {
+    width:100%;
+    display: block;
+}
+#advanced-menu.hidden {
+    display:none;
+}
+
+div#advanced-menu {
+    padding: 20px 0 0;
+    border-top: 1px solid #dedede;
+}
+
+button.btn, a.btn {
+    font-size:.9em;
+    text-transform: uppercase;
+}
+
+#advanced-menu .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 35px !important;
+}
+
+.search-bar-container .select2-container .select2-selection--multiple,
+.search-bar-container .select2-container .select2-selection--single {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    height: 38px !important;
+    border-radius: 4px !important;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.search-bar-container #advanced-menu .select2-container .select2-selection--single {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    height: 38px !important;
+    border-radius: 0 4px 4px 0 !important;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.search-bar-container .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 35px !important;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 26px;
+}
+
+.search-bar .select2-container--default .select2-selection--multiple .select2-selection__rendered li.select2-selection__choice {
+    list-style: none;
+    line-height: 1.3em;
+}
+
+.input-group-addon {
+    width: 200px;
+}
+
+.radio-box {
+    padding: 0 15px 7px;
+}
+
+.label.input-group-addon {
+    border-right: 1px solid #CCC !important;
+    border-radius: 4px 4px 0 0 !important;
+}
+
+.col.form-check.form-check-inline {
+    padding: 15px 1.5rem 10px;
+    border: 1px solid #CCC;
+    border-top: 0;
+    border-radius: 0 0 4px 4px;
+    text-align: center;
+}
+
+.input-container {
+    padding:0 0 15px;
+}
+.search-criteria {
+    border-bottom: 1px solid #dedede;
+    padding-bottom: 10px;
+}
+
+.search-criteria a.btn-default {
+    cursor: pointer;
+    color:#FFF;
+    margin-right: 4px;
+    padding-left:18px;
+}
+
+.search-criteria a.btn-default::before {
+    content: "x";
+    margin: 4px 7px 0px -12px;
+    font-size: .6em;
+    position: absolute;
+}
+
+a.rembutton {
+    margin-left: 4px;
+}
+
+@media screen and (min-width:768px){
+    .radio-box {
+        padding: 0 15px 15px;
+    }
+
+    .label.input-group-addon {
+        border-right: 1px solid #CCC !important;
+        border-radius: 4px 0 0 4px !important;
+    }
+
+    .col.form-check.form-check-inline {
+        padding: 0 1.5rem;
+        border: 1px solid #CCC;
+        border-left: 0;
+        border-radius: 0 4px 4px 0;
+        text-align: center;
+    }
+}

@@ -1,0 +1,33 @@
+.all-services.tile {
+    padding: 1.5em 0 0;
+    margin-bottom:1em;
+}
+
+.all-services.tile .service {
+    margin:1.5rem 0;
+}
+
+.all-services.tile .service .image {
+    overflow: hidden;
+    text-align: center;
+    background-color:#dedede;
+    border:1px solid #dddddd;
+}
+
+.all-services.tile .service .image img {
+    position: relative;
+    z-index: 10;
+    height: 200px;
+    min-width:100%;
+    max-width: none;
+}
+
+.all-services.tile .service h3 {
+    position: relative;
+    z-index: 15;
+    color:#000;
+    font-size:1.2em;
+    padding:.5rem 0;
+    background-color: rgba(255,255,255,.8);
+    margin-top:-3rem;
+}
