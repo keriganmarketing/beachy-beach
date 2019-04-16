@@ -101,12 +101,12 @@ use Includes\Modules\Social\SocialSettingsPage;
                 </div>
                 <?php //} ?>
             </div>
-            <?php } ?>
+            
             
 
             <hr>
             <?php get_template_part( 'template-parts/mls', 'disclaimer' ); ?>
-
+            <?php } ?>
         </div>
 
         <?php if($agentData['app_id']!=''){ ?>
