@@ -140,26 +140,6 @@ class WPSEO_Upgrade_Manager {
 	 * @param string $current_version The current version number of the installation.
 	 */
 	private function do_update( $current_version ) {
-		// < 1.0.4.
-		if ( $current_version < 5 ) {
-
-			/**
-			 * Upgrade to version 1.0.4
-			 *
-			 * - Save the old license to the new license option
-			 */
-
-			// Save the old license to the new license option.
-			$license_manager = WPSEO_Premium::get_license_manager();
-			$license_manager->set_license_key( trim( get_option( 'wpseo_license_key', '' ) ) );
-			$license_manager->set_license_status( trim( get_option( 'wpseo_license_status', '' ) ) );
-
-			// Remove old license options.
-			delete_option( 'wpseo_license_key' );
-			delete_option( 'wpseo_license_status' );
-
-		}
-
 		// Upgrade to version 1.2.0.
 		if ( $current_version < 15 ) {
 			/**

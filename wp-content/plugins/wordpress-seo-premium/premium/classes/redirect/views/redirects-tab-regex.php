@@ -38,7 +38,7 @@
 		printf(
 			/* translators: 1: opens a link to a related knowledge base article. 2: closes the link. */
 			esc_html__( 'Regular Expression (regex) Redirects are extremely powerful redirects. You should only use them if you know what you are doing. %1$sRead more about regex redirects on our knowledge base%2$s.', 'wordpress-seo-premium' ),
-			'<a href="http://kb.yoast.com/article/142-what-are-regex-redirects" target="_blank">',
+			'<a href="https://yoa.st/3lo" target="_blank">',
 			'</a>'
 		);
 		?>

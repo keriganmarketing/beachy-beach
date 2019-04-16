@@ -176,27 +176,4 @@ class WPSEO_Export_Keywords_Post_Query implements WPSEO_Export_Keywords_Query {
 			. 'ON ' . $alias . '_join.post_id = posts.ID '
 			. 'AND ' . $alias . '_join.meta_key = "' . $key . '"';
 	}
-
-	/* ********************* DEPRECATED METHODS ********************* */
-
-	/**
-	 * Escapes the post types to be used in an SQL list.
-	 *
-	 * @deprecated 5.8.0
-	 * @codeCoverageIgnore
-	 *
-	 * @return string Escaped post types.
-	 */
-	protected function get_escaped_post_types() {
-		_deprecated_function( __METHOD__, 'WPSEO 5.8.0' );
-
-		static $escaped = null;
-
-		if ( $escaped === null ) {
-			// Get all public post types and run esc_sql on them.
-			$escaped = implode( '", "', array_map( 'esc_sql', WPSEO_Post_Type::get_accessible_post_types() ) );
-		}
-
-		return $escaped;
-	}
 }

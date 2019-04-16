@@ -130,7 +130,7 @@ class WPSEO_Premium_Prominent_Words_Unindexed_Post_Query {
 	protected function get_post_types() {
 		$prominent_words_support = new WPSEO_Premium_Prominent_Words_Support();
 
-		return $prominent_words_support->get_supported_post_types();
+		return array_filter( $prominent_words_support->get_supported_post_types(), array( 'WPSEO_Post_Type', 'is_rest_enabled' ) );
 	}
 
 	/**
@@ -177,92 +177,5 @@ class WPSEO_Premium_Prominent_Words_Unindexed_Post_Query {
 		$results = wp_list_pluck( $results, 'ID' );
 
 		return $results;
-	}
-
-	/* ********************* DEPRECATED METHODS ********************* */
-
-	/**
-	 * Returns an instance of WP Query.
-	 *
-	 * @deprecated 4.6.0
-	 * @codeCoverageIgnore
-	 *
-	 * @param string $post_type The posttype to limit the resultset for.
-	 * @param array  $args      The arguments to use in the WP_Query.
-	 *
-	 * @return WP_Query Instance of the WP Query.
-	 */
-	public function get_query( $post_type, array $args = array() ) {
-		_deprecated_function( __METHOD__, 'WPSEO 4.6.0' );
-
-		$args = wp_parse_args( $this->get_query_args( $post_type ), $args );
-		return new WP_Query( $args );
-	}
-
-	/**
-	 * Returns the query args.
-	 *
-	 * @deprecated 4.6.0
-	 * @codeCoverageIgnore
-	 *
-	 * @param string $post_type The posttype to limit the resultset for.
-	 *
-	 * @return array Array with the query args.
-	 */
-	public function get_query_args( $post_type ) {
-		_deprecated_function( __METHOD__, 'WPSEO 4.6.0' );
-
-		// phpcs:disable WordPress.DB.SlowDBQuery -- This method is deprecated, so not an issue.
-		return array(
-			'post_type'   => $post_type,
-			'post_status' => array( 'future', 'draft', 'pending', 'private', 'publish' ),
-			'meta_query'  => array(
-				'relation' => 'OR',
-				array(
-					'key'     => WPSEO_Premium_Prominent_Words_Versioning::POST_META_NAME,
-					'value'   => WPSEO_Premium_Prominent_Words_Versioning::VERSION_NUMBER,
-					'compare' => '!=',
-				),
-				array(
-					'key'     => WPSEO_Premium_Prominent_Words_Versioning::POST_META_NAME,
-					'compare' => 'NOT EXISTS',
-				),
-			),
-		);
-		// phpcs:enable
-	}
-
-	/**
-	 * Formats the post types for an IN-statement.
-	 *
-	 * @deprecated 5.8.0
-	 * @codeCoverageIgnore
-	 *
-	 * @param array $post_types The post types to format.
-	 *
-	 * @return string
-	 */
-	protected function format_post_types( array $post_types ) {
-		_deprecated_function( __METHOD__, 'WPSEO 5.8.0' );
-
-		$post_types = array_map( array( $this, 'format_post_type' ), $post_types );
-
-		return implode( ',', $post_types );
-	}
-
-	/**
-	 * Formats the post type for the IN-statement.
-	 *
-	 * @deprecated 5.8.0
-	 * @codeCoverageIgnore
-	 *
-	 * @param string $post_type The post type to format.
-	 *
-	 * @return string
-	 */
-	protected function format_post_type( $post_type ) {
-		_deprecated_function( __METHOD__, 'WPSEO 5.8.0' );
-
-		return '"' . esc_sql( $post_type ) . '"';
 	}
 }

@@ -90,12 +90,11 @@ class WPSEO_Premium_Metabox implements WPSEO_WordPress_Integration {
 	 */
 	public function send_data_to_assets() {
 		$analysis_seo    = new WPSEO_Metabox_Analysis_SEO();
-		$license_manager = WPSEO_Premium::get_license_manager();
 
 		$data = array(
 			'restApi'            => $this->get_rest_api_config(),
 			'seoAnalysisEnabled' => $analysis_seo->is_enabled(),
-			'licensedURL'        => $license_manager->get_url(),
+			'licensedURL'        => WPSEO_Utils::get_home_url(),
 		);
 
 		if ( WPSEO_Metabox::is_post_edit( $this->get_current_page() ) ) {

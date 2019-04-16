@@ -35,7 +35,7 @@ class WPSEO_Premium {
 	 *
 	 * @var string
 	 */
-	const PLUGIN_VERSION_NAME = '10.0.1';
+	const PLUGIN_VERSION_NAME = '10.1.3';
 
 	/**
 	 * Machine readable version for determining whether an upgrade is needed.
@@ -43,27 +43,6 @@ class WPSEO_Premium {
 	 * @var string
 	 */
 	const PLUGIN_VERSION_CODE = '16';
-
-	/**
-	 * Plugin author name.
-	 *
-	 * @var string
-	 */
-	const PLUGIN_AUTHOR = 'Yoast';
-
-	/**
-	 * License endpoint.
-	 *
-	 * @var string
-	 */
-	const EDD_STORE_URL = 'http://my.yoast.com';
-
-	/**
-	 * Product name to use for license checks.
-	 *
-	 * @var string
-	 */
-	const EDD_PLUGIN_NAME = 'Yoast SEO Premium';
 
 	/**
 	 * Instance of the WPSEO_Redirect_Page class.
@@ -90,8 +69,6 @@ class WPSEO_Premium {
 		// Create the upload directory.
 		WPSEO_Redirect_File_Util::create_upload_dir();
 
-		self::activate_license();
-
 		// Make sure the notice will be given at install.
 		require_once WPSEO_PREMIUM_PATH . 'classes/premium-prominent-words-recalculation-notifier.php';
 		$recalculation_notifier = new WPSEO_Premium_Prominent_Words_Recalculation_Notifier();
@@ -101,16 +78,12 @@ class WPSEO_Premium {
 	/**
 	 * Creates instance of license manager if needed and returns the instance of it.
 	 *
-	 * @return Yoast_Plugin_License_Manager
+	 * @codeCoverageIgnore
+	 *
+	 * @deprecated 10.1
 	 */
 	public static function get_license_manager() {
-		static $license_manager;
-
-		if ( $license_manager === null ) {
-			$license_manager = new Yoast_Plugin_License_Manager( new WPSEO_Product_Premium() );
-		}
-
-		return $license_manager;
+		_deprecated_function( __FUNCTION__, '10.1' );
 	}
 
 	/**
@@ -223,22 +196,6 @@ class WPSEO_Premium {
 			// Settings.
 			add_action( 'admin_init', array( $this, 'register_settings' ) );
 
-			// Licensing part.
-			$license_manager = self::get_license_manager();
-
-			// Setup constant name.
-			$license_manager->set_license_constant_name( 'WPSEO_LICENSE' );
-
-			// Setup license hooks.
-			$license_manager->setup_hooks();
-
-			// Add this plugin to licensing form.
-			add_action( 'wpseo_licenses_forms', array( $license_manager, 'show_license_form' ) );
-
-			if ( $license_manager->license_is_valid() ) {
-				add_action( 'admin_head', array( $this, 'admin_css' ) );
-			}
-
 			// Add Premium imports.
 			$this->integrations[] = new WPSEO_Premium_Import_Manager();
 		}
@@ -311,14 +268,6 @@ class WPSEO_Premium {
 
 		// Adds integration that filters redirected entries from the sitemap.
 		$this->integrations['redirect-sitemap-filter'] = new WPSEO_Redirect_Sitemap_Filter( home_url() );
-	}
-
-	/**
-	 * We might want to reactivate the license.
-	 */
-	private static function activate_license() {
-		$license_manager = self::get_license_manager();
-		$license_manager->activate_license();
 	}
 
 	/**
@@ -445,7 +394,7 @@ class WPSEO_Premium {
 			'wpseo_dashboard',
 			'',
 			__( 'Redirects', 'wordpress-seo-premium' ),
-			apply_filters_deprecated( 'wpseo_premium_manage_redirects_role', array( 'wpseo_manage_redirects' ), 'WPSEO 5.5', false, 'Use the introduced wpseo_manage_redirects capability instead.' ),
+			'wpseo_manage_redirects',
 			'wpseo_redirects',
 			array( $this->redirects, 'display' ),
 		);
