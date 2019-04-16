@@ -67,7 +67,7 @@ use Includes\Modules\Social\SocialSettingsPage;
                         array_push($soldListings, $listing); 
                     }  
                 }, $agentData['listings']);
-            } ?>
+            ?>
             <div id="mylistings">
                 <?php if(count($activeListings) > 0){ ?>
                 <div class="row">
@@ -99,9 +99,9 @@ use Includes\Modules\Social\SocialSettingsPage;
                         </div>
                     <?php //} ?>
                 </div>
-                <?php //} ?> -->
+                <?php //} ?>
             </div>
-
+            <?php } ?>
             
 
             <hr>
