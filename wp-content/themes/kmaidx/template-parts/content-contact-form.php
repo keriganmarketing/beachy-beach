@@ -3,6 +3,8 @@
 use Includes\Modules\Agents\Agents;
 use Includes\Modules\Leads\RequestInfo;
 
+$leads = new RequestInfo();
+
 //DEFAULT FORM VARS
 $yourname               = (isset($_GET['full_name']) ? $_GET['full_name'] : '');
 $youremail              = (isset($_GET['email_address']) ? $_GET['email_address'] : '');
@@ -53,15 +55,15 @@ $securityFlag           = (isset($_POST['secu']) ? $_POST['secu'] : '');
 $formSubmitted          = ($formID == 'requestinfo' && $securityFlag == '' ? TRUE : FALSE);
 
 if( $formSubmitted ){ //FORM WAS SUBMITTED
-
-    $leads = new RequestInfo();
     $leads->handleLead($_POST);
-
 }
 
 ?>
 <a id="request-info-form" class="pad-anchor"></a>
 <form class="form leadform" enctype="multipart/form-data" method="post" action="#request-info-form" id="requestinfo">
+    <input type="hidden" name="user_agent" value="<?php echo $_SERVER['HTTP_USER_AGENT']; ?>" >
+    <input type="hidden" name="ip_address" value="<?php echo $leads->getIP(); ?>" >
+    <input type="hidden" name="referrer" value="<?php echo $_SERVER['HTTP_REFERER']; ?>" >
 	<input type="hidden" name="formID" value="requestinfo" >
 	<div class="row">
 		<div class="col-sm-6">
