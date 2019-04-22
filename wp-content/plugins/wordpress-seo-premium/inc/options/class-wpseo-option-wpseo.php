@@ -335,6 +335,8 @@ class WPSEO_Option_Wpseo extends WPSEO_Option {
 			'enable_cornerstone_content' => false,
 			'enable_xml_sitemap'         => false,
 			'enable_text_link_counter'   => false,
+			'enable_metabox_insights'    => false,
+			'enable_link_suggestions'    => false,
 		);
 
 		// We can reuse this logic from the base class with the above defaults to parse with the correct feature values.

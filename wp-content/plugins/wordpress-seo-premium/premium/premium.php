@@ -35,7 +35,7 @@ class WPSEO_Premium {
 	 *
 	 * @var string
 	 */
-	const PLUGIN_VERSION_NAME = '10.1.3';
+	const PLUGIN_VERSION_NAME = '11.0';
 
 	/**
 	 * Machine readable version for determining whether an upgrade is needed.
