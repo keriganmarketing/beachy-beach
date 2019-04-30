@@ -81,6 +81,8 @@ class WPSEO_Option_MS extends WPSEO_Option {
 			"{$allow_prefix}enable_cornerstone_content" => true,
 			"{$allow_prefix}enable_xml_sitemap"         => true,
 			"{$allow_prefix}enable_text_link_counter"   => true,
+			"{$allow_prefix}enable_metabox_insights"    => true,
+			"{$allow_prefix}enable_link_suggestions"    => true,
 		);
 
 		if ( is_multisite() ) {

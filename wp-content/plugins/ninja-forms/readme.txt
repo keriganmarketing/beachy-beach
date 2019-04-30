@@ -3,7 +3,7 @@ Contributors: wpninjasllc, kstover, jameslaws, kbjohnson90, klhall1987, krmoorho
 Tags: form, forms, contact form, custom form, form builder, form creator, form manager, form creation, contact forms, custom forms, forms builder, forms creator, forms manager, forms creation, form administration,
 Requires at least: 4.9
 Tested up to: 5.1
-Stable tag: 3.4.9
+Stable tag: 3.4.10
 License: GPLv2 or later
 
 Drag and drop fields in an intuitive UI to create contact forms, email subscription forms, order forms, payment forms, send emails and more!
@@ -111,17 +111,19 @@ For help and video tutorials, please visit our website: [Ninja Forms Documentati
 
 == Upgrade Notice ==
 
-= 3.4.9 (10 April 2019) =
+= 3.4.10 (15 April 2019) =
 
 *Bugs:*
 
-* Resolved an issue that sometimes caused submission dates to show inaccurately in the submissions table.
-
-*Changes:*
-
-* We've upgraded our form building experience with realistic field representations!
+* Resolved an issue that caused the form builder to crash when editing forms that had a select list with no options.
 
 == Changelog ==
+
+= 3.4.10 (15 April 2019) =
+
+*Bugs:*
+
+* Resolved an issue that caused the form builder to crash when editing forms that had a select list with no options.
 
 = 3.4.9 (10 April 2019) =
 
