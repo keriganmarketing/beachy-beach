@@ -20,7 +20,6 @@ class Offices {
 				'menu_position'      => null,
 				'public'             => false,
 				'publicly_queryable' => false,
-                'capability_type'    => array('office','offices'),
 			)
 		);
 
