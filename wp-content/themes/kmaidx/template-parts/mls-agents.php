@@ -8,20 +8,18 @@ foreach($team as $agent){
     $phone = (isset($agentData['cell_phone']) ? $agentData['cell_phone'] : (isset($agentData['office_phone']) ? $agentData['office_phone'] : ''));
 
     $agentCategories = '';
-	$is30a = false;
+	// $is30a = false;
     foreach($agentData['categories'] as $category){
-        if($category['category-slug'] == '30a-office' || $category['category-slug'] == 'seacrest-office' || $category['category-slug'] == 'destin-office'){
-            $is30a = true;
-        }
+
         $agentCategories .= ' '.$category['category-slug'].'-filter';
     }
 
 
-    $company = ( $is30a ? 'Beachy Beach 30a Real Estate' : 'Beachy Beach Real Estate' );
+    // $company = ( $is30a ? 'Beachy Beach 30a Real Estate' : 'Beachy Beach Real Estate' );
 
-    if($agentData['name'] == 'Karen Smith'){
-	    $company = 'Beachy Beach Real Estate <br> Beachy Beach 30a Real Estate';
-    }
+    // if($agentData['name'] == 'Karen Smith'){
+	//     $company = 'Beachy Beach Real Estate <br> Beachy Beach 30a Real Estate';
+    // }
 
     ?>
     <div class="agent-card col-sm-6 col-lg-4 col-xl-3 mb-5<?php echo $agentCategories; ?> all-filter" >
@@ -33,7 +31,7 @@ foreach($team as $agent){
                 <div class="agent-info">
                     <h4 class="card-title"><?php echo $agentData['name']; ?></h4>
                     <h5 class="card-subtitle"><?php echo ($agentData['title'] != '' ? $agentData['title'] : 'Realtor' ); ?></h5>
-                    <h5 class="card-subtitle company"><?php echo $company; ?></h5>
+                    <!-- <h5 class="card-subtitle company"><?php //echo $company; ?></h5> -->
                     <ul class="contact-info">
                         <?php if($agentData['email_address'] != ''){?><li class="email"><img src="<?php echo getSvg('email'); ?>" alt="Email <?php echo $agentData['name'];?>" > <a href="mailto:<?php echo $agentData['email_address']; ?>" ><?php echo $agentData['email_address']; ?></a></li><?php } ?>
                         <?php if($phone != ''){?><li class="phone"><img src="<?php echo getSvg('phone'); ?>" alt="Call <?php echo $agentData['name'];?>" > <a href="tel:<?php echo $phone; ?>" ><?php echo $phone; ?></a></li><?php }else{ '<li></li>'; } ?>
