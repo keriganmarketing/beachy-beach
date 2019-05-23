@@ -54,7 +54,8 @@ class QuickSearch
         $client       = new Client([
             'base_uri' => 'https://mothership.kerigan.com/api/v1/',
             'headers' => [
-                'Referrer' => $_SERVER['HTTP_USER_AGENT']
+                'Referrer' => $_SERVER['HTTP_USER_AGENT'],
+                'SITE_KEY' => $_SERVER['HTTP_HOST']
             ]
         ]);
 

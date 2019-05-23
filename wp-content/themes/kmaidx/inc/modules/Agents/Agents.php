@@ -242,7 +242,8 @@ class Agents {
         $client   = new Client([
 			'base_uri' => 'http://mothership.kerigan.com/api/v1/',
 			'headers' => [
-                'Referrer' => $_SERVER['HTTP_USER_AGENT']
+				'Referrer' => $_SERVER['HTTP_USER_AGENT'],
+				'SITE_KEY' => $_SERVER['HTTP_HOST']
             ]
 		]);
 

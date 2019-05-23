@@ -28,7 +28,8 @@ class FullListing
             'base_uri' => 'https://mothership.kerigan.com/api/v1/listing/',
             'http_errors' => false,
             'headers' => [
-                'Referrer' => $_SERVER['HTTP_USER_AGENT']
+                'Referrer' => $_SERVER['HTTP_USER_AGENT'],
+                'SITE_KEY' => $_SERVER['HTTP_HOST']
             ]
         ]);
 
