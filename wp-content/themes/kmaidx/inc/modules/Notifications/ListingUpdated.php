@@ -105,7 +105,7 @@ class ListingUpdated
             </td></tr><tr><td>&nbsp;</td></tr>';
         }
 
-        $tableData .= '<tr><td colspan="2" align="center"><a style="display: block; line-height: 20px;" href="https://beachtimerealty.com/my-account/" >View all saved properties</a></td></tr>';
+        $tableData .= '<tr><td colspan="2" align="center"><a style="display: block; line-height: 20px;" href="https://beachybeach.com/beachy-bucket/" >View all saved properties</a></td></tr>';
 
         $email = new Leads();
 
