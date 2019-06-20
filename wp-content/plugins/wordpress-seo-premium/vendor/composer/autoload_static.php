@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5f1bbd2eee065aff061f1a4d10ca4c69
+class ComposerStaticInit05a9d36e979a3b338cf2eb57e3191287
 {
     public static $files = array (
         '23846a2512770688e91c6220c735f257' => __DIR__ . '/..' . '/yoast/wp-helpscout/src/functions.php',
@@ -547,6 +547,7 @@ class ComposerStaticInit5f1bbd2eee065aff061f1a4d10ca4c69
         'WPSEO_Schema_Breadcrumb' => __DIR__ . '/../..' . '/frontend/schema/class-schema-breadcrumb.php',
         'WPSEO_Schema_Context' => __DIR__ . '/../..' . '/frontend/schema/class-schema-context.php',
         'WPSEO_Schema_IDs' => __DIR__ . '/../..' . '/frontend/schema/class-schema-ids.php',
+        'WPSEO_Schema_Image' => __DIR__ . '/../..' . '/frontend/schema/class-schema-image.php',
         'WPSEO_Schema_Organization' => __DIR__ . '/../..' . '/frontend/schema/class-schema-organization.php',
         'WPSEO_Schema_Person' => __DIR__ . '/../..' . '/frontend/schema/class-schema-person.php',
         'WPSEO_Schema_Person_Upgrade_Notification' => __DIR__ . '/../..' . '/admin/class-schema-person-upgrade-notification.php',
@@ -835,10 +836,10 @@ class ComposerStaticInit5f1bbd2eee065aff061f1a4d10ca4c69
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5f1bbd2eee065aff061f1a4d10ca4c69::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5f1bbd2eee065aff061f1a4d10ca4c69::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit5f1bbd2eee065aff061f1a4d10ca4c69::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit5f1bbd2eee065aff061f1a4d10ca4c69::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit05a9d36e979a3b338cf2eb57e3191287::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit05a9d36e979a3b338cf2eb57e3191287::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit05a9d36e979a3b338cf2eb57e3191287::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit05a9d36e979a3b338cf2eb57e3191287::$classMap;
 
         }, null, ClassLoader::class);
     }

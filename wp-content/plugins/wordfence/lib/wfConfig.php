@@ -52,7 +52,6 @@ class wfConfig {
 			"spamvertizeCheck" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"liveTraf_ignorePublishers" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"liveTraf_displayExpandedRecords" => array('value' => false, 'autoload' => self::DONT_AUTOLOAD),
-			//"perfLoggingEnabled" => array('value' => false, 'autoload' => self::AUTOLOAD),
 			"scheduledScansEnabled" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"lowResourceScansEnabled" => array('value' => false, 'autoload' => self::AUTOLOAD),
 			"scansEnabled_checkGSB" => array('value' => true, 'autoload' => self::AUTOLOAD),
@@ -126,6 +125,7 @@ class wfConfig {
 			'displayTopLevelBlocking' => array('value' => false, 'autoload' => self::AUTOLOAD),
 			'displayTopLevelLiveTraffic' => array('value' => false, 'autoload' => self::AUTOLOAD),
 			'displayAutomaticBlocks' => array('value' => true, 'autoload' => self::AUTOLOAD),
+			'allowLegacy2FA' => array('value' => false, 'autoload' => self::AUTOLOAD),
 		),
 		//All exportable variable type options
 		"otherParams" => array(
@@ -207,11 +207,13 @@ class wfConfig {
 			'needsNewTour_scan' => array('value' => true, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'needsNewTour_blocking' => array('value' => true, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'needsNewTour_livetraffic' => array('value' => true, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
+			'needsNewTour_loginsecurity' => array('value' => true, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'needsUpgradeTour_dashboard' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'needsUpgradeTour_firewall' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'needsUpgradeTour_scan' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'needsUpgradeTour_blocking' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'needsUpgradeTour_livetraffic' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
+			'needsUpgradeTour_loginsecurity' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'supportContent' => array('value' => '{}', 'autoload' => self::DONT_AUTOLOAD, 'validation' => array('type' => self::TYPE_STRING)),
 			'supportHash' => array('value' => '', 'autoload' => self::DONT_AUTOLOAD, 'validation' => array('type' => self::TYPE_STRING)),
 			'whitelistPresets' => array('value' => '{}', 'autoload' => self::DONT_AUTOLOAD, 'validation' => array('type' => self::TYPE_STRING)),
@@ -229,6 +231,7 @@ class wfConfig {
 	private static $wfCentralInternalConfig = array(
 		'wordfenceCentralUserSiteAuthGrant',
 		'wordfenceCentralConnected',
+		'wordfenceCentralPluginAlertingDisabled',
 	);
 
 	public static function setDefaults() {
@@ -987,9 +990,14 @@ class wfConfig {
 			$upret = $upgrader->upgrade(WORDFENCE_BASENAME);
 			if($upret){
 				$cont = file_get_contents(WORDFENCE_FCPATH);
-				if(wfConfig::get('alertOn_update') == '1' && preg_match('/Version: (\d+\.\d+\.\d+)/', $cont, $matches) ){
-					wordfence::alert("Wordfence Upgraded to version " . $matches[1], "Your Wordfence installation has been upgraded to version " . $matches[1], '127.0.0.1');
-				}
+				preg_match('/Version: (\d+\.\d+\.\d+)/', $cont, $matches);
+				$version = !empty($matches) ? $matches[1] : null;
+				$alertCallback = array(new wfAutoUpdatedAlert($version), 'send');
+				do_action('wordfence_security_event', 'autoUpdate', array(
+					'version' => $version,
+					'ip' => wfUtils::getIP(),
+				), $alertCallback);
+
 				wfConfig::set('autoUpdateAttempts', 0);
 			}
 			$output = @ob_get_contents();
@@ -1326,11 +1334,14 @@ Options -ExecCGI
 					$firewall->syncStatus(true);
 					
 					if ($value == wfFirewall::FIREWALL_MODE_DISABLED) {
-						if (wfConfig::get('alertOn_wafDeactivated')) {
-							$currentUser = wp_get_current_user();
-							$username = $currentUser->user_login;
-							wordfence::alert(__('Wordfence WAF Deactivated', 'wordfence'), sprintf(__('A user with username "%s" deactivated the Wordfence Web Application Firewall on your WordPress site.', 'wordfence'), $username), wfUtils::getIP());
-						}
+						$currentUser = wp_get_current_user();
+						$username = $currentUser->user_login;
+
+						$alertCallback = array(new wfWafDeactivatedAlert($username, wfUtils::getIP()), 'send');
+						do_action('wordfence_security_event', 'wafDeactivated', array(
+							'username' => $username,
+							'ip' => wfUtils::getIP(),
+						), $alertCallback);
 					}
 					
 					$saved = true;
