@@ -19,7 +19,7 @@ get_header(); ?>
 
 
 </div>
-<div class="full-width-map" style="margin-top:0;">
+<div class="full-width-map hidden-sm-down" style="margin-top:0;">
     <div class="container xwide">
     <div id="map-header" class="hidden-md-down">
         <span id="office-toggle" class="map-toggles">Beachy Beach Office</span>
