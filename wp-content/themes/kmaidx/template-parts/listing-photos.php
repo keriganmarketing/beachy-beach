@@ -41,7 +41,10 @@ $modalImages     = '<div class="carousel-inner" role="listbox">';
             $modalIndicators .= '<li data-target="#myCarousel" data-slide-to="' . ($i-1) . '" class="' . $active . '"></li>';
             $modalImages .= '
                     <div class="carousel-item ' . $active . '" >
-                      <img src="' . $photoUrl . '" alt="' . $photo->photo_description . '" style="width:100%; height:auto !important; display: block;">
+                      <img 
+                      class="lazy"
+                      src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                      data-src="' . $photoUrl . '" alt="' . $photo->photo_description . '" style="width:100%; height:auto !important; display: block;">
                       <div class="carousel-caption">';
 
             if ($photo->photo_description != '') {
@@ -57,8 +60,10 @@ $modalImages     = '<div class="carousel-inner" role="listbox">';
                 <div class="embed-responsive embed-responsive-16by9">
                     <div class="sub-photo-container">
                         <a href="#" class="thumbnail" data-toggle="modal" data-target="#lightbox" data-slide-to="<?php echo $nextImage - 1; ?>">
-                            <img src="<?php echo $photoUrl; ?>" data-src="<?php echo $photoUrl; ?>"
-                                 class="embed-responsive-item" style="width:100%"
+                            <img 
+                                 src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                 data-src="<?php echo $photoUrl; ?>" data-src="<?php echo $photoUrl; ?>"
+                                 class="embed-responsive-item lazy" style="width:100%"
                                  alt="MLS Property <?php echo $listingInfo->mls_account; ?>"
                                  data-slide-to="<?php echo $nextImage - 1; ?>"/>
                         </a>
