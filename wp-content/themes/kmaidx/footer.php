@@ -20,7 +20,7 @@ use Includes\Modules\Social\SocialSettingsPage;
                 <div class="switch-title text-center mb-2 mt-3">
                     <a target="_blank" href="http://www.youtube.com/user/TheBeachShow" >
                         <img 
-                            class="img-fluid b-lazy" 
+                            class="img-fluid lazy" 
                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                             data-src="<?php echo get_template_directory_uri() ?>/img/beachshow-horizontal.png" 
                             alt="The Beach Show"
@@ -63,14 +63,14 @@ use Includes\Modules\Social\SocialSettingsPage;
                     <div class="col-md-6 my-auto mx-auto justify-content-center text-center">
                         <p class="copyright">&copy;<?php echo date('Y'); ?> Beachy Beach Real Estate. All Rights Reserved. <a style="text-decoration: underline;" href="/privacy-policy/" >Privacy Policy</a> <span class="line">
                             <img 
-                                class="b-lazy"
+                                class="lazy"
                                 src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                                 data-src="<?php echo get_template_directory_uri() ?>/img/realtors-association-logo-small.png" 
                                 alt="Realtors Associattion" 
                                 id="realtors-association"
                             > 
                             <img 
-                                class="b-lazy"
+                                class="lazy"
                                 src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                                 data-src="<?php echo get_template_directory_uri() ?>/img/equal-housing-logo-small.png" 
                                 alt="Equal Housing Opportunity" 
@@ -93,6 +93,8 @@ use Includes\Modules\Social\SocialSettingsPage;
 <?php wp_footer(); ?>
 
 <script>
+
+
 
 function stickFooter(){
 
@@ -125,7 +127,13 @@ $(window).scroll(function() {
 
 $(window).load(function() {
     stickFooter();
+
+    $(function() {
+        $('.lazy').Lazy();
+    });
+
 });
+
 
 </script>
 <?php if(is_page(7221) || is_page(6784)){ ?>
@@ -218,6 +226,7 @@ $(window).load(function() {
         })
     </script>
 <?php } ?>
+
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

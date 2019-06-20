@@ -151,29 +151,33 @@ function kmaidx_scripts()
         false);
 
     //scripts
-    wp_register_script('tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js',
+    wp_register_script('tether', '//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js',
         array('jquery'), null, true);
-    wp_register_script('bootstrap-js', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js',
+    wp_register_script('bootstrap-js', '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js',
         array('jquery'), null, true);
     wp_register_script('images-loaded',
         'https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.1/imagesloaded.min.js', array('jquery'), null,
         true);
     wp_register_script('custom-scripts', get_template_directory_uri() . '/js/scripts.js', array(), null, true);
-    wp_register_script('lightbox', 'https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.9.0/js/lightbox.min.js',
+    wp_register_script('lightbox', '//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.9.0/js/lightbox.min.js',
         array('jquery'), null, true);
-    wp_register_script('lazy-js', 'https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.4/jquery.lazy.min.js',
-        array('jquery'), null, true);
-    wp_register_script('select2-js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
+    // wp_register_script('lazy-js', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.4/jquery.lazy.min.js',
+    //     array('jquery'), null, true);
+    wp_register_script('select2-js', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
         array('jquery'), null, true);
     wp_register_script('jquery-ui-slider', get_template_directory_uri() . '/js/jquery-ui.min.js', array('jquery'), null,
         true);
     //wp_register_script('chart-js', get_template_directory_uri() . '/js/chartjs/Chart.js', array('jquery'), null, true);
-    wp_register_script('chart-js', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js',
+    wp_register_script('chart-js', '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js',
         array('jquery'), null, true);
     wp_register_script('mortgage-calc', get_template_directory_uri() . '/js/mortgagecalc.js', array('jquery'), null,
         true);
     wp_register_script('listing-js', get_template_directory_uri() . '/js/listing.js', array('jquery'), null, true);
     wp_register_script('team-js', get_template_directory_uri() . '/js/team.js', array('jquery'), null, true);
+    wp_register_script('lazy-js', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js',
+        array('jquery'), null, true);
+    wp_register_script('lazy-js-plugins', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js',
+        array('jquery'), null, true);
 
     //wp ajax scripts
     wp_register_script('communities-ajax', get_template_directory_uri() . '/js/communities.ajax.js', array('jquery'),
@@ -191,6 +195,7 @@ function kmaidx_scripts()
     wp_enqueue_script('bootstrap-js');
     wp_enqueue_script('custom-scripts');
     wp_enqueue_script('lazy-js');
+    wp_enqueue_script('lazy-js-plugins');
     wp_enqueue_style('select2-styles');
     wp_enqueue_script('select2-js');
 

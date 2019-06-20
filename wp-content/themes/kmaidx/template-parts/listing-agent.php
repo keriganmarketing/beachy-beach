@@ -2,7 +2,12 @@
 $phone = (isset($agentData['cell_phone']) ? $agentData['cell_phone'] : (isset($agentData['office_phone']) ? $agentData['office_phone'] : ''));
 ?>
 <div class="card">
-    <img class="card-img-top" src="<?php echo $agentData['thumbnail']; ?>" alt="<?php echo $agentData['name']; ?>">
+    <img 
+        class="card-img-top lazy" 
+        src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+        data-src="<?php echo $agentData['thumbnail']; ?>" 
+        alt="<?php echo $agentData['name']; ?>"
+    >
     <div class="card-block">
         <h4 class="card-title"><?php echo $agentData['name']; ?></h4>
         <ul class="contact-info">
