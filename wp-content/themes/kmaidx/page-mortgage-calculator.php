@@ -14,21 +14,19 @@
 
 get_header(); ?>
 <div id="content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main" >
 
+            <?php while ( have_posts() ) : the_post();
 
-        <div id="primary" class="content-area">
-            <main id="main" class="site-main" >
+                get_template_part( 'template-parts/content', 'page' );
 
-				<?php while ( have_posts() ) : the_post();
+            endwhile; ?>
 
-					get_template_part( 'template-parts/content', 'page' );
-
-				endwhile; ?>
-
-            </main><!-- #main -->
-        </div><!-- #primary -->
-        <?php get_template_part( 'template-parts/mls', 'mortgage-calulator' ); ?>
+        </main><!-- #main -->
+    </div><!-- #primary -->
 </div>
+<?php get_template_part( 'template-parts/mls', 'mortgage-calulator' ); ?>
 <?php 
 wp_enqueue_script( 'mortgage-calc' );
 get_footer();
