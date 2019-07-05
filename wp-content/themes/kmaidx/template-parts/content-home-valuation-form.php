@@ -72,11 +72,11 @@ if( $formSubmitted ){ //FORM WAS SUBMITTED
             </div>
         </div>
         <div class="col-12 mt-4">
-            <label for="who" >Select an area office or specific agent.</label>
+            <label for="who" >Select an agent you'd like to work with.</label>
         </div>
-        <div class="custom-controls-inline col-12">
+        <div class="custom-controls-inline col-12 col-lg-4">
 
-            <label class="custom-control custom-radio mt-2 mb-2">
+            <!-- <label class="custom-control custom-radio mt-2 mb-2">
                 <input id="radioStacked1" name="lead_for" type="radio" class="custom-control-input" onclick="toggleSelect();" value="pcb" <?= ($overrideFields ? 'disabled' : ''); ?>>
                 <span class="custom-control-indicator"></span>
                 <span class="custom-control-description">Beachy Beach Real Estate</span>
@@ -90,9 +90,9 @@ if( $formSubmitted ){ //FORM WAS SUBMITTED
                 <input id="select-an-agent" name="lead_for" type="radio" class="custom-control-input" onclick="toggleSelect();" value="specific" <?php echo ($selectedAgent!='' ? 'checked' : ''); ?> >
                 <span class="custom-control-indicator"></span>
                 <span class="custom-control-description">Select an agent</span>
-            </label>
+            </label> -->
 
-            <div class="form-group <?php echo ( $selectedAgent=='' && $formSubmitted ? 'has-error' : ''); ?>" id="agent-select-dd" style="display: none; margin:0;">
+            <div class="form-group <?php echo ( $selectedAgent=='' && $formSubmitted ? 'has-error' : ''); ?> w-auto" id="agent-select-dd" style="margin:0;">
                 <label for="selected_agent" class="sr-only">Your Agent</label>
                 <select class="form-control" name="selected_agent" required>
 			        <?php echo $agentOptions; ?>
