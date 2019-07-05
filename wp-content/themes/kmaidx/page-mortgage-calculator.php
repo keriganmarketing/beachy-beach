@@ -28,5 +28,6 @@ get_header(); ?>
 </div>
 <?php get_template_part( 'template-parts/mls', 'mortgage-calulator' ); ?>
 <?php 
+wp_enqueue_script( 'chart-js' );
 wp_enqueue_script( 'mortgage-calc' );
 get_footer();
