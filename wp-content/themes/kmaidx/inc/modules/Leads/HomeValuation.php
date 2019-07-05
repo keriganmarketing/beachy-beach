@@ -69,4 +69,28 @@ class HomeValuation extends Leads
         parent::sendNotifications($dataSubmitted);
     }
 
+    public function checkSpam($dataSubmitted)
+    {
+        $client = new \Gothick\AkismetClient\Client(
+            site_url(),           // Your website's URL (this becomes Akismet's "blog" parameter)
+            "KMA Spam Checker",   // Your website or app's name (Used in the User-Agent: header when talking to Akismet)
+            "1.0",                // Your website or app's software version (Used in the User-Agent: header when talking to Akismet)
+            akismet_get_key()     
+        );
+
+        $result = $client->commentCheck([
+            'user_ip'              => $dataSubmitted['ip_address'],
+            'user_agent'           => $dataSubmitted['user_agent'],
+            'referrer'             => $dataSubmitted['referrer'],
+            'comment_author'       => $dataSubmitted['full_name'],
+            'comment_author_email' => $dataSubmitted['email_address'],
+            'comment_content'      => $dataSubmitted['property_details']
+        ], $_SERVER);
+
+        $spam = $result->isSpam();
+        //echo '<pre>',print_r($result),'</pre>';
+
+        return $spam; // Boolean 
+    }
+
 }
