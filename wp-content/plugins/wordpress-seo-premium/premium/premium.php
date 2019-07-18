@@ -35,7 +35,7 @@ class WPSEO_Premium {
 	 *
 	 * @var string
 	 */
-	const PLUGIN_VERSION_NAME = '11.1';
+	const PLUGIN_VERSION_NAME = '11.6';
 
 	/**
 	 * Machine readable version for determining whether an upgrade is needed.
@@ -117,6 +117,7 @@ class WPSEO_Premium {
 			'request-free-translations'              => new WPSEO_Premium_Free_Translations(),
 			'expose-javascript-shortlinks'           => new WPSEO_Premium_Expose_Shortlinks(),
 			'multi-keyword'                          => new WPSEO_Multi_Keyword(),
+			'post-data'                              => new WPSEO_Premium_Post_Data_Endpoint( new WPSEO_Premium_Post_Data_Service() ),
 		);
 
 		if ( WPSEO_Options::get( 'enable_cornerstone_content' ) ) {
@@ -323,7 +324,8 @@ class WPSEO_Premium {
 	 * Add 'Create Redirect' option to admin bar menu on 404 pages
 	 */
 	public function admin_bar_menu() {
-		if ( ! is_404() ) {
+		// Prevent function from running if the page is not a 404 page or the user has not the right capabilities to create redirects.
+		if ( ! is_404() || ! WPSEO_Capability_Utils::current_user_can( 'wpseo_manage_options' ) ) {
 			return;
 		}
 

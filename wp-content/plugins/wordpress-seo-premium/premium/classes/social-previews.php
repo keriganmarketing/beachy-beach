@@ -18,13 +18,8 @@ class WPSEO_Social_Previews implements WPSEO_WordPress_Integration {
 	 * @return void
 	 */
 	public function register_hooks() {
-		global $pagenow;
-		if ( ! WPSEO_Metabox::is_post_edit( $pagenow ) && ! WPSEO_Taxonomy::is_term_edit( $pagenow ) ) {
-			return;
-		}
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_ajax_retrieve_image_data_from_url', array( $this, 'ajax_retrieve_image_data_from_url' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
 	/**
