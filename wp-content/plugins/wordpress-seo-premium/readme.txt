@@ -3,10 +3,10 @@ Contributors: yoast, joostdevalk, tacoverdo, omarreiss, atimmer, jipmoors
 Donate link: https://yoa.st/1up
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
-Tags: SEO, XML sitemap, Google Search Console, Content analysis, Readability
+Tags: SEO, XML sitemap, Content analysis, Readability
 Requires at least: 4.9
-Tested up to: 5.1.1
-Stable tag: 11.1
+Tested up to: 5.2.2
+Stable tag: 11.6
 Requires PHP: 5.2.4
 
 Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin.
@@ -42,11 +42,10 @@ Yoast SEO does everything in its power to please both visitors and search engine
 
 * Yoast SEO tunes the engine of your site so you can work on creating great content.
 * Our cornerstone content and internal linking features help you optimize your site structure in a breeze.
-* Integrates with Google Search Console: See how your site performs in the search engines and fix crawl errors.
 * Manage SEO roles: Give your colleagues access to specific sections of the Yoast SEO plugin.
 * Bulk editor: Make large-scale edits to your site.
 * **[Premium]** Social previews to manage the way your page is shared on social networks like Facebook and Twitter.
-* **[Premium]** Redirect manager: It keeps your site healthy by easily redirecting errors from Google Search Console, deleted pages and changed URLs.
+* **[Premium]** Redirect manager: It keeps your site healthy by easily redirecting deleted pages and changed URLs.
 
 ### Premium support
 
@@ -106,39 +105,39 @@ You'll find answers to many of your questions on [kb.yoast.com](https://yoa.st/1
 
 == Changelog ==
 
-= 11.1.0 =
-Release Date: April 30th, 2019
+= 11.6.0 =
+Release Date: July 9th, 2019
+
+Yoast SEO 11.6 is out today. Of course, we did the regular round of bug fixing, but the focus of this release is two-fold: a new, much easier to use tabbed interface for the meta box and an updated HowTo structured data content block for WordPress. Find out all about Yoast SEO 11.6 in [our 11.6 release post](https://yoa.st/release-11-6)!
 
 Enhancements:
 
-* Improves how we generate the image parts for the Schema output. [Read more about the ImageObject output](https://yoa.st/image-schema).
-* Adds `filesize` to whitelisted properties on `$image`. Props to [cmmarslender](https://github.com/cmmarslender).
-* Optimizes the code to avoid an unnecessary DB query to remove notifications storage when it's already empty. Props to [rmc47](https://github.com/rmc47).
-* Improves the breadcrumbs accessibility by adding `aria-current` to the active item.
+* Changes the tabs in the metabox to horizontal tabs.
+* Splits the content optimization tab in the metabox into two separate tabs: an SEO and a Readability tab.
+* Updates HowTo schema output to reflect Google's new guidelines.
+* Makes sure the media modal that is triggered for image uploads only displays images.
 
 Bugfixes:
 
-* Fixes a bug where the position of the buttons in the FAQ and How-To structured data blocks was compromised when running the development build of Gutenberg.
-* Fixed a bug where social profile settings would be empty because it was relying on the user choosing whether the site represents a company or a person.
+* Fixes a bug where the Schema `@id` for `Person` would be incorrect on posts when author archives where disabled. 
+* Fixes a bug where the Schema would contain `WebPage` instead of `CollectionPage` for a latest posts homepage and the static posts page type.
+* Fixes a bug where the Organization and Article Schema nodes would incorrectly be output when a website had not set their organization's name and/or logo.
+* Fixes a bug where the eye marker tooltips would break out of the metabox, which would hide the last part of the tooltip text.
+* Fixes a bug where instances of unfiltered HTML would be allowed in term descriptions where they shouldn't be.
 
-= 11.0.0 =
-Release Date: April 16th, 2019
+= 11.5.0 =
+Release Date: June 25th, 2019
 
-We've made huge changes to the schema.org markup we output, adding multiple different types of Schema. Be sure to check [our posts on yoast.com about this release](https://yoa.st/schema-release-post)!
+Yoast SEO 11.5 is out today. This release features a big change that gives you a better idea of how searchers see your snippets on mobile. Yep, we’ve overhauled the mobile snippet preview and brought it up-to-date with Google’s latest changes. And that, of course, includes that shiny favicon. Find out what Yoast SEO 11.5 is all about in [our 11.5 release post](https://yoa.st/release-11-5)!
 
 Enhancements:
 
-* Schema changes:
-	* Adds `Person` markup for author pages.
-	* Adds `WebPage` markup for all pages.
-	* Adds `Article` markup for posts, with `Person` markup for the author.
-	* Changes the ‘Organization or Person’ section of the Knowledge graph settings to allow selecting an author that is the ‘Person’ that the website represents.
-* Adds MySpace, SoundCloud, Tumblr and YouTube URL input fields to people’s profiles.
+* Updates the Mobile Snippet Preview.
+* Moves the primary image for a page out of the `WebPage` piece into its own graph piece.
 
 Bugfixes:
 
-* Fixes an issue where the metabox would not display on term edit pages when running the development build of Gutenberg.
+* Fixes missing trailing slash for the homepage on post sitemap. Props to [stodorovic](https://github.com/stodorovic).
 
 = Earlier versions =
-
-For the changelog of earlier versions, please refer to https://yoa.st/yoast-seo-changelog
+For the changelog of earlier versions, please refer to [the changelog on yoast.com](https://yoa.st/yoast-seo-changelog).

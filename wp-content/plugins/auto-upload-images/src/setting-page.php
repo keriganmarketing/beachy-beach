@@ -1,17 +1,11 @@
 <?php if (!defined('ABSPATH')) exit(); ?>
 
 <div class="wrap">
-    <?php screen_icon('options-general'); ?> <h2><?php _e('Auto Upload Images Settings', 'auto-upload-images'); ?></h2>
+    <h2><?php _e('Auto Upload Images Settings', 'auto-upload-images'); ?></h2>
 
-    <?php if (isset($curl_error) && $curl_error == true) : ?>
-    <div id="setting-error-settings_updated" class="error settings-error">
-        <p><strong><?php _e('"PHP CURL" not enabled on your site! For working with "Auto Upload Images" plugin, you need to enable "PHP CURL", please contact with server admin and send request to enable "PHP CURL" on your site.', 'auto-upload-images'); ?></strong></p>
-    </div>
-    <?php endif; ?>
-
-    <?php if (isset($message) && $message == true) : ?>
+    <?php if (isset($message)) : ?>
     <div id="setting-error-settings_updated" class="updated settings-error">
-        <p><strong><?php _e('Settings Saved.', 'auto-upload-images'); ?></strong></p>
+        <p><strong><?php echo $message; ?></strong></p>
     </div>
     <?php endif; ?>
 
@@ -29,7 +23,7 @@
                                 </th>
                                 <td>
                                     <input type="text" name="base_url" value="<?php echo self::getOption('base_url'); ?>" class="regular-text" dir="ltr" />
-                                    <p class="description"><?php _e('If you need to choose a new base URL for the images that will be automatically uploaded. Ex:', 'auto-upload-images'); ?> <code>http://p30design.net</code>, <code>http://cdn.p30design.net</code>, <code>/</code></p>
+                                    <p class="description"><?php _e('If you need to choose a new base URL for the images that will be automatically uploaded. Ex:', 'auto-upload-images'); ?> <code>https://irani.im</code>, <code>https://cdn.irani.im</code>, <code>/</code></p>
                                 </td>
                             </tr>
                             <tr valign="top">
@@ -59,16 +53,23 @@
                                 </td>
                             </tr>
                             <?php if (function_exists('image_make_intermediate_size')) : ?>
-                                <tr valign="top">
+                                <?php $editor_supports = wp_image_editor_supports(); ?>
+                                <tr valign="top" <?= !$editor_supports ? 'style="background-color:#dedede;color:#6d6d6d;opacity:.8;"' : '' ?>>
                                     <th scope="row">
-                                        <label><?php _e('Image Size:', 'auto-upload-images'); ?></label>
+                                        <label <?= !$editor_supports ? 'style="color:#6d6d6d;"' : '' ?>><?php _e('Image Size:', 'auto-upload-images'); ?></label>
+                                        <?php if (!$editor_supports) : ?>
+                                        <small style="color:#6d6d6d;"><?php _e('(Inactive)', 'auto-upload-images') ?></small>
+                                        <?php endif; ?>
                                     </th>
                                     <td>
                                         <label for="max_width"><?php _e('Max Width', 'auto-upload-images'); ?></label>
-                                        <input name="max_width" type="number" step="5" min="0" id="max_width" placeholder="600" class="small-text" value="<?php echo self::getOption('max_width'); ?>">
+                                        <input name="max_width" type="number" step="5" min="0" id="max_width" placeholder="600" class="small-text" value="<?php echo self::getOption('max_width'); ?>" <?php echo !$editor_supports ? 'disabled' : '' ?>>
                                         <label for="max_height"><?php _e('Max Height', 'auto-upload-images'); ?></label>
-                                        <input name="max_height" type="number" step="5" min="0" id="max_height" placeholder="400" class="small-text" value="<?php echo self::getOption('max_height'); ?>">
+                                        <input name="max_height" type="number" step="5" min="0" id="max_height" placeholder="400" class="small-text" value="<?php echo self::getOption('max_height'); ?>" <?php echo !$editor_supports ? 'disabled' : '' ?>>
                                         <p class="description"><?php _e('You can choose max width and height for images uploaded by this plugin on your site. If you leave empty each one of fields by default use the original size of the image.', 'auto-upload-images'); ?></p>
+                                        <?php if (!$editor_supports) : ?>
+                                        <p style="color:#535353;font-weight: bold;"><?php _e('To activate this feature please enable Gd or Imagick extensions of PHP.', 'auto-upload-images') ?></p>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endif; ?>
@@ -99,11 +100,16 @@
                                 </th>
                                 <td>
                                     <p><?php _e('Enter the domains you wish to be excluded from uploading images: (One domain per line)', 'auto-upload-images'); ?></p>
-                                    <p><textarea name="exclude_urls" rows="10" cols="50" id="exclude_urls" class="large-text code" placeholder="http://p30design.net"><?php echo self::getOption('exclude_urls'); ?></textarea></p>
+                                    <p><textarea name="exclude_urls" rows="10" cols="50" id="exclude_urls" class="large-text code" placeholder="https://irani.im"><?php echo self::getOption('exclude_urls'); ?></textarea></p>
                                 </td>
                             </tr>
                         </table>
-                        <?php submit_button(); ?>
+                        <p class="submit">
+                            <?php submit_button(null, 'primary', 'submit', false); ?>
+                            <?php submit_button(__('Reset Options', 'auto-upload-images'), 'small', 'reset', false, array(
+                                'onclick' => 'return confirm("'. __('Are you sure to reset all options to defaults?', 'auto-upload-images') .'");'
+                            )) ?>
+                        </p>
                     </form>
                 </div>
             </div>
@@ -131,7 +137,7 @@
                                     <a href="https://twitter.com/xerror" title="Ali Irani" style="text-decoration: none" target="_blank"><?php _e('Twitter of Plugin Developer', 'auto-upload-images'); ?></a>
                                 </li>
                                 <li class="dashicons-before dashicons-admin-links" style="color: #82878c">
-                                    <a href="http://p30design.net/1391/08/wp-auto-upload-images.html" style="text-decoration: none" target="_blank"><?php _e('Official Page', 'auto-upload-images'); ?></a>
+                                    <a href="https://p30design.irani.im/1391/08/wp-auto-upload-images.html" style="text-decoration: none" target="_blank"><?php _e('Official Page', 'auto-upload-images'); ?></a>
                                 </li>
                             </ul>
                             <hr>
