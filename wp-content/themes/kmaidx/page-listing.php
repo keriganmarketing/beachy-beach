@@ -116,6 +116,7 @@ get_header(); ?>
                         <?php get_template_part( 'template-parts/mls', 'disclaimer' ); ?>
                     <?php } else { ?>
                         <p class="center">The requested listing is no longer available.</p>
+                        <a class="btn btn-primary bebas text-white" style="font-size:1.5em;" href="/property-search/" >Search Active Properties</a>
                     <?php } ?>
                 </div>
             </div>

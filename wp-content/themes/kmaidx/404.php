@@ -26,6 +26,9 @@ get_header(); ?>
                             <div class="row justify-content-center">
                                 <div class="col-xl-11">
                                     <p>The page you requested does not exist. </p>
+                                    <a class="btn btn-primary bebas text-white" style="font-size:1.5em;" href="/team/" >Check Out Our Team</a>
+                                    <a class="btn btn-primary bebas text-white" style="font-size:1.5em;" href="/property-search/" >Search Active Properties</a>
+
                                 </div>
                             </div>
                         </div>
