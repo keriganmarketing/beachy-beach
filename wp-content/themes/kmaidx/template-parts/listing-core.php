@@ -14,7 +14,9 @@
                     <input type="hidden" name="mls_account" value="<?php echo $listingInfo->mls_account; ?>" />
                     <button type="submit" class="btn btn-primary mb-2" ><img src="<?php echo getSvg( 'star' ); ?>" alt="save to favorites" style="width: 16px; vertical-align: sub; margin: 0 3px 0 0;"> <?php echo $buttonText; ?></button>
                 </form>
-			<?php } ?>
+			<?php }else{ ?>
+                <a href="/beachy-bucket/user-login/" class="btn btn-primary mb-2" >Log in to save</a>
+            <?php } ?>
             <button type="button" class="btn btn-primary hidden-md-up mb-2" data-toggle="modal" data-target="#lightbox" >View more photos</button>
 
             <div class="social-sharing" style="padding: .5rem 0;">
