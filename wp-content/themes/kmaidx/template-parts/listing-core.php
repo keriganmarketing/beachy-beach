@@ -42,7 +42,8 @@
     <div class="col-md-6 flex-order-md-first text-center text-md-left">
         <h1 class="listing-page-location mt-2 mt-md-0"><?php echo $listingInfo->street_number.' '.$listingInfo->street_name. ' '. $listingInfo->street_suffix; ?></h1>
 		<h2 class="listing-page-area"><?php echo $listingInfo->city; ?>, FL</h2>
-		<h3 class="listing-page-price">$<?php echo number_format($listingInfo->price); ?></h3>
+		<h3 class="listing-page-price">$<?php echo number_format($listingInfo->price); ?> 
+            <a class="btn btnprimary" href="/mortgage-calculator/?balance=<?php echo $listingInfo->price; ?>" >calculate payment</a></h3>
 	</div>
 </div>
 <div class="listing-details">
