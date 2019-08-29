@@ -1956,15 +1956,32 @@ form h3 {
 #map-search .gm-style-iw,
 #map-search .gm-style-iw>div,
 #map-search .gm-style-iw>div>div {
-    width: 330px!important;
-    max-width: none!important;
+    width: 352px !important;
+    max-width: none !important;
     overflow: visible !important;
 }
 
 #map-search .gm-style-iw {
-    top: 1px!important;
-    left: 1px!important;
-    height: 358px;
+    top: 1px !important;
+    left: 1px !important;
+    height: 379px !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+#map-search .gm-style-iw button.gm-ui-hover-effect {
+    background: #FFF !important;
+    opacity: 1 !important;
+    border-radius: 50% !important;
+    border: 2px solid #24BCE3 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 20 !important;
+}
+
+#map-search .gm-style-iw button.gm-ui-hover-effect:hover {
+    border: 2px solid red !important;
 }
 
 #map-search .gm-style-iw+div {
