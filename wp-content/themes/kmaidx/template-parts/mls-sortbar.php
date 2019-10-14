@@ -42,7 +42,7 @@
                             <input type="hidden" name="qs" value="search" >
                             <select class="form-control form-control-sm" name="sortBy" >
                                 <option value="date_modified" <?php if($sort=='date_modified'){ echo 'selected'; } ?> >Updated</option>
-                                <option value="price" <?php if($sort=='price'){ echo 'selected'; } ?>>Cheapest</option>
+                                <option value="price" <?php if($sort=='price'){ echo 'selected'; } ?>>Low to High</option>
                                 <!--<option value="list_date">Newest</option>-->
                             </select>
                             <span class="input-group-btn"><button type="submit" class="btn btn-sm btn-default" >Sort</button></span>

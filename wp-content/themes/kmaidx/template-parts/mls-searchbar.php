@@ -224,7 +224,7 @@
                     <form class="form form-inline text-right" method="get" >
                         <?php
                         if(isset($_GET['omniField']) && $_GET['omniField']!= '') {
-                            echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="omniField" >'.$_GET['omniField'].'</a><input type="hidden" name="pool" value="'.$_GET['omniField'].'" > ';
+                            echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="omniField" >'.$_GET['omniField'].'</a><input type="hidden" name="omniField" value="'.$_GET['omniField'].'" > ';
                         }
 
                         if(isset($_GET['status']) && $_GET['status']!= '') {
@@ -273,7 +273,7 @@
                                 <input type="hidden" name="qs" value="search" >
                                 <select class="form-control form-control-sm" name="sortBy" >
                                     <option value="date_modified" <?php if($_GET['sortBy']=='date_modified'){ echo 'selected'; } ?> >Updated</option>
-                                    <option value="price" <?php if($_GET['sortBy']=='price'){ echo 'selected'; } ?>>Cheapest</option>
+                                    <option value="price" <?php if($_GET['sortBy']=='price'){ echo 'selected'; } ?>>Low to High</option>
                                     <!--<option value="list_date">Newest</option>-->
                                 </select>
                                 <span class="input-group-btn"><button type="submit" class="btn btn-sm btn-default" >Sort</button></span>
