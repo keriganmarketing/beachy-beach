@@ -243,10 +243,10 @@
                             echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="propertyType" >' . $_GET['propertyType'] . '</a><input type="hidden" name="propertyType" value="'.$_GET['propertyType'].'" > ';
                         }
                         if(isset($_GET['minPrice']) && $_GET['minPrice']!= '') {
-                            echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="min_price" >$' . number_format($_GET['minPrice']) . ' Min</a><input type="hidden" name="min_price" value="'.$_GET['minPrice'].'" > ';
+                            echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="min_price" >$' . number_format($_GET['minPrice']) . ' Min</a><input type="hidden" name="minPrice" value="'.$_GET['minPrice'].'" > ';
                         }
                         if(isset($_GET['maxPrice']) && $_GET['maxPrice']!= '') {
-                            echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="max_price" >$' . number_format($_GET['maxPrice']) . ' Max</a><input type="hidden" name="max_price" value="'.$_GET['maxPrice'].'" > ';
+                            echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="max_price" >$' . number_format($_GET['maxPrice']) . ' Max</a><input type="hidden" name="maxPrice" value="'.$_GET['maxPrice'].'" > ';
                         }
                         if(isset($_GET['bedrooms']) && $_GET['bedrooms']!= '') {
                             echo '<a class="criterion btn btn-default btn-sm hidden-sm-down" data-call="bedrooms" >' . $_GET['bedrooms'] . '+ Beds</a><input type="hidden" name="bedrooms" value="'.$_GET['bedrooms'].'" > ';

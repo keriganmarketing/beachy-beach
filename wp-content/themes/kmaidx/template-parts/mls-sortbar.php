@@ -15,11 +15,11 @@
                 if(isset($_GET['propertyType']) && $_GET['propertyType']!= '') {
                     echo '<input type="hidden" name="propertyType" value="'.$_GET['propertyType'].'" > ';
                 }
-                if(isset($_GET['min_price']) && $_GET['min_price']!= '') {
-                    echo '<input type="hidden" name="min_price" value="'.$_GET['min_price'].'" > ';
+                if(isset($_GET['minPrice']) && $_GET['minPrice']!= '') {
+                    echo '<input type="hidden" name="minPrice" value="'.$_GET['minPrice'].'" > ';
                 }
-                if(isset($_GET['max_price']) && $_GET['max_price']!= '') {
-                    echo '<input type="hidden" name="max_price" value="'.$_GET['max_price'].'" > ';
+                if(isset($_GET['maxPrice']) && $_GET['maxPrice']!= '') {
+                    echo '<input type="hidden" name="maxPrice" value="'.$_GET['maxPrice'].'" > ';
                 }
                 if(isset($_GET['bedrooms']) && $_GET['bedrooms']!= '') {
                     echo '<input type="hidden" name="bedrooms" value="'.$_GET['bedrooms'].'" > ';
