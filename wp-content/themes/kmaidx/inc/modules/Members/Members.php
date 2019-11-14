@@ -341,9 +341,9 @@ class Members {
 			$rows[] = array(
 				'type'         => 'text',
 				'row_before'   => '<div class="col-md-6">',
-				'label'        => '<label for="user_login" class="sr-only">Choose a Username *</label>',
+				'label'        => '<label for="username" class="sr-only">Choose a Username *</label>',
 				'field_before' => '<div class="input-group mb-2">',
-				'field'        => '<input name="user_login" type="text" id="user_login" value="' . ( isset( $currentUserInfo->user_login ) ? $currentUserInfo->user_login : '' ) . '" class="textbox form-control" required ' . ( ! is_page( 8254 ) ? 'disabled' : '' ) . ' placeholder="Choose a Username *" />',
+				'field'        => '<input name="username" type="text" id="username" value="' . ( isset( $currentUserInfo->username ) ? $currentUserInfo->username : '' ) . '" class="textbox form-control" required ' . ( ! is_page( 8254 ) ? 'disabled' : '' ) . ' placeholder="Choose a Username *" />',
 				'field_after'  => '</div>',
 				'row_after'    => '</div>'
 			);
