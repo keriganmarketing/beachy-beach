@@ -93,7 +93,7 @@ class Members {
 			 * numerical array keys (defaults: 0 & 1).
 			 **/
 
-			if ( is_page( $this->loginPage ) ) {  //LOGIN PAGE
+			if ( is_page( $this->loginPage ) || is_page($this->registerPage) ) {  //LOGIN PAGE
 				$rows[0] = array(
 					'row_before'   => '<div class="col-md-6 col-lg-4">',
 					'label'        => '<label for="log" class="sr-only">Username</label>',
