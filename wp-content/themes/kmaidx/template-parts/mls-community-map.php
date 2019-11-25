@@ -177,8 +177,8 @@
         href="javascript:;"
         id="ada-compliant-button"
         class="btn btn-info" style="text-decoration: none;"
-        onkeypress="toggleADAversion() this.preventDefault();" 
-        onclick="toggleADAversion(); this.preventDefault();" 
+        onkeypress="toggleADAversion();" 
+        onclick="toggleADAversion();" 
         >View in List Format
     </a>
 </p>
