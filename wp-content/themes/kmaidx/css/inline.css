@@ -200,7 +200,7 @@ div.container.wide {
         height: 75px;
         min-height: inherit;
     }
-    #top.smaller div#beach-bucket {
+    #top.smaller div.beach-bucket {
         margin: 0;
         border-radius: 0 0 8px 8px;
     }
@@ -405,7 +405,7 @@ span.btn-text {
 }
 
 /* Beachy Bucket */
-div#beach-bucket {
+div.beach-bucket {
     background-color: #FFFFFF;
     width: 100%;
     position: relative;
@@ -415,15 +415,15 @@ div#beach-bucket {
     display:inline-flex;
     overflow:hidden;
 }
-div#beach-bucket #bucket-left {
+div.beach-bucket #bucket-left {
     padding: 5px;
     background: #FFFFFF;
     display: flex;
 }
-div#beach-bucket #bucket-left img {
+div.beach-bucket #bucket-left img {
     height:50px;
 }
-div#beach-bucket #bucket-left p {
+div.beach-bucket #bucket-left p {
     margin: auto;
     text-align: center;
     padding: 0;
@@ -433,12 +433,12 @@ div#beach-bucket #bucket-left p {
     font-size: 1.2rem;
     color: #42bc7b;
 }
-div#beach-bucket #bucket-right {
+div.beach-bucket #bucket-right {
     flex-grow:1;
     padding:10px 1rem;
     background: url('/wp-content/themes/kmaidx/img/blue-texture.jpg') #24afdd;
 }
-div#beach-bucket #bucket-right p {
+div.beach-bucket #bucket-right p {
     font-family: 'Lato', sans-serif;
     font-weight: 700;
     font-style: italic;
@@ -448,25 +448,25 @@ div#beach-bucket #bucket-right p {
     line-height: 22px;
 }
 
-div#beach-bucket #bucket-right p.not-logged-in {
+div.beach-bucket #bucket-right p.not-logged-in {
     min-height: 26px;
 }
 
-div#beach-bucket #bucket-right p a {
+div.beach-bucket #bucket-right p a {
     color:#FFF;
     text-decoration: underline;
 }
 
-div#beach-bucket #bucket-right p.logged-in{
+div.beach-bucket #bucket-right p.logged-in{
     margin: .25em 0 0 0;
     display: inline-block;
 }
-div#beach-bucket #bucket-right p.logged-in a{
+div.beach-bucket #bucket-right p.logged-in a{
     text-decoration: none;
     font-size: .9em;
 }
 
-div#beach-bucket span.user-name {
+div.beach-bucket span.user-name {
     font-family: 'Bebas Neue',sans-serif;
     font-style: normal;
     font-size: 1.5em;
@@ -477,12 +477,12 @@ div#beach-bucket span.user-name {
     padding-right:4px;
 }
 
-div#beach-bucket a.logout-link {
+div.beach-bucket a.logout-link {
     font-weight: 400;
     font-size: .8em;
 }
 
-div#beach-bucket p.logout-link {
+div.beach-bucket p.logout-link {
     float: right;
 }
 
@@ -502,7 +502,7 @@ form legend {
 
 
 @media screen and (min-width:768px){
-    div#beach-bucket {
+    div.beach-bucket {
         width: auto;
         height: 68px;
         border-radius: 0 0 8px 8px;
@@ -510,31 +510,31 @@ form legend {
         justify-content: flex-end;
         order:3;
     }
-    div#beach-bucket #bucket-left {
+    div.beach-bucket #bucket-left {
         padding: .5rem;
     }
-    div#beach-bucket #bucket-left p {
+    div.beach-bucket #bucket-left p {
     }
-    div#beach-bucket #bucket-left img {
+    div.beach-bucket #bucket-left img {
         height: 95%; width: auto;
     }
 
-    div#beach-bucket #bucket-right {
+    div.beach-bucket #bucket-right {
         width: auto;
         flex-grow: 1;
         align-items: center;
     }
 
-    div#beach-bucket #bucket-right p {
+    div.beach-bucket #bucket-right p {
         font-size: 16px;
     }
 
-    div#beach-bucket #bucket-right p.logout-link {
+    div.beach-bucket #bucket-right p.logout-link {
         float:none;
         line-height: 14px;
     }
 
-    .smaller div#beach-bucket  {
+    .smaller div.beach-bucket  {
         display: none;
     }
 }
@@ -918,6 +918,10 @@ div#smart-search-box .input-group-lg>.input-group-btn>.btn {
 }
 
 /* Content */
+#content a {
+    text-decoration: underline;
+}
+
 #content #blogheader,
 #content article>header {
     padding: .5rem 0;
@@ -952,14 +956,22 @@ div#smart-search-box .input-group-lg>.input-group-btn>.btn {
     border-bottom: 1px solid rgba(50,50,50,.2);
 }
 
+div.gm-style div[title] {
+    background-color: #FFF !important;
+    border-radius: 3px !important;
+    display: inline-block !important;
+    padding: 3px !important;
+}
+
 #map-search,
 #office-map,
-#community-map {
+#community-map,
+#community-ada-map {
     margin: 0 0 30px;
     border: 5px solid #FFFFFF;
     box-sizing: border-box;
     box-shadow: 0 0 10px rgba(50,50,50,.4);
-    height:250px;
+    min-height:250px;
 }
 
 header.blog-header {
@@ -1002,8 +1014,9 @@ header.blog-header {
 
 @media screen and (min-width:768px){
     #map-search,
-    #community-map {
-        height:600px;
+    #community-map,
+    #community-ada-map {
+        min-height:600px;
     }
     #office-map {
         height:300px;

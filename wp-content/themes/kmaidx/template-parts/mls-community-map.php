@@ -1,342 +1,186 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Bryan
- * Date: 5/16/2017
- * Time: 5:23 PM
- */
 
-?>
+<script type="text/javascript">
+    function toggleADAversion(){        
+        let map = window.document.getElementById("community-map");
+        let adamap = window.document.getElementById("community-ada-map");
+        let adabutton = window.document.getElementById("ada-compliant-button");
 
-        <script type="text/javascript">
+        if(adamap.style.display === 'none' ){
+            map.style.display = 'none';
+            adamap.style.display = 'block';
+            adabutton.innerText = 'Back to map';
+        }else{
+            map.style.display = 'block';
+            adamap.style.display = 'none';
+            adabutton.innerText = 'View in List Format';
+        }
+    }
 
-            var map,
-                bounds,
-                mapElement,
-                currentInfoWindow = null;
+    var map,
+        bounds,
+        mapElement,
+        currentInfoWindow = null;
 
-            //init map using script include callback
-            function initMap() {
+    //init map using script include callback
+    function initMap() {
 
-                var myLatLng = {lat: 30.250795, lng: -85.940390 };
-                // Basic options for a simple Google Map
-                // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
-                var mapOptions = {
-                    // How zoomed in you want the map to start at (always required)
-                    zoom: 11,
-                    // The latitude and longitude to center the map (always required)
-                    center: myLatLng,
-                    disableDefaultUI: true,
-                    zoomControl: true,
-                    // This is where you would paste any style found on Snazzy Maps.
-                    // styles: [
-                    //     {
-                    //         "featureType": "all",
-                    //         "elementType": "labels",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "off"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "administrative",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "off"
-                    //             },
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "landscape",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.attraction",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.business",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.government",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#dfdcd5"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.medical",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#dfdcd5"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.park",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#bad294"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.place_of_worship",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.school",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "poi.sports_complex",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#efebe2"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "on"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road.highway",
-                    //         "elementType": "geometry.fill",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#ffffff"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road.highway",
-                    //         "elementType": "geometry.stroke",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "on"
-                    //             },
-                    //             {
-                    //                 "color": "#dedede"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road.highway.controlled_access",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "on"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road.arterial",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "on"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road.arterial",
-                    //         "elementType": "geometry.fill",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#ffffff"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road.local",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "on"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "road.local",
-                    //         "elementType": "labels.icon",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "off"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "transit",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "visibility": "off"
-                    //             }
-                    //         ]
-                    //     },
-                    //     {
-                    //         "featureType": "water",
-                    //         "elementType": "all",
-                    //         "stylers": [
-                    //             {
-                    //                 "color": "#a5d7e0"
-                    //             }
-                    //         ]
-                    //     }
-                    // ]
-                };
+        var myLatLng = {lat: 30.250795, lng: -85.940390 };
+        var mapOptions = {
+            zoom: 11,
+            center: myLatLng,
+            disableDefaultUI: true,
+            zoomControl: true,
+        };
 
-                // Get the HTML DOM element that will contain your map
-                // We are using a div with id="map" seen below in the <body>
-                mapElement = document.getElementById('community-map');
+        mapElement = document.getElementById('community-map');
+        map = new google.maps.Map(mapElement, mapOptions);
+        panorama = new google.maps.StreetViewPanorama(mapElement);
+        bounds = new google.maps.LatLngBounds();
 
-                // Create the Google Map using our element and options defined above
-                map = new google.maps.Map(mapElement, mapOptions);
-                panorama = new google.maps.StreetViewPanorama(mapElement);
-                bounds = new google.maps.LatLngBounds();
-  
-                panorama.setVisible(false);
+        panorama.setVisible(false);
 
+    }
+
+    //add the pins
+    function addMarker(lat, lng, type, name, link) {
+        var link = link!='' ? link : '';
+        var pinLocation = new google.maps.LatLng(parseFloat(lat),parseFloat(lng));
+
+        switch(type) {
+            case 'neighborhood':
+
+                var contentString =
+                    '<div class="community-map-info ' + type + '">' +
+                        '<h3 class="comm-title">' + name + '</h3>' +
+                        '<div class="comm-text"><a class="btn btn-block btn-primary" href="' + link + '" >View Properties in ' + name + '</div>' +
+                    '</div>';
+
+                break;
+
+            case 'beach':
+
+                var contentString =
+                    '<div class="community-map-info ' + type + '">' +
+                    '<h3 class="comm-title">' + name + '</h3>' +
+                    '<div class="comm-text"><a class="btn btn-block btn-primary" onclick="openBeachViewer(' + parseFloat(lat) + ',' + parseFloat(lng) + ')" >View the Beach</div>' +
+                    '</div>';
+
+                break;
+
+            case 'office':
+
+                var contentString =
+                    '<div class="community-map-info ' + type + '">' +
+                        '<h3 class="comm-title">' + name + '</h3>' +
+                        '<div class="comm-text">' +
+                            '<a class="btn btn-block btn-primary" href="/contact/" >Contact Us</a>' +
+                            '<a class="btn btn-block btn-primary" href="/team/" >View the Team</a>' +
+                        '</div>' +
+                    '</div>';
+
+                break;
+
+            default:
+
+                var contentString =
+                    '<div class="community-map-info ' + type + '">' +
+                        '<h3 class="comm-title">' + name + '</h3>' +
+                    '</div>';
+        }
+
+        var infowindow = new google.maps.InfoWindow({
+            maxWidth: 279,
+            content: contentString
+        });
+
+        var marker = new google.maps.Marker({
+            title: name,
+            // label: name,
+            position: pinLocation,
+            map: map,
+            icon: '<?php echo get_template_directory_uri() ?>/img/'+type+'-pin.png'
+        });
+
+        marker.addListener('mouseover', function(){
+            if (currentInfoWindow != null) {
+                currentInfoWindow.close();
             }
+            infowindow.open(map, marker);
+            currentInfoWindow = infowindow;
+        });
 
-            //add the pins
-            function addMarker(lat, lng, type, name, link) {
-                var link = link!='' ? link : '';
-                var pinLocation = new google.maps.LatLng(parseFloat(lat),parseFloat(lng));
+        bounds.extend(pinLocation);
+        //map.fitBounds(bounds);
 
-                switch(type) {
-                    case 'neighborhood':
+    }
 
-                        var contentString =
-                            '<div class="community-map-info ' + type + '">' +
-                                '<h3 class="comm-title">' + name + '</h3>' +
-                                '<div class="comm-text"><a class="btn btn-block btn-primary" href="' + link + '" >View Properties in ' + name + '</div>' +
-                            '</div>';
+    function openBeachViewer(lat, lng){
 
-                        break;
+        var pinLocation = new google.maps.LatLng(parseFloat(lat),parseFloat(lng));
 
-                    case 'beach':
+        panorama = map.getStreetView();
+        panorama.setPosition(pinLocation);
+        panorama.setPov(({
+            heading: 265,
+            pitch: 0
+        }));
 
-                        var contentString =
-                            '<div class="community-map-info ' + type + '">' +
-                            '<h3 class="comm-title">' + name + '</h3>' +
-                            '<div class="comm-text"><a class="btn btn-block btn-primary" onclick="openBeachViewer(' + parseFloat(lat) + ',' + parseFloat(lng) + ')" >View the Beach</div>' +
-                            '</div>';
+        panorama.setVisible(true);
+    }
 
-                        break;
+    function addTableRow(type,name,link){
+        let div = document.createElement('div');
+        div.className = 'col-md-4 pt-4 text-left';
 
-                    case 'office':
+        switch(type) {
+            case 'neighborhood':
+                var contentString =
+                        '<h3>' +
+                        '<img src="<?php echo get_template_directory_uri() ?>/img/'+type+'-pin.png" alt="' + name + '" class="mr-4" >' +
+                        name + '</h3>' +
+                        '<div class="comm-text"><a class="btn btn-block btn-primary" style="text-decoration: none;" href="' + link + '" >View Properties</div>';
+                break;
 
-                        var contentString =
-                            '<div class="community-map-info ' + type + '">' +
-                                '<h3 class="comm-title">' + name + '</h3>' +
-                                '<div class="comm-text">' +
-                                    '<a class="btn btn-block btn-primary" href="/contact/" >Contact Us</a>' +
-                                    '<a class="btn btn-block btn-primary" href="/team/" >View the Team</a>' +
-                                '</div>' +
-                            '</div>';
+            case 'beach':
+                var contentString = '';
+                break;
 
-                        break;
+            case 'office':
+                var contentString =
+                        '<h3>' +
+                        '<img src="<?php echo get_template_directory_uri() ?>/img/'+type+'-pin.png" alt="' + name + '" class="mr-4" >' +
+                        name + '</h3>' +
+                        '<div class="comm-text">' +
+                            '<a class="btn btn-block btn-primary" style="text-decoration: none;" href="/contact/" >Contact Us</a>' +
+                            '<a class="btn btn-block btn-primary" style="text-decoration: none;" href="/team/" >View the Team</a>' +
+                        '</div>';
+                break;
 
-                    default:
+            default:
+                var contentString =
+                        '<h3>' + name + '</h3>';
+        }
 
-                        var contentString =
-                            '<div class="community-map-info ' + type + '">' +
-                                '<h3 class="comm-title">' + name + '</h3>' +
-                            '</div>';
-                }
+        div.innerHTML = contentString;
+        if(contentString !== ''){
+            window.document.getElementById('data-table').appendChild(div);
+        }
+    }
 
-                var infowindow = new google.maps.InfoWindow({
-                    maxWidth: 279,
-                    content: contentString
-                });
-
-                var marker = new google.maps.Marker({
-                    title: name,
-                    position: pinLocation,
-                    map: map,
-                    icon: '<?php echo get_template_directory_uri() ?>/img/'+type+'-pin.png'
-                });
-
-                marker.addListener('mouseover', function(){
-                    if (currentInfoWindow != null) {
-                        currentInfoWindow.close();
-                    }
-                    infowindow.open(map, marker);
-                    currentInfoWindow = infowindow;
-                });
-
-                bounds.extend(pinLocation);
-                //map.fitBounds(bounds);
-
-            }
-
-            function openBeachViewer(lat, lng){
-
-                var pinLocation = new google.maps.LatLng(parseFloat(lat),parseFloat(lng));
-
-                panorama = map.getStreetView();
-                panorama.setPosition(pinLocation);
-                panorama.setPov(({
-                    heading: 265,
-                    pitch: 0
-                }));
-
-                panorama.setVisible(true);
-            }
-
-        </script>
-        <div id="community-map" ></div>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo GOOGLE_API_KEY; ?>&callback=initMap" ></script>
-        <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap" ></script> -->
+</script>
+<div id="community-map" ></div>
+<div id="community-ada-map" style="display:none; background-color:#eee; padding: 2rem;" >
+<div class="row" id="data-table"></div>
+</div>
+<p class="text-white text-center">
+    <a 
+        href="javascript:;"
+        id="ada-compliant-button"
+        class="btn btn-info" style="text-decoration: none;"
+        onkeypress="toggleADAversion() this.preventDefault();" 
+        onclick="toggleADAversion(); this.preventDefault();" 
+        >View in List Format
+    </a>
+</p>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo GOOGLE_API_KEY; ?>&callback=initMap" ></script>
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap" ></script> -->

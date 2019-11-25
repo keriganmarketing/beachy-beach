@@ -19,7 +19,7 @@ get_header(); ?>
         <p id="sub-title">Bringing families and the beach together.</p>
 	    <?php get_template_part( 'template-parts/mls', 'quick-search' ); ?>
     </div>
-    <div class="container">
+    <div id="content" class="container">
         <div id="map-header" >
             <p class="text-center text-md-left" >Explore Our Communities</p>
             <span class="hidden-md-down">

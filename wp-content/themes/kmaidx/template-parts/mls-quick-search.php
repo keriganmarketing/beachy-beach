@@ -8,6 +8,7 @@
 			<div class="col-12">
 				<div class="input-container smart-select">
 					<div class="input-group input-group-lg">
+                        <label class="sr-only" for="id-area-select">City, address, subdivision or zip</label>
 						<select class="area-select form-control select2-omni-field" name="omniField" id="id-area-select" >
                             <option value="">City, address, subdivision or zip</option>
                         </select>
@@ -19,7 +20,8 @@
 			</div>
 			<div class="col-md-4">
 				<div class="input-container property-type-select">
-                    <select class="form-control form-control-lg select2-property-type" name="propertyType" >
+                    <label class="sr-only" for="property-type-select">Property Type</label>
+                    <select id="property-type-select" class="form-control form-control-lg select2-property-type" name="propertyType" >
                         <option value="">Property type</option>
                         <option value="Single Family Home">Single Family Home</option>
                         <option value="Condo / Townhome">Condo / Townhome</option>
@@ -33,12 +35,14 @@
 				</div>
 			</div>
 			<div class="col-md-8 hidden-sm-down">
-                <label>Price Range</label>
+                <label for="pricerange">Price Range</label>
+                <input type="hidden" name="price_range" id="pricerange" value="" >
 				<div id="slider-range"></div>
 				<p class="range-text">from <span class="slider-num" id="num1">$0</span> to <span class="slider-num" id="num2">5,000,000+</span></p>
 			</div>
             <div class="col-6 col-md-4 hidden-md-up">
                 <div class="input-container property-type-select">
+                    <label class="sr-only" for="min-price">Minimum Price</label>
                     <select id="min-price" class="select-other form-control"   >
                         <option value="" >Min Price</option>
 	                    <?php for($i = 50000; $i < 5000000; $i+=50000){
@@ -49,6 +53,7 @@
             </div>
             <div class="col-6 col-md-4 hidden-md-up">
                 <div class="input-container property-type-select">
+                    <label class="sr-only" for="max-price">Maximum Price</label>
                     <select id="max-price" class="select-other form-control"   >
                         <option value="" >Max Price</option>
 	                    <?php for($i = 50000; $i < 10000000; $i+=50000){

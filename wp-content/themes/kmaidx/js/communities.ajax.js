@@ -9,7 +9,7 @@ function loadCommMap(){
             action: 'loadCommMapPins'
         },
         success: function(data) {
-            console.log(data);
+            //console.log(data);
 
             for (i = 0; i < data.length; i++) {
                 var lat = data[i].lat,
@@ -19,6 +19,7 @@ function loadCommMap(){
                     link = data[i].link;
 
                 addMarker(lat,lng,type,name,link);
+                addTableRow(type,name,link);
             }
         }
 

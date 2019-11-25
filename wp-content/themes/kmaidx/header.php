@@ -46,7 +46,7 @@ $bb = new BeachyBucket();
             
             <div class="container wide nopad">
                 <div class="row no-gutters justify-content-center">
-                    <div id="beach-bucket" class="col-md-5 d-lg-none" >
+                    <div id="beach-bucket-mobile" class="beach-bucket col-md-5 d-lg-none" >
                         <div id="bucket-left" >
                             <p class="saved-num">
                                 <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : '0'); ?>
@@ -79,7 +79,7 @@ $bb = new BeachyBucket();
                     
                     <div class="col-12 col-md-6 col-xl hidden-md-down ml-auto d-flex flex-column justify-content-between">
                         <div class="d-flex justify-content-end ">
-                            <div id="beach-bucket" >
+                            <div class="beach-bucket" >
                                 <div id="bucket-left" >
                                     <p class="saved-num">
                                         <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : '0'); ?>
