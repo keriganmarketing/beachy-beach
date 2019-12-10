@@ -49,12 +49,10 @@ $address = $listingInfo->street_number.' '.$listingInfo->street_name. ' '. $list
 <div class="col-md-7">
 	<div id="listing-map">
         <div class="embed-responsive embed-responsive-16by9">
-            <iframe 
-                class="embed-responsive-item"
-                frameborder="0" 
-                scrolling="no" 
-                marginheight="0" 
-                marginwidth="0" 
+            <iframe
+				title="map location" 
+                class="embed-responsive-item"  
+				style="overflow= hidden; border: none; margin: 0;" 
                 src="https://maps.google.com/maps?q=<?php echo urlencode($address); ?>&hl=es;z=14&amp;output=embed"
             ></iframe>
         </div>
