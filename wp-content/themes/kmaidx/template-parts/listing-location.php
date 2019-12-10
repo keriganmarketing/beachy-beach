@@ -10,7 +10,7 @@ $address = $listingInfo->street_number.' '.$listingInfo->street_name. ' '. $list
 ?>
 <div class="col mb-2" >
     <div class="card" style="border-bottom:1px solid #ddd;">
-	<table class="table table-striped listing-data mb-0">
+	<table role="presentation" class="table table-striped listing-data mb-0">
 		<tbody>
 		<?php if( isset($listingInfo->lot_description) ){ ?>
             <tr><td class="title">Area</td><td class="data">$<?php echo $listingInfo->lot_description; ?></td></tr>
