@@ -62,7 +62,7 @@ $modalImages     = '<div class="carousel-inner" role="listbox">';
                         <a href="#" class="thumbnail" data-toggle="modal" data-target="#lightbox" data-slide-to="<?php echo $nextImage - 1; ?>">
                             <img 
                                  src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                 data-src="<?php echo $photoUrl; ?>" data-src="<?php echo $photoUrl; ?>"
+                                 data-src="<?php echo $photoUrl; ?>"
                                  class="embed-responsive-item lazy" style="width:100%"
                                  alt="MLS Property <?php echo $listingInfo->mls_account; ?>"
                                  data-slide-to="<?php echo $nextImage - 1; ?>"/>
