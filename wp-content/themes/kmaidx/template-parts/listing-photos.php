@@ -94,7 +94,7 @@ $modalContent = '<div id="myCarousel" class="carousel slide" style="display: blo
 
 ?>
 
-<div id="lightbox" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="lightbox" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <button data-dismiss="modal" aria-hidden="true" style="padding: 0 8px 3px; position: fixed; top:0; right: 0; border-radius: 0 0 0 6px; z-index:9999999999; padding-top:.5rem;" class="btn btn-primary btn-lg" >close</button>
     <div class="modal-dialog modal-lg" style="display: block;">
         <div class="modal-content" style="display: block;">
