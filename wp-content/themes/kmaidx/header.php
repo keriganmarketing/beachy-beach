@@ -47,7 +47,7 @@ $bb = new BeachyBucket();
             <div class="container wide nopad">
                 <div class="row no-gutters justify-content-center">
                     <div id="beach-bucket-mobile" class="beach-bucket col-md-5 d-lg-none" >
-                        <div id="bucket-left" >
+                        <div class="bucket-left" >
                             <p class="saved-num">
                                 <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : '0'); ?>
                             </p>
@@ -55,7 +55,7 @@ $bb = new BeachyBucket();
                             <img src="<?php echo get_template_directory_uri().'/img/beach-bucket.png'; ?>" alt="Save &amp; Compare Beach Properties">
                             <?php echo (is_user_logged_in() ? '</a>' : ''); ?>
                         </div>
-                        <div id="bucket-right" class="text-left" >
+                        <div class="bucket-right text-left" >
                             <?php if(is_user_logged_in()){ ?>
                                 <p class="logged-in"><a href="/beachy-bucket/"><span class="user-name" ><?php echo ( $current_user->user_firstname != '' ? $current_user->user_firstname : $current_user->user_login ); ?>'s</span>Beachy&nbsp;Bucket</a></p><p class="logout-link"><a class="logout-link" href="<?php echo wp_logout_url('/'); ?>">logout</a> </p>
                             <?php }else{ ?>
@@ -80,7 +80,7 @@ $bb = new BeachyBucket();
                     <div class="col-12 col-md-6 col-xl hidden-md-down ml-auto d-flex flex-column justify-content-between">
                         <div class="d-flex justify-content-end ">
                             <div class="beach-bucket" >
-                                <div id="bucket-left" >
+                                <div class="bucket-left" >
                                     <p class="saved-num">
                                         <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : '0'); ?>
                                     </p>
@@ -88,7 +88,7 @@ $bb = new BeachyBucket();
                                     <img src="<?php echo get_template_directory_uri().'/img/beach-bucket.png'; ?>" alt="Save &amp; Compare Beach Properties">
                                     <?php echo (is_user_logged_in() ? '</a>' : ''); ?>
                                 </div>
-                                <div id="bucket-right" class="text-left" >
+                                <div class="bucket-right text-left" >
                                     <?php if(is_user_logged_in()){ ?>
                                         <p class="logged-in"><a href="/beachy-bucket/"><span class="user-name" ><?php echo ( $current_user->user_firstname != '' ? $current_user->user_firstname : $current_user->user_login ); ?>'s</span>Beachy&nbsp;Bucket</a></p><p class="logout-link"><a class="logout-link" href="<?php echo wp_logout_url('/'); ?>">logout</a> </p>
                                     <?php }else{ ?>
@@ -102,7 +102,7 @@ $bb = new BeachyBucket();
                                 array(
                                     'theme_location'  => 'menu-1',
                                     'container_class' => 'navbar-static',
-                                    'container_id'    => 'navbarNavDropdown',
+                                    'container_id'    => 'desktop-navbar-dropdown',
                                     'menu_class'      => 'navbar-nav justify-content-end',
                                     'fallback_cb'     => '',
                                     'menu_id'         => 'menu-1',
@@ -125,7 +125,7 @@ $bb = new BeachyBucket();
                 array(
                     'theme_location'  => 'menu-3',
                     'container_class' => 'navbar-static',
-                    'container_id'    => 'navbarNavDropdown',
+                    'container_id'    => 'mobile-navbar-dropdown',
                     'menu_class'      => 'navbar-nav justify-content-end',
                     'fallback_cb'     => '',
                     'menu_id'         => 'menu-3',
