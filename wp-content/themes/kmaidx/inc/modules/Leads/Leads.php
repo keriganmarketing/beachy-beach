@@ -327,7 +327,7 @@ class Leads
 
         //Assigns values to columns
         add_action('manage_' . $this->uglify($this->postType) . '_posts_custom_column', function ($column_name, $post_ID) {
-            if($column_name != 'title' && $column_name != 'date'){
+            if($column_name != 'title' && $column_name != 'date' && $column_name != 'cb'){
                 switch ($column_name) {
                     case 'email_address':
                         $email_address = get_post_meta($post_ID, 'lead_info_email_address', true);
