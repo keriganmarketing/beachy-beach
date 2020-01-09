@@ -19,3 +19,5 @@ wp-config.php
 wp-content/wflogs/
 wp-content/uploads/
 wp-content/plugins/
+wp-admin/
+wp-includes/
