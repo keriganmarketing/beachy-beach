@@ -19,9 +19,24 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeAdmin
+use JchOptimize\Platform\Settings;
+use JchOptimize\Platform\Uri;
+use JchOptimize\Platform\Cache;
+use JchOptimize\Platform\Profiler;
+use JchOptimize\Platform\Paths;
+use JchOptimize\Platform\Utility;
+use JchOptimize\Platform\Excludes;
+use JchOptimize\Minify\Html;
+use JchOptimize\Minify\Js;
+use JchOptimize\Minify\Css;
+
+
+class Admin
 {
 
         protected $bBackend;
@@ -33,7 +48,7 @@ class JchOptimizeAdmin
          * @param type $params
          * @param type $bBackend
          */
-        public function __construct(JchPlatformSettings $params, $bBackend = false)
+        public function __construct(Settings $params, $bBackend = false)
         {
                 $this->params   = $params;
                 $this->bBackend = $bBackend;
@@ -55,7 +70,7 @@ class JchOptimizeAdmin
                         $sId       = md5('getAdminLinks' . JCH_VERSION . serialize($hash));
                         $aFunction = array($this, 'generateAdminLinks');
                         $aArgs     = array($sHtml, $sCss);
-                        $this->links = JchPlatformCache::getCallbackCache($sId, $aFunction, $aArgs);
+                        $this->links = Cache::getCallbackCache($sId, $aFunction, $aArgs);
                 }
 
                 return $this->links;
@@ -63,13 +78,13 @@ class JchOptimizeAdmin
 
         /**
          * 
-         * @param type $sHtml Can be instance of JchOptimizeParser or JchOptimizeHtml
+         * @param type $sHtml Can be instance of JchOptimize\Core\Parser or JchOptimize\Platform\Html
          * @param type $sCss
          * @return type
          */
         public function generateAdminLinks($sHtml, $sCss)
         {
-                JCH_DEBUG ? JchPlatformProfiler::start('GenerateAdminLinks') : null;
+                JCH_DEBUG ? Profiler::start('GenerateAdminLinks') : null;
 
                 $params = clone $this->params;
                 $params->set('combine_files_enable', '1');
@@ -90,33 +105,48 @@ class JchOptimizeAdmin
                 $params->set('csg_exclude_images', array());
                 $params->set('csg_include_images', array());
 
-                
+                $params->set('searchBody', '1');
+                $params->set('phpAndExternal', '1');
+                $params->set('inlineScripts', '1');
+                $params->set('replaceImports', '0');
+                $params->set('loadAsynchronous', '0');
+                $params->set('cookielessdomain_enable', '0');
+                $params->set('lazyload', '0');
+		$params->set('optimizeCssDelivery_enable', '0');
+                //$params->set('pro_excludeLazyLoad', array());
+                //$params->set('pro_excludeLazyLoadFolders', array());
+                //$params->set('pro_excludeLazyLoadClass', array());
 
                 try
                 {
-			$oParser = new JchOptimizeParser($params, $sHtml, JchOptimizeFileRetriever::getInstance());
+			$oParser = new Parser($params, $sHtml, FileRetriever::getInstance());
 			$aLinks = $oParser->getReplacedFiles();
 
                         if ($sCss == '' && !empty($aLinks['css'][0]))
                         {
-                                $oCombiner  = new JchOptimizeCombiner($params, $oParser);
-                                $oCssParser = new JchOptimizeCssParser($params, $this->bBackend);
+                                $oCombiner  = new Combiner($params, $oParser);
+                                $oCssParser = new CssParser($params, $this->bBackend);
 
                                 $oCombiner->combineFiles($aLinks['css'][0], 'css', $oCssParser);
                                 $sCss = $oCombiner->css;
                         }
 
-                        $oSpriteGenerator = new JchOptimizeSpriteGenerator($params);
-                        $aLinks['images'] = $oSpriteGenerator->processCssUrls($sCss, TRUE);
+                        $oSpriteGenerator = new SpriteGenerator($params);
+                        $aLinks['images'] = $oSpriteGenerator->processCssUrls($sCss, true);
+
+                        $sRegex = $oParser->getLazyLoadRegex(true);
+
+                        preg_match_all($sRegex, $oParser->getBodyHtml(), $aMatches);
 
                         
+                        $aLinks['lazyload']      = array_merge($aMatches[8], $aMatches[18]);
                 }
                 catch (Exception $e)
                 {
                         $aLinks = array();
                 }
 
-                JCH_DEBUG ? JchPlatformProfiler::stop('GenerateAdminLinks', TRUE) : null;
+                JCH_DEBUG ? Profiler::stop('GenerateAdminLinks', true) : null;
 
                 return $aLinks;
         }
@@ -147,7 +177,7 @@ class JchOptimizeAdmin
 
 		$aOptions  = array();
 		$oParams   = $this->params;
-		$aExcludes = JchOptimizeHelper::getArray($oParams->get($sExcludeParams, array()));
+		$aExcludes = Helper::getArray($oParams->get($sExcludeParams, array()));
 
 		foreach ($aExcludes as $sExclude)
 		{
@@ -204,13 +234,13 @@ class JchOptimizeAdmin
                                 {
                                         if ($sExclude == 'scripts')
                                         {
-                                                $sScript = JchOptimize\HTML_Optimize::cleanScript($aLink['content'], 'js');
-                                                $sScript = trim(JchOptimize\JS_Optimize::optimize($sScript));
+                                                $sScript = Html::cleanScript($aLink['content'], 'js');
+                                                $sScript = trim(Js::optimize($sScript));
                                         }
                                         elseif ($sExclude == 'styles')
                                         {
-                                                $sScript = JchOptimize\HTML_Optimize::cleanScript($aLink['content'], 'css');
-                                                $sScript = trim(JchOptimize\CSS_Optimize::optimize($sScript));
+                                                $sScript = Html::cleanScript($aLink['content'], 'css');
+                                                $sScript = trim(Css::optimize($sScript));
                                         }
 
                                         if (isset($sScript))
@@ -364,9 +394,9 @@ class JchOptimizeAdmin
         {
                 if ($sType != 'value')
                 {
-                        $oFile = JchPlatformUri::getInstance($sFile);
+                        $oFile = Uri::getInstance($sFile);
 
-                        if (JchOptimizeUrl::isInternal($sFile))
+                        if (Url::isInternal($sFile))
                         {
                                 $sFile = $oFile->getPath();
                         }
@@ -409,7 +439,7 @@ class JchOptimizeAdmin
 
                 static $sHost = '';
 
-                $oUri  = JchPlatformUri::getInstance();
+                $oUri  = Uri::getInstance();
                 $sHost = $sHost == '' ? $oUri->toString(array('host')) : $sHost;
 
                 $result     = preg_match('#^(?:https?:)?//([^/]+)#', $sUrl, $m1);
@@ -417,7 +447,7 @@ class JchOptimizeAdmin
 
                 if ($result === 0 || $sExtension == $sHost)
                 {
-                        $result2 = preg_match('#' . JchPlatformExcludes::extensions() . '([^/]+)#', $sUrl, $m);
+                        $result2 = preg_match('#' . Excludes::extensions() . '([^/]+)#', $sUrl, $m);
 
                         if ($result2 === 0)
                         {
@@ -515,32 +545,23 @@ JFIELD;
                 $aButtons[3]['link']   = '';
                 $aButtons[3]['icon']   = 'fa-forward';
                 $aButtons[3]['text']   = 'Deluxe';
-                
-                  
-                  $aButtons[3]['color']  = '#CCC';
-                  $aButtons[3]['script'] = '';
-                  $aButtons[3]['class']  = 'disabled';
-                  
+                $aButtons[3]['color']  = '#E8CE0B';
+                $aButtons[3]['script'] = 'onclick="applyAutoSettings(4, 2); return false;"';
+                $aButtons[3]['class']  = 'enabled settings-4';
 
                 $aButtons[4]['link']   = '';
                 $aButtons[4]['icon']   = 'fa-fast-forward';
                 $aButtons[4]['text']   = 'Premium';
-                
-                  
-                  $aButtons[4]['color']  = '#CCC';
-                  $aButtons[4]['script'] = '';
-                  $aButtons[4]['class']  = 'disabled';
-                  
+                $aButtons[4]['color']  = '#9995FF';
+                $aButtons[4]['script'] = 'onclick="applyAutoSettings(5, 1); return false;"';
+                $aButtons[4]['class']  = 'enabled settings-5';
 
                 $aButtons[5]['link']   = '';
                 $aButtons[5]['icon']   = 'fa-dashboard';
                 $aButtons[5]['text']   = 'Optimum';
-                
-                 
-                  $aButtons[5]['color']  = '#CCC';
-                  $aButtons[5]['script'] = '';
-                  $aButtons[5]['class']  = 'disabled';
-                  
+                $aButtons[5]['color']  = '#60AF2C';
+                $aButtons[5]['script'] = 'onclick="applyAutoSettings(6, 1); return false;"';
+                $aButtons[5]['class']  = 'enabled settings-6';
 
                 return $aButtons;
         }
@@ -553,29 +574,29 @@ JFIELD;
         {
                 $aButtons = array();
 
-                $aButtons[1]['link']    = JchPlatformPaths::adminController('browsercaching');
+                $aButtons[1]['link']    = Paths::adminController('browsercaching');
                 $aButtons[1]['icon']    = 'fa-globe';
                 $aButtons[1]['color']   = '#51A351';
-                $aButtons[1]['text']    = JchPlatformUtility::translate('Optimize .htaccess');
+                $aButtons[1]['text']    = Utility::translate('Optimize .htaccess');
                 $aButtons[1]['script']  = '';
                 $aButtons[1]['class']   = 'enabled';
-                $aButtons[1]['tooltip'] = JchPlatformUtility::translate('Use this button to add codes to your htaccess file to enable leverage browser caching and gzip compression.');
+                $aButtons[1]['tooltip'] = Utility::translate('Use this button to add codes to your htaccess file to enable leverage browser caching and gzip compression.');
 
-                $aButtons[3]['link']    = JchPlatformPaths::adminController('filepermissions');
+                $aButtons[3]['link']    = Paths::adminController('filepermissions');
                 $aButtons[3]['icon']    = 'fa-file-text';
                 $aButtons[3]['color']   = '#166BEC';
-                $aButtons[3]['text']    = JchPlatformUtility::translate('Fix file permissions');
+                $aButtons[3]['text']    = Utility::translate('Fix file permissions');
                 $aButtons[3]['script']  = '';
                 $aButtons[3]['class']   = 'enabled';
-                $aButtons[3]['tooltip'] = JchPlatformUtility::translate('If your site has lost CSS formatting after enabling the plugin, the problem could be that the plugin files were installed with incorrect file permissions so the browser cannot access the cached combined file. Click here to correct the plugin\'s file permissions.');
+                $aButtons[3]['tooltip'] = Utility::translate('If your site has lost CSS formatting after enabling the plugin, the problem could be that the plugin files were installed with incorrect file permissions so the browser cannot access the cached combined file. Click here to correct the plugin\'s file permissions.');
 
-                $aButtons[5]['link']    = JchPlatformPaths::adminController('cleancache');
+                $aButtons[5]['link']    = Paths::adminController('cleancache');
                 $aButtons[5]['icon']    = 'fa-times-circle';
                 $aButtons[5]['color']   = '#C0110A';
-                $aButtons[5]['text']    = JchPlatformUtility::translate('Clean Cache');
+                $aButtons[5]['text']    = Utility::translate('Clean Cache');
                 $aButtons[5]['script']  = '';
                 $aButtons[5]['class']   = 'enabled';
-                $aButtons[5]['tooltip'] = JchPlatformUtility::translate('Click this button to clean the plugin\'s cache and page cache. If you have edited any CSS or javascript files you need to clean the cache so the changes can be visible.');
+                $aButtons[5]['tooltip'] = Utility::translate('Click this button to clean the plugin\'s cache and page cache. If you have edited any CSS or javascript files you need to clean the cache so the changes can be visible.');
 
                 return $aButtons;
         }
@@ -586,7 +607,7 @@ JFIELD;
          */
         public static function leverageBrowserCaching()
         {
-                $htaccess = JchPlatformPaths::rootPath() . '.htaccess';
+                $htaccess = Paths::rootPath() . '.htaccess';
 
                 if (file_exists($htaccess))
                 {
@@ -703,7 +724,7 @@ JFIELD;
 
 	public static function cleanHtaccess()
 	{
-                $htaccess = JchPlatformPaths::rootPath() . '.htaccess';
+                $htaccess = Paths::rootPath() . '.htaccess';
 
                 if (file_exists($htaccess))
                 {

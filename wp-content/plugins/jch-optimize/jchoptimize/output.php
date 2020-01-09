@@ -20,17 +20,20 @@
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
+namespace JchOptimize\Core;
 
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeOutput
+use JchOptimize\Platform\Cache;
+
+class Output
 {
 
         /**
          * 
          * @return type
          */
-        public static function getCombinedFile($aGet=array(), $bSend=true, $needFontFace=false)
+        public static function getCombinedFile($aGet=array(), $bSend=true)
         {
 		if (empty($aGet))
 		{
@@ -41,7 +44,7 @@ class JchOptimizeOutput
 			));
 		}
 
-                $aCache = JchPlatformCache::getCache($aGet['f']);
+                $aCache = Cache::getCache($aGet['f']);
 
                 if ($aCache === false)
                 {
@@ -109,7 +112,7 @@ class JchOptimizeOutput
 
                 $sFile = $aCache['file'][$aGet['i']];
 
-                //$sFile = JchOptimizeOutput::getCachedFile($sFile);
+                //$sFile = Output::getCachedFile($sFile);
 
                 $aSpriteCss = $aCache['spritecss'];
 
@@ -120,13 +123,8 @@ class JchOptimizeOutput
                                 $sFile = str_replace($aSpriteCss['needles'], $aSpriteCss['replacements'], $sFile);
                         }
 
-                        $oCssParser = new JchOptimizeCssParser();
+                        $oCssParser = new CssParser();
                         $sFile      = $oCssParser->sortImports($sFile);
-
-			if (!$needFontFace && $aCache['optimizecssdelivery'])
-			{
-				$sFile = $oCssParser->removeFontFace($sFile);
-			}
 
                         if (function_exists('mb_convert_encoding'))
                         {
@@ -226,7 +224,7 @@ class JchOptimizeOutput
                 $sContent = preg_replace_callback('#\[\[JCH_([^\]]++)\]\]#',
                                                   function($aM) 
 		{
-                        return JchPlatformCache::getCache($aM[1]);
+                        return Cache::getCache($aM[1]);
                 }, $sContent);
 
                 return $sContent;
@@ -282,12 +280,12 @@ class JchOptimizeOutput
         {
                 $aTime = array();
 
-                $date = new DateTime();
+                $date = new \DateTime();
                 $date->setTimestamp($filemtime);
 
                 $aTime['filemtime'] = $date->format('D, d M Y H:i:s');
 
-                $date->add(DateInterval::createFromDateString($period));
+                $date->add(\DateInterval::createFromDateString($period));
                 $aTime['expiry'] = $date->format('D, d M Y H:i:s');
 
                 return $aTime;

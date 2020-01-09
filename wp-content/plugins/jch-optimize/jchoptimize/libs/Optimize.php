@@ -1,7 +1,5 @@
 <?php
 
-namespace JchOptimize;
-
 /**
  * JCH Optimize - Aggregate and minify external resources for optmized downloads
  * 
@@ -21,7 +19,10 @@ namespace JchOptimize;
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
-class Optimize extends \JchOptimizeRegextokenizer
+
+namespace JchOptimize\LIBS;
+
+class Optimize extends \JchOptimize\Core\Regextokenizer
 {
 
 

@@ -23,7 +23,7 @@
  */
 include dirname(dirname(__FILE__)) . '/dir.php';
 
-define('SHORTINIT', TRUE);
+define('SHORTINIT', true);
 
 if (!isset($wp_did_header))
 {
@@ -52,5 +52,5 @@ wp_register_plugin_realpath($plugin);
 require_once($plugin);
 
 
-JchOptimizeOutput::getCombinedFile();
+JchOptimize\Core\Output::getCombinedFile();
 

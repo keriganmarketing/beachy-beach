@@ -1,7 +1,5 @@
 <?php
 
-use JchOptimize\CssSpriteGen;
-
 /**
  * JCH Optimize - Aggregate and minify external resources for optmized downloads
  * 
@@ -22,11 +20,15 @@ use JchOptimize\CssSpriteGen;
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
-
+namespace JchOptimize\Core;
 
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeSpriteGenerator
+use JchOptimize\LIBS\CssSpriteGen;
+use JchOptimize\Platform\Profiler;
+use JchOptimize\Platform\Paths;
+
+class SpriteGenerator
 {
 
         public $params = null;
@@ -49,7 +51,7 @@ class JchOptimizeSpriteGenerator
         {
                 if(!extension_loaded('exif'))
                 {
-                      JchOptimizeLogger::log('EXIF extension not loaded', $this->params);
+                      Logger::log('EXIF extension not loaded', $this->params);
                       
                       return FALSE;
                 }
@@ -62,7 +64,7 @@ class JchOptimizeSpriteGenerator
                 {
                         if (!extension_loaded('gd'))
                         {
-                                JchOptimizeLogger::log('No image manipulation library installed', $this->params);
+                                Logger::log('No image manipulation library installed', $this->params);
                                 
                                 return FALSE;
                         }
@@ -92,7 +94,7 @@ class JchOptimizeSpriteGenerator
                         return $sCss;
                 }
                 
-                $this->params->set('sprite-path', JchPlatformPaths::spriteDir());
+                $this->params->set('sprite-path', Paths::spriteDir());
 
                 $aSearch = $this->generateSprite($aMatches, new CssSpriteGen($sImageLibrary, $this->params));
 
@@ -108,7 +110,7 @@ class JchOptimizeSpriteGenerator
          */
         public function generateSprite($aMatches, $oSpriteGen)
         {
-                JCH_DEBUG ? JchPlatformProfiler::start('GenerateSprite') : null;
+                JCH_DEBUG ? Profiler::start('GenerateSprite') : null;
                 
                 $aDeclaration = $aMatches[0];
                 $aImages      = $aMatches[1];
@@ -129,8 +131,8 @@ class JchOptimizeSpriteGenerator
                 $sSpriteName = $oSpriteGen->GetSpriteFilename();
 
                 $aSearch = array();
-		$spritepath = JchPlatformPaths::spriteDir(true) . $sSpriteName;
-		$spritepath = JchOptimizeHelper::cookieLessDomain($this->params, $spritepath, $spritepath);
+		$spritepath = Paths::spriteDir(true) . $sSpriteName;
+		$spritepath = Helper::cookieLessDomain($this->params, $spritepath, $spritepath);
 
                 for ($i = 0; $i < count($aSpriteCss); $i++)
                 {
@@ -155,7 +157,7 @@ class JchOptimizeSpriteGenerator
                         }
                 }
 
-                JCH_DEBUG ? JchPlatformProfiler::stop('GenerateSprite', TRUE) : null;
+                JCH_DEBUG ? Profiler::stop('GenerateSprite', TRUE) : null;
                 
                 return $aSearch;
         }
@@ -168,7 +170,7 @@ class JchOptimizeSpriteGenerator
          */
         public function processCssUrls($sCss, $bBackend = FALSE)
         {
-                JCH_DEBUG ? JchPlatformProfiler::start('ProcessCssUrls') : null;
+                JCH_DEBUG ? Profiler::start('ProcessCssUrls') : null;
                 
                 $params         = $this->params;
                 $aRegexStart    = array();
@@ -190,8 +192,8 @@ class JchOptimizeSpriteGenerator
                         [^{}]++} )';
                 $sRegexEnd      = '#isx';
 
-                $aIncludeImages  = JchOptimizeHelper::getArray($params->get('csg_include_images'));
-                $aExcludeImages  = JchOptimizeHelper::getArray($params->get('csg_exclude_images'));
+                $aIncludeImages  = Helper::getArray($params->get('csg_include_images'));
+                $aExcludeImages  = Helper::getArray($params->get('csg_exclude_images'));
                 $sIncImagesRegex = '';
 
                 if (!empty($aIncludeImages[0]))
@@ -280,7 +282,7 @@ class JchOptimizeSpriteGenerator
                         return $aImages;
                 }
 
-                JCH_DEBUG ? JchPlatformProfiler::stop('ProcessCssUrls', TRUE) : null;
+                JCH_DEBUG ? Profiler::stop('ProcessCssUrls', TRUE) : null;
                 
                 return $aMatches;
         }

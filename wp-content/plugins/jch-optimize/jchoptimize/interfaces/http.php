@@ -20,7 +20,9 @@
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
-interface JchInterfaceHttp
+namespace JchOptimize\Interfaces;
+
+interface HttpInterface
 {
         /**
          * 

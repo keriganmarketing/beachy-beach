@@ -20,9 +20,15 @@
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformHtml implements JchInterfaceHtml
+use JchOptimize\Core\FileRetriever;
+use JchOptimize\Core\Logger;
+use JchOptimize\Core\Exception;
+
+class Html implements \JchOptimize\Interfaces\HtmlInterface
 {
         protected $params;
         
@@ -33,34 +39,34 @@ class JchPlatformHtml implements JchInterfaceHtml
         
         public function getOriginalHtml()
         {
-                JCH_DEBUG ? JchPlatformProfiler::mark('beforeGetHtml') : null;
+                JCH_DEBUG ? Profiler::mark('beforeGetHtml') : null;
                 
                 $url = home_url() . '/?jchbackend=1';
                 
                 try
                 {
-                        $oFileRetriever = JchOptimizeFileRetriever::getInstance();
+                        $oFileRetriever = FileRetriever::getInstance();
 
                         $response = $oFileRetriever->getFileContents($url);
 
                         if ($oFileRetriever->response_code != 200)
                         {
                                 throw new Exception(
-                                JchPlatformUtility::translate('Failed fetching front end HTML with response code ' . $oFileRetriever->response_code)
+                                Utility::translate('Failed fetching front end HTML with response code ' . $oFileRetriever->response_code)
                                 );
                         }
 
-                        JCH_DEBUG ? JchPlatformProfiler::mark('afterGetHtml') : null;
+                        JCH_DEBUG ? Profiler::mark('afterGetHtml') : null;
 
                         return $response;
                 }
                 catch (Exception $e)
                 {
-                        JchOptimizeLogger::log($url . ': ' . $e->getMessage(), $this->params);
+                        Logger::log($url . ': ' . $e->getMessage(), $this->params);
 
-                        JCH_DEBUG ? JchPlatformProfiler::mark('afterGetHtml)') : null;
+                        JCH_DEBUG ? Profiler::mark('afterGetHtml)') : null;
 
-                        throw new RunTimeException(_('Load or refresh the front-end site first then refresh this page '
+                        throw new \RunTimeException(_('Load or refresh the front-end site first then refresh this page '
                                 . 'to populate the multi select exclude lists.'));
                 }
         }

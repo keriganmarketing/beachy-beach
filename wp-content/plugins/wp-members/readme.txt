@@ -2,8 +2,8 @@
 Contributors: cbutlerjr
 Tags: access, authentication, content, login, member, membership, password, protect, register, registration, restriction, subscriber
 Requires at least: 4.0
-Tested up to: 5.1
-Stable tag: 3.2.6.1
+Tested up to: 5.3
+Stable tag: 3.3.0.3
 License: GPLv2
 
 == Description ==
@@ -27,37 +27,37 @@ __Simple to install and configure - yet customizable and scalable!__
 * Notify admin of new user registrations
 * Hold new registrations for admin approval
 * Create post excerpt teaser content automatically
-* [Shortcodes for login, registration, content restriction, and more](https://rkt.bz/docssc)
-* Create powerful customizations with [more than 120 action and filter hooks](https://rkt.bz/hooks)
-* [A library of API functions for extensibility](https://rkt.bz/api)
+* [Shortcodes for login, registration, content restriction, and more](https://rocketgeek.com/plugins/wp-members/docs/shortcodes/)
+* Create powerful customizations with [more than 120 action and filter hooks](https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/)
+* [A library of API functions for extensibility](https://rocketgeek.com/plugins/wp-members/docs/api-functions/)
 
 WP-Members allows you to restrict content as restricted or hidden, limiting access to registered users.
 
-A full Users Guide is [available here](https://rkt.bz/docs). The guide outlines the installation process, and also documents how to use all of the settings.
+A full Users Guide is [available here](https://rocketgeek.com/plugins/wp-members/docs/). The guide outlines the installation process, and also documents how to use all of the settings.
 
-Get support along with all of the plugin's premium extensions in one [cost saving Pro Bundle!](https://rkt.bz/pro)
+Get support along with all of the plugin's premium extensions in one [cost saving Pro Bundle!](https://rocketgeek.com/product/wp-members-pro-bundle/)
 
 = Premium Support =
 
-Premium support subscribers have access to priority email support, examples, tutorials, and code snippets that will help you extend and customize the base plugin using the plugin's framework. [Visit the site for more info](https://rkt.bz/getsupport).
+Premium support subscribers have access to priority email support, examples, tutorials, and code snippets that will help you extend and customize the base plugin using the plugin's framework. [Visit the site for more info](https://rocketgeek.com/plugins/wp-members/support-options/).
 
 = Premium Extensions =
 
 The plugin has several premium extensions for additional functionality. You can purchase any of them individually, or get them all for a significant discount in the Pro Bundle.
 
-* [Advanced Options](https://rkt.bz/advanced) - adds additional settings to WP-Members for redirecting core WP created URLs, redirecting restricted content, hiding the WP toolbar, and more! Also includes integrations with popular plugins like WooCommerce, BuddyPress, bbPress, ADF, Easy Digital Downloads, and The Events Calendar.
-* [Download Protect](https://rkt.bz/downloadprotect) - Allows you to restrict access to specific files, requiring the user to be logged in to access.
-* [Invite Codes](https://rkt.bz/invitecodes) - set up invitation codes to restrict registration to only those with a valide invite code.
-* [MailChimp Integration](https://rkt.bz/mailchimp) - add MailChimp list subscription to your registation form.
-* [Memberships for WooCommerce](https://rkt.bz/fR) - Sell memberships through WooCommerce.
-* [PayPal Subscriptions](https://rkt.bz/paypal) - Sell restricted content access through PayPal.
-* [Security](https://rkt.bz/security) - adds a number of security features to the plugin such as preventing concurrent logins, registration form honey pot (spam blocker), require passwords be changed on first use, require passwords to be changed after defined period of time, require strong passwords, block registration by IP and email, restrict specified usernames from being registered.
-* [Text Editor](https://rkt.bz/te) - Adds an editor to the WP-Members admin panel to easily customize all user facing strings in the plugin.
-* [User List](https://rkt.bz/userlist) - Display lists of users on your site. Great for creating user directories with detailed and customizable profiles.
-* [User Tracking](https://rkt.bz/usertrack) - Track what pages logged in users are visting and when.
-* [WordPass Pro](https://rkt.bz/3O) - Change your random password generator from gibberish to word-based passwords (can be used with or without WP-Members).
+* [Advanced Options](https://rocketgeek.com/plugins/wp-members-advanced-options/) - adds additional settings to WP-Members for redirecting core WP created URLs, redirecting restricted content, hiding the WP toolbar, and more! Also includes integrations with popular plugins like WooCommerce, BuddyPress, bbPress, ADF, Easy Digital Downloads, and The Events Calendar.
+* [Download Protect](https://rocketgeek.com/plugins/wp-members-download-protect/) - Allows you to restrict access to specific files, requiring the user to be logged in to access.
+* [Invite Codes](https://rocketgeek.com/plugins/wp-members-invite-codes/) - set up invitation codes to restrict registration to only those with a valide invite code.
+* [MailChimp Integration](https://rocketgeek.com/plugins/wp-members-mailchimp-integration/) - add MailChimp list subscription to your registation form.
+* [Memberships for WooCommerce](https://rocketgeek.com/plugins/wp-members-memberships-for-woocommerce/) - Sell memberships through WooCommerce.
+* [PayPal Subscriptions](https://rocketgeek.com/plugins/wp-members-paypal-subscriptions/) - Sell restricted content access through PayPal.
+* [Security](https://rocketgeek.com/plugins/wp-members-security/) - adds a number of security features to the plugin such as preventing concurrent logins, registration form honey pot (spam blocker), require passwords be changed on first use, require passwords to be changed after defined period of time, require strong passwords, block registration by IP and email, restrict specified usernames from being registered.
+* [Text Editor](https://rocketgeek.com/plugins/wp-members-text-editor/) - Adds an editor to the WP-Members admin panel to easily customize all user facing strings in the plugin.
+* [User List](https://rocketgeek.com/plugins/wp-members-user-list/) - Display lists of users on your site. Great for creating user directories with detailed and customizable profiles.
+* [User Tracking](https://rocketgeek.com/plugins/wp-members-user-tracking/) - Track what pages logged in users are visting and when.
+* [WordPass Pro](https://rocketgeek.com/plugins/wordpass/) - Change your random password generator from gibberish to word-based passwords (can be used with or without WP-Members).
 
-Get support along with all of the plugin's premium extensions in one [cost saving Pro Bundle!](https://rkt.bz/pro)
+Get support along with all of the plugin's premium extensions in one [cost saving Pro Bundle!](https://rocketgeek.com/product/wp-members-pro-bundle/)
 
 
 == Installation ==
@@ -66,7 +66,7 @@ WP-Members is designed to run "out-of-the-box" with no modifications to your WP 
 
 = Basic Install: =
 
-The best way to begin is to review the [Initial Setup Video](https://rkt.bz/videos). There is also a complete [Users Guide available](https://rkt.bz/docs) that covers all of the plugin's features in depth.
+The best way to begin is to review the [Initial Setup Video](https://rocketgeek.com/plugins/wp-members/docs/videos/). There is also a complete [Users Guide available](https://rocketgeek.com/plugins/wp-members/docs/) that covers all of the plugin's features in depth.
 
 1. Upload the `/wp-members/` directory and its contents to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress&reg;
@@ -88,9 +88,9 @@ There are also some special pages that can be created with simple shortcodes:
 * A User Profile page where registered members can edit their information and change/reset their password: [wpmem_profile]
 * A Registration page available for those that need a specific URL for registrations (such as email marketing or banner ad landing pages). Note: this is strictly optional as a registration form can also be included by default on blocked content pages: [wpmem_form register]
 * A Login page. This is also an optional page as the login form is included by default on blocked content. But if you need a specific login page, this can be created with a simple shortcode: [wpmem_form login]
-* [And more shortcodes are available](https://rkt.bz/docssc)!
+* [And more shortcodes are available](https://rocketgeek.com/plugins/wp-members/docs/shortcodes/)!
 
-Powerful cusotmizations can be constructed with [over 120 action and filter hooks](https://rkt.bz/hooks), as well as user accessible functions.
+Powerful cusotmizations can be constructed with [over 120 action and filter hooks](https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/), as well as user accessible functions.
 
 
 == Frequently Asked Questions ==
@@ -100,8 +100,8 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.2.0 is a major update. See changelog for important details. Minimum WP version is 4.0.
-WP-Members 3.2.6 is a security release with some additional updates. See changelog for details.
+WP-Members 3.3.0 is a major update. WP-Members 3.3.0.2 is a critical fix for registration/profile fields. See changelog for important details. Minimum WP version is 4.0.
+
 
 == Screenshots ==
 
@@ -124,17 +124,194 @@ WP-Members 3.2.6 is a security release with some additional updates. See changel
 
 == Changelog ==
 
-= 3.2.6.1 =
+= 3.3.0.3 =
+
+* Fixes a shortcode issue for the [wpmem_logged_in] shortcode when using the meta_key attribute. 3.3.0 added a "compare" attribute, and with this addition, it broke the original default use of the shortcode. This bug is fixed in the 3.3.0.3 release. 
+
+= 3.3.0.2 =
+
+* Fixes an issue with registration/profile form fields when used in the profile. It was intended to introduce separate selection of fields for registration and profile update in 3.3.0. However, there is an issue that causes profile fields to both (1) not correctly display and (2) if they do, they do not update correctly. All users who updated to 3.3.x should update to 3.3.0.2 to correct this.
+
+= 3.3.0.1 = 
+
+* Fixes issue when updating where the stylesheet selector indicates "use_custom" but the actual URL is to a default stylesheet. The problem can be corrected manually, but this fix applies the custom URL to the new standard setting for the defaults.
+* Fixes bug where any stylesheet other than the default reverts to the default ("no float"). This was due to the database version being wiped when settings were updated. This fix correctly applies the database version when updating settings.
+* Fixes bug when captcha is used (unknown validate() function). The validate() function should have been declared and used as a static method. This fix declares validate() as static and then uses it as such.
+* Fixes undefined string variable when successful registration is executed.
+
+= 3.3.0 =
+
+* REMOVED [wp-members] shortcode tag. THIS TAG IS OBSOLETE WILL NO LONGER FUNCTION. See: https://rocketgeek.com/shortcodes/list-of-replacement-shortcodes/
+* REMOVED tinymce button for shortcodes as no longer necessary with gutenberg.
+* Deprecated wpmem_inc_login_args filter, use wpmem_login_form_defaults instead.
+* Deprecated wpmem_inc_{$form}_inputs and wpmem_inc_{$form}_args filters, use wpmem_{$form}_form_defaults instead. (changepassword|resetpassword|forgotusername)
+* Deprecated wpmem_sb_login_args filter, use wpmem_login_widget_args instead.
+* Deprecated wpmem_msg_args and wpmem_msg_dialog_arr filters, use wpmem_msg_defaults instead.
+* The following functions are deprecated, replacements should no longer be considered "pluggable":
+  - wpmem_inc_registration() Use wpmem_register_form() instead ($heading argument obsolete).
+  - wpmem_inc_changepassword()
+  - wpmem_inc_resetpassword()
+  - wpmem_inc_forgotusername()
+  - wpmem_inc_recaptcha()
+  - wpmem_build_rs_captcha()
+* The following functions and filters are obsolete and have been removed:
+  - wpmem_shortcode() (deprecated 3.1.2)
+  - wpmem_do_sc_pages() (deprecated 3.1.8)
+  - wpmem_admin_fields() (deprecated 3.1.9)
+  - wpmem_admin_update() (deprecated 3.1.9)
+  - wpmem_user_profile() (deprecated 3.1.9)
+  - wpmem_profile_update() (deprecated 3.1.9)
+  - wpmem_dashboard_enqueue_scripts() (deprecated 3.2.0 Use $wpmem->admin->dashboard_enqueue_script() instead.)
+  - wpmem_sc_forms() (deprecated 3.2.0 Use $wpmem->shortcodes->forms() instead.)
+  - wpmem_sc_logged_in() (deprecated 3.2.0 Use $wpmem->shortcodes->logged_in() instead.)
+  - wpmem_sc_logged_out() (deprecated 3.2.0 Use $wpmem->shortcodes->logged_out() instead.)
+  - wpmem_sc_user_profile (deprecated 3.2.0 Use $wpmem->shortcodes->profile() instead.)
+  - wpmem_sc_user_count() (3.2.0 Use $wpmem->shortcodes->user_count() instead.)
+  - wpmem_sc_loginout 3.2.0() (deprecated Use $wpmem->shortcodes->loginout() instead.)
+  - wpmem_sc_fields() (deprecated 3.2.0 Use $wpmem->shortcodes->fields() instead.)
+  - wpmem_sc_logout() (deprecated 3.2.0 Use $wpmem->shortcodes->logout() instead.)
+  - wpmem_sc_tos() (deprecated 3.2.0 Use $wpmem->shortcodes->tos() instead.)
+  - wpmem_sc_avatar() (deprecated 3.2.0 Use $wpmem->shortcodes->avatar() instead.)
+  - wpmem_sc_link() (deprecated 3.2.0 Use $wpmem->shortcodes->login_link() instead.)
+  - wpmem_register_fields_arr (obsolete 3.1.7, use wpmem_fields instead.)
+  
+IMPORTANT UPDATES/CHANGES
+
+* Major filesystem changes. The directory structure has changed and several files
+  moved/renamed/made obsolete. If you have ANY WP-Members customization that directly
+  includes a file, that step is probably obsolete. The plugin has loaded most of the
+  include files automatically since at least version 3.2, so this step has not been
+  necessary for quite some time. However, this set of changes is more significant.
+  (If you do not have code snippets using file includes from WP-Members, this most 
+  likely will not affect you.)
+
+* Updated registration function to hook to user_register, IMPORTANT: this 
+  changes the order in which the user meta fields are saved, and also changes 
+  when the email is sent. Email is now hooked to user_register, but can be 
+  unloaded if necessary.
+  
+* Major overhaul of registration and login form, validation, and processing
+  functions. Moved things into appropriate object classes (user, forms) and
+  deprecated legacy functions and files (register.php, forms.php).
+  
+* Updated membership product meta and date format, IMPORTANT: this changes the 
+  way the user product access information is stored (going from an array of 
+  all memberships to individual meta for each) as well as the format (dates 
+  are now unix timestamp). There is an update script that will run during 
+  upgrade to handle this. For now, the legacy format is also maintained (so 
+  consider this if customzizing any processing) so that rollback is possible.
+
+* Updated wpmem_user_has_meta() to include a check by array when the field is 
+  multiple checkbox or multiple select.
+
+* Updated [wpmem_logged_in] shortcode to include an msg attribute to display a 
+  message if the user does not have access to a specified product (product must
+  be passed as attribute).
+  
+* Updated [wpmem_logged_in] shortcode to include a compare attribute. Possible
+  values for "compare" are "=" and "!=" to restrict if the has a meta value or
+  the meta value is "not equal to" respectively. Passing only meta_key/meta_value
+  will still assume an "=" comparison.
+
+* Updated register page shortcode [wpmem_form register] logged in state - if a 
+  profile page is set, second link links to profile rather than "begin using 
+  the site".
+
+* Updated Users > All Users screen filters, removed "Not Activated" replaced
+  with "Pending Activation". Filter now only shows users who have not been
+  activated, no longer includes users who were deactivated.
+
+* Major menus change - if you use the $wpmem->menus object directly, this is 
+  now $wpmem->menus_clone (setting $wpmem->clone_menus remains the same).
+  wpmem_menu_settings and wpmem_menus are now wpmem_clone_menu_settings and 
+  wpmem_clone_menus. New menu handing has been introduced in the $wpmem->menus
+  object and that will take the place of the cloned menu options.
+  
+* Updated the way stylesheets are handled. Added wpmem_get_suffix() API function to
+  get the appropriate suffix for files (.min.css or .css) for both js and css. Also,
+  minified all CSS files that were not previously minified. Note: you can no longer
+  filter custom stylesheets into the plugin's dropdown selector (no one was using
+  this feature as far as I am aware anyway). You *can* still filter the stylesheet
+  being loaded as well as indicate the path of a custom stylesheet.
+
+* Added reCAPTCHA v3 support.
+* Added default membership product(s) at registration.
+* Added membership product(s) for user export.
+* Added support for selecting fields to display on the registration form or the profile form.
+* Added wpmem_activate_user() and wpmem_deactivate_user() to user API.
+* Added wpmem_user_sets_password() API function.
+* Added wpmem_get_block_setting() API function.
+* Added wpmem_set_user_status() API function.
+* Added wpmem_export_users() as API function (function already existed, but the original has been moved to an object class, and the function has been included in the API).
+* Added wpmem_sanitize_field() API function. This is a general utility that allows for different sanitization by type.
+* Added wpmem_maybe_unserialize() API function. If result is serialized, it unserializes to an array, if an array, it sanitizes using wpmem_sanitize_array().
+* Added wpmem_get_user_role() API function.
+* Added wpmem_get_user_ip() API function.
+* Added wpmem_get_user_meta() API function.
+* Added wpmem_get_user_products() API function.
+* Added wpmem_user_has_meta filter.
+* Added wpmem_login_form_settings filter.
+* Added wpmem_block_settings filter.
+* Added wpmem_msg_settings filter.
+* Added wpmem_sc_product_access_denied filter.
+* Added wpmem_views_users filter.
+* Added wpmem_dialogs filter.
+* Added wpmem_query_where filter.
+* Added wpmem_user_action.
+* Added admin user class for handling Users > All users screen and user activation.
+* Added user export class.
+* Added "msg" attribute support for [wpmem_logged_in] when using the "membership" or "product" attributes.
+* Replaced WPMEM_VERSION constant with $wpmem->version.
+* Replaced WPMEM_PATH constant with $wpmem->path. WPMEM_PATH will still function for backward compatibility.
+* Replaced WPMEM_URL constant with $wpmem->url.
+* New folder structure being implemented
+  - All admin js & css now load from /assets/ not /admin/ !!!
+
+Other Improvements
+
+* Changed load for WP-Members Admin API so that emails, dialogs, and tabs only load on the WP-Members settings screens (where they are used).
+* Changed email "from" to only load if the WP-Members Email object is doing a send (user or admin). This saves an option load when not needed.
+* Fixed an issue where a PHP notice was thrown if one of the User Pages (login/register/profile) was deleted but the setting not updated. Fixes the PHP notice issue, but also adds an admin notice to indicate the page was deleted, but the setting not updated. (This also adds a new admin notice function/process that can be expanded on later.)
+* Fixed an issue with wpmem_user_has_access() that prevented proper results when used to check a specific user ID (other than the current user).
+
+= 3.2.9 =
+
+* Load jQuery UI and Select2 libraries locally (if they have not already been enqueued).
+* Use (local) template file for default tos field link (can be customized and saved in theme folder).
+* Added new sanitization functions to API: wpmem_sanitize_class() and wpmem_sanitize_array().
+* Review and cleanup of form data sanitization.
+* Improved file/image field upload file type validation.
+* Fixed issue with loading legacy translation files.
+* Added "membership" attribute to [wpmem_logged_in] shortcode (same as "product" attribute, they are interchangeable).
+* Added datepicker for setting user expiration (when membership products are used).
+
+= 3.2.8 =
+
+* Include jQuery UI CSS and Select2 library locally.
+* Updated default TOS to a template file.
+* Added additional data sanitization.
+* Fixed potential security issues to prevent CSRF (Cross Site Request Forgery).
+
+= 3.2.7 =
+
+* Fix console error from nonce by implementing different nonce names.
+* Updated packaged POT file for legacy lanaguage files. Updated legacy language files to use new POT.
+* Full removal of legacy language files that are available as language packs from https://translate.wordpress.org/projects/wp-plugins/wp-members/
+* Added jQuery UI stylesheet (fixes issue with main options tab settings modal).
+* Added wpmem_default_text filter.
+* Deprecated wpmem_default_text_strings filter, use wpmem_default_text instead.
+* Added translation capability to field placeholders and title attributes.
+* Updated Customizer setting slug to avoid namespace collisions (added "wpmem_" stem).
+* Updated instances of wp_redirect() to use wp_safe_redirect().
+* Updated install for multisite to use wp_insert_site (wpmu_new_blog deprecated in WP 5.1).
+* Added user screen filter to show activated users.
+
+= 3.2.6 =
 
 * Update to evaluate required fields as not null (instead of false).
 * Added wpmem_tos_link_tag filter.
 * Added $button_html parameter to wpmem_register_form_buttons filter.
 * Added wpmem_serve_menu filter.
-* Fixed display issue with password shortcode which caused message dialog to display in default state.
-* Fixed console error with short form nonce.
-
-= 3.2.6 =
-
 * Added nonce to short form (long form was added in 3.2.5).
 * Password change function only can be fired if user is logged in.
 * Added "all" argument to wpmem_user_data() to retrieve either all user meta or WP-Members fields only.
@@ -274,77 +451,3 @@ WP-Members 3.2.6 is a security release with some additional updates. See changel
 * Fixed a bug that caused WP native fields to be set as non-native when labels were updated in the fields tab.
 * Added Customizer control to display login, register, and widget forms when using the Customizer (easier to work on custom CSS).
 * Added login/out menu item.
-
-= 3.1.9 =
-
-* Security enhancements.
-* Improved user search in Users > All Users.
-* Fully deprecated obsolete reCAPTCHA v1. If v1 is selected as a setting, it will be automatically changed to v2. (v1 users check your API keys for compatibility.)
-* Removed obsolete comments_template.php.
-* Set image field to display "medium" image in dashboard/admin user profile. Admin profile image display links to media editor.
-* Added default format to date field shortcode to date format set in WP settings.
-* Added format attribute to date field shortcode for custom date formatting.
-* Added User ID as an optional column for the Users > All Users screen.
-* Deprecated wpmem_user_profile(), wpmem_profile_update(), wpmem_user_profile_multipart(), wpmem_admin_fields(), wpmem_admin_update().
-* Rebuild of dashboard profile functions incorporated into new user profile object class.
-* Fields tab bulk action now checks for both page and tab (rather than just tab) to prevent namespace collisions.
-* Removed $requested_redirect_to argument from login_redirect filter hook.
-* Removed height property of button_div for generic stylesheets.
-* Fixed user edit shortcode to display updated user data without page refresh.
-* Fixed password change so that login state is maintained after password update.
-* Fix for multiple checkbox and multiple select field types if "comma" was selected as the delimiter (previously, this would break the field settings array option assembly).
-* Improvements on field manager add/edit field screen.
-* Improvements to multiple checkbox and radio groups: better handling of non-value selections and span wrapper for group separators.
-
-= 3.1.8 =
-
-* Added new native registration handling to accommodate WooCommerce 3.0.
-* Added support for user file upload on admin/dashboard profile.
-* Added meta_key/meta_value attribute to [wpmem_logged_in] shortcode.
-* Added wpmem_user_has_meta() API function.
-* Updated post editor shortcode button javascript to include new(er) shortcodes.
-* Fixed WP-Members user profile shortcode to only display logged in content (by shortcode) if the wpmem_a 'action' is not set (i.e. logged in content only displays if page is in "member links" state).
-* Fixed register link in login form to prevent link from displaying if login form is displayed along with the registration form (standard configuration).
-* Improved multisite support, including revisions to load all admin dependencies for administrator role, not just super admin. Dependency load role requirement is filterable.
-* Improved line break stripping process in form builder to allow for line breaks in textarea fields.
-* Improved field shortcode for textarea fields to display line breaks.
-* Deprecated old wpmem_do_sc_pages() function, updated wpmem_sc_user_profile().
-* Removed $_SERVER['REQUEST_URI'] from all admin tab form action attributes. Replaced with new wpmem_admin_form_post_url() API function.
-* Fields Tab: ground-up rebuild to utilize WP_List_Table and jquery sorting UI.
-* Fields Tab: improved field add/edit screen: return link at bottom of page, display current field upon successful form submission, success message include return link.
-* Fields Tab: added support for HTML5 field types: number, date.
-* Fields Tab: added support for HTML5 field attributes: placeholder, pattern (regex), title, min, max.
-* Corrects an issue with user profile display/update of textarea fields that are not the WP default bio field.
-* Added display=raw attribute handling to textarea fields to allow display without converting line breaks to HTML br tags.
-* Fixes issue with User Profile form heading not using the get_text() value.
-* Improves logic for displaying register link in login form if login page is not set.
-
-= 3.1.7 =
-
-* API updates: added wpmem_is_user_activated().
-* API updates: wpmem_is_reg_page() added default of current page ID.
-* API updates: wpmem_current_url() added check for query string.
-* API updates: Added wpmem_fields filter to wpmem_fields().
-* API updates: Added wpmem_current_post_id() and wpmem_form_label() functions.
-* API updates: Added new [wpmem_avatar], [wpmem_login_link], and [wpmem_register_link] shortcodes.
-* API updates: Added filter option in user export to decode html entities in user fields.
-* API updates: Added wpmem_get_action action hook when wpmem_a is loaded.
-* All admin dependencies and actions/filters loaded in admin api object.
-* Corrected issue in forms function were RS Captcha had empty div wrapper variable.
-* Removed deprecated functions wpmem_load_admin_js(), wpmem_test_shortcode(), and wpmem_generatePassword().
-* Moved remaining deprecated functions to new inc/deprecated.php.
-* Added successful registration message on page if nonce validates (for reg redirects).
-* Added User object class, handling login, logout, register.
-* Added buffering to login form and widget to allow do_login action results to be displayed (such as 3rd party login captcha).
-* Added support for WP's login_redirect filter (loads before wpmem_login_redirect).
-* Added a div wrapper for post restricted message.
-* Added initial form support for HTML5 number input, & min, max, title, and pattern attributes (placeholder support was added in 3.1.6).
-* Updated wpmem_admin_update() to exit if there is no user ID.
-* Updated admin notification email to translate field labels.
-* Updated login form links and filters to a single process (was one for each).
-* Updated WP Registration finalize process.
-* Moved form building functions to forms object class.
-* Deprecated wpmem_register_fields_arr filter (Use wpmem_fields instead).
-* Removing the wpautop() function is now optional rather than default.
-* Fixed load fields error checking, install function now correctly returns defaults.
-* Changed password reset and password change to use wp_set_password() for improved performance with caching.

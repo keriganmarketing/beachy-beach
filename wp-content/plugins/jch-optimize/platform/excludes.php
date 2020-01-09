@@ -20,9 +20,11 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformExcludes implements JchInterfaceExcludes
+class Excludes implements \JchOptimize\Interfaces\ExcludesInterface
 {
 
         /**
@@ -41,7 +43,7 @@ class JchPlatformExcludes implements JchInterfaceExcludes
                         }
                         else
                         {
-                                return array();
+                                return array('js.stripe.com');
                         }
                 }
 
@@ -57,7 +59,7 @@ class JchPlatformExcludes implements JchInterfaceExcludes
          */
         public static function extensions()
         {
-                return JchPlatformPaths::rewriteBase();
+                return Paths::rewriteBase();
         }
 
         /**
@@ -76,7 +78,7 @@ class JchPlatformExcludes implements JchInterfaceExcludes
                         }
                         else
                         {
-                                return array();
+                                return array('js.stripe.com');
                         }
                 }
 

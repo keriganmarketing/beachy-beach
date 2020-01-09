@@ -1,14 +1,5 @@
 <?php
 
-namespace JchOptimize;
-
-use Imagick;
-use ImagickPixel;
-use ImagickException;
-use JchOptimizeHelper;
-use JchPlatformUtility;
-use JchPlatformProfiler;
-use JchPlatformPaths;
 
 /**
  * This is a modified version of the original class from the online css sprite generator found at
@@ -38,6 +29,17 @@ use JchPlatformPaths;
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
+namespace JchOptimize\LIBS;
+
+use Imagick;
+use ImagickPixel;
+use ImagickException;
+use JchOptimize\Core\Helper;
+use JchOptimize\Core\Logger;
+use JchOptimize\Platform\Utility;
+use JchOptimize\Platform\Profiler;
+use JchOptimize\Platform\Paths;
+
 class CssSpriteGen
 {
 
@@ -61,7 +63,7 @@ class CssSpriteGen
 
                 $this->params = $params;
 
-                $class = 'JchOptimize\ImageHandler' . ucfirst($ImageLibrary);
+                $class = 'JchOptimize\LIBS\ImageHandler' . ucfirst($ImageLibrary);
 
                 $this->oImageHandler = new $class($this->params, $this);
 
@@ -148,12 +150,12 @@ class CssSpriteGen
 
                 foreach ($aFilePaths as $sFile)
                 {
-                        JCH_DEBUG ? JchPlatformProfiler::start('CalculateSprite') : null;
+                        JCH_DEBUG ? Profiler::start('CalculateSprite') : null;
                         
 			//Remove CDN domains if present
-			$aCdns = array_keys(JchOptimizeHelper::cookieLessDomain($this->params, '', '', true));
+			$aCdns = array_keys(Helper::cookieLessDomain($this->params, '', '', true));
                         $sFilePath = str_replace($aCdns, '', $sFile);
-                        $sFilePath = JchOptimizeHelper::getFilepath($sFilePath);
+                        $sFilePath = Helper::getFilepath($sFilePath);
 
                         $bFileExists = TRUE;
 
@@ -407,14 +409,14 @@ class CssSpriteGen
                         }
                 }
 
-                JCH_DEBUG ? JchPlatformProfiler::stop('CalculateSprite', TRUE) : null;
+                JCH_DEBUG ? Profiler::stop('CalculateSprite', TRUE) : null;
 
                 if ($this->bBackend)
                 {
                         return $aValidImages;
                 }
 
-                JCH_DEBUG ? JchPlatformProfiler::start('CreateSprite') : null;
+                JCH_DEBUG ? Profiler::start('CreateSprite') : null;
 
 
                 /*                 * **************************************** */
@@ -516,7 +518,7 @@ class CssSpriteGen
 
                                 if (!file_exists($path))
                                 {
-                                        JchPlatformUtility::createFolder($path);
+                                        Utility::createFolder($path);
                                 }
 
                                 // write image to file
@@ -537,10 +539,10 @@ class CssSpriteGen
                         }
                         catch (Exception $e)
                         {
-                                JchOptimizeLogger::log($e->getMessage(), $this->params);
+                                Logger::log($e->getMessage(), $this->params);
                         }
                         
-                        JCH_DEBUG ? JchPlatformProfiler::stop('CreateSprite', TRUE) : null;
+                        JCH_DEBUG ? Profiler::stop('CreateSprite', TRUE) : null;
                 }
 
                 
@@ -633,7 +635,7 @@ class ImageHandlerImagick implements ImageHandlerInterface
                 }
                 catch (ImagickException $e)
                 {
-                        JchOptimizeLogger::log($e->getMessage(), $this->params);
+                        Logger::log($e->getMessage(), $this->params);
                 }
 
                 // store supported formats for populating drop downs etc later

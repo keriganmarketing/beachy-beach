@@ -6,7 +6,11 @@
  * and open the template in the editor.
  */
 
-class JchPlatformHttp implements JchInterfaceHttp
+namespace JchOptimize\Platform;
+
+use JchOptimize\LIBS\ImageOptimizer;
+
+class Http implements \JchOptimize\Interfaces\HttpInterface
 {
 
         protected $transport = '';
@@ -46,7 +50,7 @@ class JchPlatformHttp implements JchInterfaceHttp
                                 'compress'            => false,
                                 'decompress'          => true,
                                 'sslverify'           => true,
-                                'sslcertificates'     => JchPlatformPaths::rootPath() . WPINC . '/certificates/ca-bundle.crt',
+                                'sslcertificates'     => Paths::rootPath() . WPINC . '/certificates/ca-bundle.crt',
                                 'stream'              => false,
                                 'filename'            => null,
                                 'limit_response_size' => null,
@@ -89,7 +93,7 @@ class JchPlatformHttp implements JchInterfaceHttp
 		if ($this->transport === 'Requests_Transport_cURL' 
 			&& isset($aHeaders['Content-Type']) && $aHeaders['Content-Type'] == 'multipart/form-data')
 		{
-			return JchOptimize\ImageOptimizer::curlRequest($sPath, $aPost);
+			return ImageOptimizer::curlRequest($sPath, $aPost);
 		}
 
                 if (isset($aHeaders))

@@ -85,6 +85,7 @@ div.description > div:after {
         margin-right: 5px;
 }
 
+fieldset[id^="jch_options_staticfiles"] ul,
 fieldset[id^="jch_options_pro_staticfiles"] ul,
 fieldset[id^="jch_options_pro_http2_file_types"] ul{
         padding: 0;
@@ -93,12 +94,14 @@ fieldset[id^="jch_options_pro_http2_file_types"] ul{
         width: 300px;
 }
 
+fieldset[id^="jch_options_staticfiles"] ul li,
 fieldset[id^="jch_options_pro_staticfiles"] ul li,
 fieldset[id^="jch_options_pro_http2_file_types"] ul li{
         display: inline-table;
         width: 20%
 }
 
+fieldset[id^="jch_options_staticfiles"] ul li label,
 fieldset[id^="jch_options_pro_staticfiles"] ul li label,
 fieldset[id^="jch_options_pro_http2_file_types"] ul li label{
 	margin-left: 5px !important;

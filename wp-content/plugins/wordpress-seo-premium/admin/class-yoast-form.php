@@ -21,12 +21,16 @@ class Yoast_Form {
 	public static $instance;
 
 	/**
+	 * The short name of the option to use for the current page.
+	 *
 	 * @var string
 	 * @since 2.0
 	 */
 	public $option_name;
 
 	/**
+	 * Option values for the WPSEO_Options.
+	 *
 	 * @var array
 	 * @since 2.0
 	 */
@@ -262,9 +266,6 @@ class Yoast_Form {
 
 		$class = '';
 		if ( $label_left !== false ) {
-			if ( ! empty( $label_left ) ) {
-				$label_left .= ':';
-			}
 			$this->label( $label_left, array( 'for' => $var ) );
 		}
 		else {
@@ -360,13 +361,21 @@ class Yoast_Form {
 		}
 
 		$this->label(
-			$label . ':',
+			$label,
 			array(
 				'for'   => $var,
 				'class' => 'textinput',
 			)
 		);
-		echo '<input' . $attributes . ' class="textinput ' . esc_attr( $attr['class'] ) . ' " placeholder="' . esc_attr( $attr['placeholder'] ) . '" type="text" id="', esc_attr( $var ), '" name="', esc_attr( $this->option_name ), '[', esc_attr( $var ), ']" value="', esc_attr( $val ), '"', disabled( $this->is_control_disabled( $var ), true, false ), '/>', '<br class="clear" />';
+
+		$has_input_error = Yoast_Input_Validation::yoast_form_control_has_error( $var );
+		$aria_attributes = Yoast_Input_Validation::get_the_aria_invalid_attribute( $var );
+
+		Yoast_Input_Validation::set_error_descriptions();
+		$aria_attributes .= Yoast_Input_Validation::get_the_aria_describedby_attribute( $var );
+
+		echo '<input' . $attributes . $aria_attributes . ' class="textinput ' . esc_attr( $attr['class'] ) . '" placeholder="' . esc_attr( $attr['placeholder'] ) . '" type="text" id="', esc_attr( $var ), '" name="', esc_attr( $this->option_name ), '[', esc_attr( $var ), ']" value="', esc_attr( $val ), '"', disabled( $this->is_control_disabled( $var ), true, false ), '/>', '<br class="clear" />';
+		echo Yoast_Input_Validation::get_the_error_description( $var );
 	}
 
 	/**
@@ -394,7 +403,7 @@ class Yoast_Form {
 		$val      = ( isset( $this->options[ $var ] ) ) ? $this->options[ $var ] : '';
 
 		$this->label(
-			$label . ':',
+			$label,
 			array(
 				'for'   => $var,
 				'class' => 'textinput',
@@ -443,7 +452,7 @@ class Yoast_Form {
 
 		if ( $show_label ) {
 			$this->label(
-				$label . ':',
+				$label,
 				array(
 					'for'   => $var,
 					'class' => 'select',
@@ -493,7 +502,7 @@ class Yoast_Form {
 
 		$var_esc = esc_attr( $var );
 		$this->label(
-			$label . ':',
+			$label,
 			array(
 				'for'   => $var,
 				'class' => 'select',
@@ -532,7 +541,7 @@ class Yoast_Form {
 		$var_esc = esc_attr( $var );
 
 		$this->label(
-			$label . ':',
+			$label,
 			array(
 				'for'   => 'wpseo_' . $var,
 				'class' => 'select',

@@ -19,9 +19,14 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeUrl
+use JchOptimize\Platform\Uri;
+
+class Url
 {
 
         /**
@@ -37,19 +42,19 @@ class JchOptimizeUrl
                         $sUrl = self::toAbsolute($sUrl);
                 }
 
-                $oUrl = clone JchPlatformUri::getInstance($sUrl);
+                $oUrl = clone Uri::getInstance($sUrl);
 
                 $sUrlBase = $oUrl->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
                 $sUrlHost = $oUrl->toString(array('scheme', 'user', 'pass', 'host', 'port'));
 
-                $sBase = JchPlatformUri::base();
+                $sBase = Uri::base();
 
                 if (stripos($sUrlBase, $sBase) !== 0 && !empty($sUrlHost))
                 {
-                        return FALSE;
+                        return false;
                 }
 
-                return TRUE;
+                return true;
         }
 
         /**
@@ -156,11 +161,11 @@ class JchOptimizeUrl
                         $sUrl = (empty($sCurFile) ? '' : dirname($sCurFile) . '/' ) . $sUrl;
                 }
                 
-                $sUrl = JchPlatformUri::getInstance($sUrl)->toString(array('path', 'query', 'fragment'));
+                $sUrl = Uri::getInstance($sUrl)->toString(array('path', 'query', 'fragment'));
                 
                 if(self::isPathRelative($sUrl))
                 {
-                        $sUrl = rtrim(JchPlatformUri::base(TRUE), '\\/') . '/' . $sUrl;
+                        $sUrl = rtrim(Uri::base(TRUE), '\\/') . '/' . $sUrl;
                 }
                 
                 return $sUrl;
@@ -173,7 +178,7 @@ class JchOptimizeUrl
          */
         public static function toAbsolute($sUrl, $sCurFile='SERVER')
         {
-                $oUri = clone JchPlatformUri::getInstance($sCurFile);
+                $oUri = clone Uri::getInstance($sCurFile);
                 
                 if(self::isPathRelative($sUrl))
                 {
@@ -194,7 +199,7 @@ class JchOptimizeUrl
                                 $sUrl = $scheme . ':' . $sUrl;
                         }
                         
-                        $oUri = JchPlatformUri::getInstance($sUrl);
+                        $oUri = Uri::getInstance($sUrl);
                 }
                         
                 $sUrl = $oUri->toString();

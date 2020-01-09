@@ -19,9 +19,14 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeCron
+use JchOptimize\Platform\Profiler;
+use JchOptimize\Platform\Cache;
+
+class Cron
 {
         public $params;
         
@@ -51,19 +56,19 @@ class JchOptimizeCron
          */
         public function getAdminObject($oParser)
         {
-                JCH_DEBUG ? JchPlatformProfiler::start('GetAdminObject') : null;
+                JCH_DEBUG ? Profiler::start('GetAdminObject') : null;
                 
                 try
                 {
-                        $oAdmin = new JchOptimizeAdmin($this->params);
-                        $oAdmin->getAdminLinks($oParser->getOriginalHtml(), JchPlatformUtility::menuId());
+                        $oAdmin = new Admin($this->params);
+                        $oAdmin->getAdminLinks($oParser->getOriginalHtml(), Utility::menuId());
                 }
                 catch (Exception $ex)
                 {
-                        JchOptimizeLogger::log($ex->getMessage(), $this->params);
+                        Logger::log($ex->getMessage(), $this->params);
                 }
                 
-                JCH_DEBUG ? JchPlatformProfiler::stop('GetAdminObject', true) : null;
+                JCH_DEBUG ? Profiler::stop('GetAdminObject', true) : null;
         }
         
         /**
@@ -71,12 +76,12 @@ class JchOptimizeCron
          */
         public function garbageCron()
         {
-                JCH_DEBUG ? JchPlatformProfiler::start('GarbageCron') : null;
+                JCH_DEBUG ? Profiler::start('GarbageCron') : null;
                 
-               // $url = JchPlatformPaths::ajaxUrl('garbagecron');
-               // JchOptimizeHelper::postAsync($url, $this->params, array('async' => '1'));
-		JchPlatformCache::gc();
+               // $url = Paths::ajaxUrl('garbagecron');
+               // Helper::postAsync($url, $this->params, array('async' => '1'));
+		Cache::gc();
 
-                JCH_DEBUG ? JchPlatformProfiler::stop('GarbageCron', true) : null;
+                JCH_DEBUG ? Profiler::stop('GarbageCron', true) : null;
         }
 }

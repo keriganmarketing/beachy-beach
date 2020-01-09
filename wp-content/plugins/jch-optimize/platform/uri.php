@@ -20,9 +20,14 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformUri implements JchInterfaceUri
+use JchOptimize\Core\Helper;
+
+class Uri implements \JchOptimize\Interfaces\UriInterface
 {
 
         private $aUri;
@@ -131,13 +136,13 @@ class JchPlatformUri implements JchInterfaceUri
         /**
          * 
          * @param type $uri
-         * @return \JchPlatformUri
+         * @return \JchOptimize\Platform\Uri
          */
         public static function getInstance($uri = 'SERVER')
         {
                 if (empty(self::$aInstances[$uri]))
                 {
-                        self::$aInstances[$uri] = new JchPlatformUri($uri);
+                        self::$aInstances[$uri] = new Uri($uri);
                 }
 
                 return self::$aInstances[$uri];
@@ -160,7 +165,7 @@ class JchPlatformUri implements JchInterfaceUri
                         $uri = str_replace(array("'", '"', '<', '>'), array("%27", "%22", "%3C", "%3E"), $uri);
                 }
 
-                $this->aUri = JchOptimizeHelper::parseUrl($uri);
+                $this->aUri = Helper::parseUrl($uri);
         }
 
         /**
@@ -178,7 +183,7 @@ class JchPlatformUri implements JchInterfaceUri
          */
         public static function currentUrl()
         {
-                $oUri = JchPlatformUri::getInstance();
+                $oUri = Uri::getInstance();
 
                 return $oUri->toString(array('scheme', 'host', 'port', 'path'));
         }

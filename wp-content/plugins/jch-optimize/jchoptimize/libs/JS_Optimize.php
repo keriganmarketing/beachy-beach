@@ -1,7 +1,5 @@
 <?php
 
-namespace JchOptimize;
-
 /**
  * This is a regular expressions based implementation of the JSMin algorithim in PHP as described 
  * on Douglas Crockford's page at http://www.crockford.com/javascript/jsmin.html and also 
@@ -45,6 +43,9 @@ namespace JchOptimize;
  * @license http://opensource.org/licenses/mit-license.php MIT License
  * 
  */
+
+namespace JchOptimize\LIBS;
+
 class JS_Optimize extends Optimize
 {
         public $js;

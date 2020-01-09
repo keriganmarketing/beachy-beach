@@ -2,6 +2,8 @@
 
 final class NF_Display_Render
 {
+    protected static $render_instance_count = array();
+
     protected static $loaded_templates = array(
         'app-layout',
         'app-before-form',
@@ -80,6 +82,9 @@ final class NF_Display_Render
 
             unset( $settings[ $name ] );
         }
+
+        // Remove the embed_form setting to avoid pagebuilder conflicts.
+        $settings[ 'embed_form' ] = '';
 
         $settings = array_merge( Ninja_Forms::config( 'i18nFrontEnd' ), $settings );
         $settings = apply_filters( 'ninja_forms_display_form_settings', $settings, $form_id );
@@ -251,6 +256,8 @@ final class NF_Display_Render
                 }
 
                 $settings = $field[ 'settings' ];
+                // Scrub any values that might be stored in data. Defaults will set these later.
+                $settings['value'] = '';
                 foreach ($settings as $key => $setting) {
                     if (is_numeric($setting) && 'custom_mask' != $key )
                     	$settings[$key] =
@@ -307,6 +314,7 @@ final class NF_Display_Render
                     $settings[ 'product_price' ] = str_replace( '||', '.', $settings[ 'product_price' ] );
 
                 } elseif ('total' == $settings['type'] && isset($settings['value'])) {
+                    if ( empty( $settings['value'] ) ) $settings['value'] = 0;
                     $settings['value'] = number_format($settings['value'], 2);
                 }
 
@@ -352,6 +360,21 @@ final class NF_Display_Render
 
         $fields = apply_filters( 'ninja_forms_display_fields', $fields );
 
+        if(!isset($_GET['nf_preview_form'])){
+            /* Render Instance Fix */
+            $instance_id = $form_id;
+            if( ! isset(self::$render_instance_count[$form_id]) ) self::$render_instance_count[$form_id] = 0;
+            if(self::$render_instance_count[$form_id]) {
+                $instance_id .= '_' . self::$render_instance_count[$form_id];
+                foreach( $fields as $id => $field ) {
+                    $fields[$id]['id'] .= '_' . self::$render_instance_count[$form_id];
+                }
+            }
+            self::$render_instance_count[$form_id]++;
+            $form_id = $instance_id;
+            /* END Render Instance Fix */
+        }
+
         // Output Form Container
         do_action( 'ninja_forms_before_container', $form_id, $form->get_settings(), $form_fields );
         Ninja_Forms::template( 'display-form-container.html.php', compact( 'form_id' ) );
@@ -389,6 +412,8 @@ final class NF_Display_Render
         $form[ 'settings' ] = array_merge( Ninja_Forms::config( 'i18nFrontEnd' ), $form[ 'settings' ] );
         $form[ 'settings' ] = apply_filters( 'ninja_forms_display_form_settings', $form[ 'settings' ], $form_id );
 
+        // Remove the embed_form setting to avoid pagebuilder conflicts.
+        $form[ 'settings' ][ 'embed_form' ] = '';
 
         $form[ 'settings' ][ 'is_preview' ] = TRUE;
 
@@ -416,6 +441,8 @@ final class NF_Display_Render
             foreach ($form['fields'] as $field_id => $field) {
 
                 $field_type = $field['settings']['type'];
+                // Scrub any values that might be stored in data. Defaults will set these later.
+                $field['settings']['value'] = '';
 
                 if( ! isset( Ninja_Forms()->fields[ $field_type ] ) ) continue;
                 if( ! apply_filters( 'ninja_forms_preview_display_type_' . $field_type, TRUE ) ) continue;
@@ -659,14 +686,6 @@ final class NF_Display_Render
                 }
             }
         }
-
-        ?>
-        <script>
-            var post_max_size = '<?php echo WPN_Helper::string_to_bytes( ini_get('post_max_size') ); ?>';
-            var upload_max_filesize = '<?php echo WPN_Helper::string_to_bytes( ini_get( 'upload_max_filesize' ) ); ?>';
-            var wp_memory_limit = '<?php echo WPN_Helper::string_to_bytes( WP_MEMORY_LIMIT ); ?>';
-        </script>
-        <?php
 
         // Action to Output Custom Templates
         do_action( 'ninja_forms_output_templates' );

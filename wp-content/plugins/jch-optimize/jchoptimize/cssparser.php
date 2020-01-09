@@ -19,43 +19,20 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeCssParserBase extends JchOptimize\Optimize
-{
-
-        /**
-         * 
-         * @return type
-         */
-        public static function fontFiles()
-        {
-                return array();
-        }
-
-        /**
-         * 
-         * @param type $sContents
-         * @param type $sHtml
-         * @return string
-         */
-        public function optimizeCssDelivery($sContents, $sHtml)
-        {
-                $aContents = array(
-                        'font-face'   => '',
-                        'criticalcss' => ''
-                );
-
-                return $aContents;
-        }
-
-}
+use JchOptimize\Platform\Uri;
+use JchOptimize\Platform\Profiler;
+use JchOptimize\Platform\Utility;
 
 /**
  * 
  * 
  */
-class JchOptimizeCssParser extends JchOptimizeCssParserBase
+class CssParser extends \JchOptimize\Minify\Base
 {
 
         public $sLnEnd      = '';
@@ -71,7 +48,7 @@ class JchOptimizeCssParser extends JchOptimizeCssParserBase
          */
         public function __construct($params = NULL, $bBackend = false)
         {
-                $this->sLnEnd = is_null($params) ? "\n" : JchPlatformUtility::lnEnd();
+                $this->sLnEnd = is_null($params) ? "\n" : Utility::lnEnd();
                 $this->params = $params;
 
                 $this->bBackend = $bBackend;
@@ -287,7 +264,7 @@ class JchOptimizeCssParser extends JchOptimizeCssParserBase
         {
                 if (preg_match_all($sAtRulesRegex, $sContent, $aMatches) === FALSE)
                 {
-                        //JchOptimizeLogger::log(sprintf('Error parsing for at rules in %s', $sUrl['url']), $this->params);
+                        //Logger::log(sprintf('Error parsing for at rules in %s', $sUrl['url']), $this->params);
 
                         return $sContent;
                 }
@@ -355,31 +332,31 @@ class JchOptimizeCssParser extends JchOptimizeCssParserBase
                 $sImageUrl   = $aMatches[1];
                 $sCssFileUrl = empty($aUrl['url']) ? '' : $aUrl['url'];
 
-                if (JchOptimizeUrl::isHttpScheme($sImageUrl))
+                if (Url::isHttpScheme($sImageUrl))
                 {
-                        if (($sCssFileUrl == '' || JchOptimizeUrl::isInternal($sCssFileUrl)) && JchOptimizeUrl::isInternal($sImageUrl))
+                        if (($sCssFileUrl == '' || Url::isInternal($sCssFileUrl)) && Url::isInternal($sImageUrl))
                         {
 				
 
-                                $sImageUrl = JchOptimizeUrl::toRootRelative($sImageUrl, $sCssFileUrl);
+                                $sImageUrl = Url::toRootRelative($sImageUrl, $sCssFileUrl);
 
-                                $oImageUri = clone JchPlatformUri::getInstance($sImageUrl);
+                                $oImageUri = clone Uri::getInstance($sImageUrl);
 
                                 if ($this->params->get('pro_cookielessdomain_enable', '0') && $bInFontFace)
                                 {
-                                        $oUri = clone JchPlatformUri::getInstance();
+                                        $oUri = clone Uri::getInstance();
 
                                         $sImageUrl = '//' . $oUri->toString(array('host', 'port')) .
                                                 $oImageUri->toString(array('path', 'query', 'fragment'));
                                 }
 				else
 				{
-					$sImageUrlCdn = JchOptimizeHelper::cookieLessDomain($this->params, $oImageUri->toString(array('path')), $sImageUrl);
+					$sImageUrlCdn = Helper::cookieLessDomain($this->params, $oImageUri->toString(array('path')), $sImageUrl);
 					
 					//If CSS file will be loaded by CDN but image won't then return absolute url
-					if ($this->params->get('pro_cookielessdomain_enable', '0') && in_array('css', JchOptimizeHelper::getCdnFileTypes($this->params)) && $sImageUrlCdn == $sImageUrl)
+					if ($this->params->get('pro_cookielessdomain_enable', '0') && in_array('css', Helper::getCdnFileTypes($this->params)) && $sImageUrlCdn == $sImageUrl)
 					{
-						$sImageUrl = JchOptimizeUrl::toAbsolute($sImageUrl);
+						$sImageUrl = Url::toAbsolute($sImageUrl);
 					}
 					else
 					{
@@ -390,9 +367,9 @@ class JchOptimizeCssParser extends JchOptimizeCssParserBase
                         }
                         else
                         {
-                                if (!JchOptimizeUrl::isAbsolute($sImageUrl))
+                                if (!Url::isAbsolute($sImageUrl))
                                 {
-                                        $sImageUrl = JchOptimizeUrl::toAbsolute($sImageUrl, $sCssFileUrl);
+                                        $sImageUrl = Url::toAbsolute($sImageUrl, $sCssFileUrl);
                                 }
 				else
 				{
@@ -426,7 +403,7 @@ class JchOptimizeCssParser extends JchOptimizeCssParserBase
 
                 if (is_null($sCssMediaImports))
                 {
-                        //JchOptimizeLogger::log('Failed matching for imports within media queries in css', $this->params);
+                        //Logger::log('Failed matching for imports within media queries in css', $this->params);
 
                         return $sCss;
                 }
@@ -507,5 +484,485 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 
 		return $sCss;
 	}
-        
+
+        public static function cssRulesRegex()
+        {
+                $c = self::BLOCK_COMMENT . '|' . self::LINE_COMMENT;
+
+                $r =  "(?:\s*+(?>$c)\s*+)*+\K"
+                        . "((?>[^{}@/]*+(?:/(?![*/])|(?<=\\\\)[{}@/])?)*?)(?>{[^{}]*+}|(@[^{};]*+)(?>({((?>[^{}]++|(?3))*+)})|;?)|$)";
+
+		return $r;
+        }
+
+        /**
+	 * Extracts the critical CSS required to render content above the fold from the combined CSS contents
+	 *
+	 * @param    array      $aContents   Array of combined CSS contents, passed by reference. @font-face (and possibly
+	 * 				     unused CSS) will be removed
+         * @param    string     $sHtml       The HTML content of the page stripped of all <style/>'s and <scripts/>'s
+	 *
+	 * @return   string     Critical CSS 
+         */
+        public function optimizeCssDelivery(&$aContents, $sHtml)
+        {
+		if (!class_exists('DOMDocument') || !class_exists('DOMXPath'))
+		{
+			Logger::log('Document Object Model not supported', $this->params);
+
+			return parent::optimizeCssDelivery($aContents, $sHtml);
+		}
+
+                JCH_DEBUG ? Profiler::start('OptimizeCssDelivery') : null;
+
+                $this->_debug('', '');
+
+		//Place space around HTML attributes for easy processing with XPath
+                $sHtml = preg_replace('#\s*=\s*["\']([^"\']++)["\']#i', '=" $1 "', $sHtml);
+		//Remove text nodes from HTML elements
+                $sHtml = preg_replace_callback('#(<(?>[^<>]++|(?1))*+>)|((?<=>)(?=[^<>\S]*+[^<>\s])[^<>]++)#',
+                                                        function($m)
+                {
+                        if (!empty($m[1]))
+                        {
+                                return $m[0];
+                        }
+
+                        if (!empty($m[2]))
+                        {
+                                return ' ';
+                        }
+
+                }, $sHtml);
+
+                $this->_debug('', '', 'afterHtmlAdjust');
+
+		//Truncate HTML to number of elements set in params
+                $sHtmlAboveFold = '';
+                preg_replace_callback('#<(?:[a-z0-9]++)(?:[^>]*+)>(?><?[^<]*+)*?(?=<[a-z0-9])#i',
+                                      function($aM) use (&$sHtmlAboveFold)
+                {
+                        $sHtmlAboveFold .= $aM[0];
+
+                        return;
+                }, $sHtml, (int) $this->params->get('optimizeCssDelivery', '200'));
+
+                $this->_debug('', '', 'afterHtmlTruncated');
+
+                $oDom = new \DOMDocument();
+
+		//Load HTML in DOM 
+                libxml_use_internal_errors(TRUE);
+                $oDom->loadHtml($sHtmlAboveFold);
+                libxml_clear_errors();
+
+                $oXPath = new \DOMXPath($oDom);
+
+                $this->_debug('', '', 'afterLoadHtmlDom');
+
+		//There should be only one value in array if feature enabled. All CSS should be combined in one file
+		$sCombinedCss = $aContents[0];
+		$sFullHtml    = $sHtml;
+
+		//Extracts critical css, storing in $sCriticalCss. @font-face will be returned in $sContents
+                $sCriticalCss = '';
+                $sCombinedCss = preg_replace_callback(
+                        '#' . self::cssRulesRegex() . '#',
+                        function ($aMatches) use ($oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss)
+                {
+                        return $this->extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, $sCriticalCss);
+                }, $sCombinedCss);
+
+                $this->_debug('', '', 'afterExtractCriticalCss');
+
+		$aContents[0] = $sCombinedCss;
+
+                $sCriticalCss = preg_replace('#@media[^{]*+{[^\S}]*+}#', '', $sCriticalCss);
+                //$sCriticalCss = preg_replace('#@media[^{]*+{[^\S}]*+}#', '', $sCriticalCss);
+                $sCriticalCss = preg_replace('#/\*\*\*!+[^!]+!\*\*\*+/[^\S]*+(?=\/\*\*\*!|$)#', '', $sCriticalCss);
+                $sCriticalCss = preg_replace('#\s*[\r\n]{2,}\s*#', "\n\n", $sCriticalCss);
+
+                $this->_debug(self::cssRulesRegex(), '', 'afterCleanCriticalCss');
+
+                JCH_DEBUG ? Profiler::stop('OptimizeCssDelivery', TRUE) : null;
+
+                return $sCriticalCss;
+        }
+
+        /**
+	 * Callback function to extract critical css
+	 *
+         * @param    array    $aMatches         Match of each CSS declaration
+         * @param    DOMXPath $oXPath
+	 * @param    string   $sHtmlAboveFold   Section of HTML above the fold
+	 * @param    string   $sFullHtml        Complete HTML
+         * @param    string   $sCriticalCss     Variable holding critical css
+	 *
+         * @return   string   The original matched CSS declaration or empty string if removed
+         */
+        public function extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss)
+        {
+                $matches0 = trim($aMatches[0]);
+
+		if (empty($matches0))
+		{
+			return;
+		}
+
+		//add all @font-face to the critical css
+                if (preg_match('#^(?>@(?:-[^-]+-)?(?:font-face))#i', $matches0))
+                {
+			if (!preg_match('#font-display#i', $matches0))
+			{
+				$sCriticalCss .= rtrim(substr($matches0, 0, -1),';') . ';font-display:swap}';
+
+			}
+			else
+			{
+				$sCriticalCss .= $aMatches[0];
+			}
+
+			//Remove @font-face from combined CSS
+                        return '';
+                }
+
+		//recurse into each @media rule
+                if (preg_match('#^@media#', $matches0))
+                {
+                        $sCriticalCss .= $aMatches[2] . '{';
+
+                        $sMediaCss = preg_replace_callback(
+                                '#' . self::cssRulesRegex() . '#',
+                                function ($aMatches) use ($oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss)
+                        {
+                                return $this->extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, $sCriticalCss);
+                        }, $aMatches[4]);
+
+                        $sCriticalCss .= $this->sLnEnd . '}' . $this->sLnEnd;
+
+                        return $aMatches[2] . '{' . $sMediaCss . '}' . $this->sLnEnd;
+                }
+
+		//Return all other @rules
+                if (preg_match('#^\s*+@(?:-[^-]+-)?(?:page|keyframes|charset|namespace)#i', $matches0))
+                {
+                        return $aMatches[0];
+                }
+
+		//we're inside a @media rule or global css
+		//remove pseudo-selectors
+                $sSelectorGroup = preg_replace('#:not\([^)]+\)|::?[a-zA-Z0-9(\[\])-]+#', '', $aMatches[1]);
+		//Split selector groups into individual selector chains
+                $aSelectorChains = array_filter(explode(',', $sSelectorGroup));
+                $aFoundSelectorChains = array();
+
+		//Iterate through each selector chain 
+                foreach ($aSelectorChains as $sSelectorChain)
+                {
+			//If Selector chain is already in critical css just go ahead and add this group
+			if(strpos($sCriticalCss, $sSelectorChain) !== false)
+			{
+				$sCriticalCss .= $aMatches[0];
+
+				//Retain matched CSS in combined CSS
+				return $aMatches[0];
+			}
+
+			//Check CSS selector chain against HTMl above the fold to find a match
+			if ($this->checkCssAgainstHtml($sSelectorChain, $sHtmlAboveFold))
+			{
+				//Match found, add selector chain to array
+				$aFoundSelectorChains[] = $sSelectorChain;
+			}
+                }
+
+		//If no valid selector chain was found in the group then we don't add this selector group to the critical CSS
+                if (empty($aFoundSelectorChains))
+                {
+                        $this->_debug('', '', 'afterSelectorNotFound');
+
+			
+			//
+			//Simply return match to combined CSS without adding to critical css
+                        return $aMatches[0];
+                }
+
+		//Group the found selector chains
+                $sFoundSelectorGroup = implode(',', array_unique($aFoundSelectorChains));
+		//remove any backslash used for escaping
+		//$sFoundSelectorGroup = str_replace('\\', '', $sFoundSelectorGroup);
+
+                $this->_debug($sFoundSelectorGroup, '', 'afterSelectorFound');
+
+		//Convert the selector group to Xpath
+                $sXPath = $this->convertCss2XPath($sFoundSelectorGroup);
+
+                $this->_debug($sXPath, '', 'afterConvertCss2XPath');
+
+                if ($sXPath)
+                {
+                        $aXPaths = array_unique(explode(' | ', str_replace('\\', '', $sXPath)));
+
+                        foreach ($aXPaths as $sXPathValue)
+                        {
+                                $oElement = $oXPath->query($sXPathValue);
+
+//                                if ($oElement === FALSE)
+//                                {
+//                                        echo $aMatches[1] . "\n";
+//                                        echo $sXPath . "\n";
+//                                        echo $sXPathValue . "\n";
+//                                        echo "\n\n";
+//                                }
+
+				//Match found! Add to critical CSS
+                                if ($oElement !== false && $oElement->length)
+                                {
+                                        $sCriticalCss .= $aMatches[0];
+                                        $this->_debug($sXPathValue, '', 'afterCriticalCssFound');
+
+                                        return $aMatches[0];
+                                }
+
+                                $this->_debug($sXPathValue, '', 'afterCriticalCssNotFound');
+                        }
+                }
+
+		//No match found for critical CSS. 
+		//Just return the original CSS declaration match to combined file
+                return $aMatches[0];
+        }
+
+	/**
+	 * Do a preliminary simple check to see if a CSS declaration is used by the HTML
+	 *
+	 * @param    string    $sSelectorChain
+	 * @param    string    $sHtml
+	 * 
+	 * @return   boolean   True is all parts of the CSS selector is found in the HTML, false if not
+	 */
+	protected function checkCssAgainstHtml($sSelectorChain, $sHtml)
+	{
+		//Split selector chain into simple selectors
+		$aSimpleSelectors = preg_split('#[^\[ >+]*+(?:\[[^\]]*+\])?\K(?:[ >+]*+|$)#', trim($sSelectorChain), -1, PREG_SPLIT_NO_EMPTY);
+
+		//We'll do a quick check first if all parts of each simple selector is found in the HTML
+		//Iterate through each simple selector
+		foreach ($aSimpleSelectors  as $sSimpleSelector)
+		{
+			//Match the simple selector into its components
+			$sSimpleSelectorRegex = '#([a-z0-9]*)(?:([.\#]((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))|(\[((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+)(?:[~|^$*]?=(?|"([^"\]]*+)"|\'([^\'\]]*+)\'|([^\]]*+)))?\]))*#i';
+			if (preg_match($sSimpleSelectorRegex, $sSimpleSelector, $aS))
+			{
+				//Elements
+				if (!empty($aS[1]))
+				{
+					$sNeedle = '<' . $aS[1];
+
+					if (!empty($sNeedle) && strpos($sHtml, $sNeedle) === false)
+					{
+						//Element part of selector not found, 
+						//abort and check next selector chain
+						return false;
+					}
+				}
+
+				//Attribute selectors 
+				if (!empty($aS[4]))
+				{
+					//If the value of the attribute is set we'll look for that
+					//otherwise just look for the attribute
+					$sNeedle = !empty($aS[6]) ? $aS[6] : $aS[5];// . '="';
+
+					if (!empty($sNeedle) && strpos($sHtml, str_replace('\\', '', $sNeedle)) === false)
+					{
+						//Attribute part of selector not found, 
+						//abort and check next selector chain
+						return false;
+					}
+				}
+
+				//Ids or Classes
+				if (!empty($aS[2]))
+				{
+					$sNeedle = ' ' . $aS[3] . ' ';
+
+					if (!empty($sNeedle) && strpos($sHtml, str_replace('\\', '', $sNeedle)) === false)
+					{
+						//Id or class part of selector not found, 
+						//abort and check next selector chain
+						return false;
+					}
+				}
+
+				//we found this Selector so let's remove it from the chain in case we need to check it 
+				//against the HTML below the fold
+				str_replace($sSimpleSelector, '', $sSelectorChain);
+			}
+
+		}
+		//If we get to this point then we've found a simple selector that has all parts in the 
+		//HTML. Let's save this selector chain and refine its search with Xpath.
+		return true;
+	}
+
+        /**
+         * 
+         * @param type $sSelector
+         * @return boolean
+         */
+        public function convertCss2XPath($sSelector)
+        {
+                $sSelector = preg_replace('#\s*([>+~,])\s*#', '$1', $sSelector);
+                $sSelector = trim($sSelector);
+                $sSelector = preg_replace('#\s+#', ' ', $sSelector);
+
+
+                if (!$sSelector)
+                {
+                        return FALSE;
+                }
+
+                $sSelectorRegex = '#(?!$)'
+                        . '([>+~, ]?)' //separator
+                        . '([*a-z0-9]*)' //element
+                        . '(?:(([.\#])((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))(([.\#])((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))?|'//class or id
+                        . '(\[((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+)(([~|^$*]?=)["\']?([^\]"\']+)["\']?)?\]))*' //attribute
+                        . '#i';
+
+                return preg_replace_callback($sSelectorRegex, array($this, '_tokenizer'), $sSelector) . '[1]';
+        }
+
+        /**
+         * 
+         * @param type $aM
+         */
+        protected function _tokenizer($aM)
+        {
+                $sXPath = '';
+
+                switch ($aM[1])
+                {
+                        case '>':
+                                $sXPath .= '/';
+
+                                break;
+                        case '+':
+                                $sXPath .= '/following-sibling::*';
+
+                                break;
+                        case '~':
+                                $sXPath .= '/following-sibling::';
+
+                                break;
+                        case ',':
+                                $sXPath .= '[1] | descendant-or-self::';
+
+                                break;
+                        case ' ':
+                                $sXPath .= '/descendant::';
+
+                                break;
+                        default:
+                                $sXPath .= 'descendant-or-self::';
+                                break;
+                }
+
+                if ($aM[1] != '+')
+                {
+                        $sXPath .= $aM[2] == '' ? '*' : $aM[2];
+                }
+
+                if (isset($aM[3]) || isset($aM[9]))
+                {
+                        $sXPath .= '[';
+
+                        $aPredicates = array();
+
+                        if (isset($aM[4]) && $aM[4] == '.')
+                        {
+                                $aPredicates[] = "contains(@class, ' " . $aM[5] . " ')";
+                        }
+
+                        if (isset($aM[7]) && $aM[7] == '.')
+                        {
+                                $aPredicates[] = "contains(@class, ' " . $aM[8] . " ')";
+                        }
+
+                        if (isset($aM[4]) && $aM[4] == '#')
+                        {
+                                $aPredicates[] = "@id = ' " . $aM[5] . " '";
+                        }
+
+                        if (isset($aM[7]) && $aM[7] == '#')
+                        {
+                                $aPredicates[] = "@id = ' " . $aM[8] . " '";
+                        }
+
+                        if (isset($aM[9]))
+                        {
+                                if (!isset($aM[11]))
+                                {
+                                        $aPredicates[] = '@' . $aM[10];
+                                }
+                                else
+                                {
+                                        switch ($aM[12])
+                                        {
+                                                case '=':
+                                                        $aPredicates[] = "@{$aM[10]} = ' {$aM[13]} '";
+
+                                                        break;
+                                                case '|=':
+                                                        $aPredicates[] = "(@{$aM[10]} = ' {$aM[13]} ' or "
+                                                                . "starts-with(@{$aM[10]}, ' {$aM[13]}'))";
+                                                        break;
+                                                case '^=':
+                                                        $aPredicates[] = "starts-with(@{$aM[10]}, ' {$aM[13]}')";
+                                                        break;
+                                                case '$=':
+                                                        $aPredicates[] = "substring(@{$aM[10]}, string-length(@{$aM[10]})-"
+                                                                . strlen($aM[13]) . ") = '{$aM[13]} '";
+                                                        break;
+                                                case '~=':
+                                                        $aPredicates[] = "contains(@{$aM[10]}, ' {$aM[13]} ')";
+                                                        break;
+                                                case '*=':
+                                                        $aPredicates[] = "contains(@{$aM[10]}, '{$aM[13]}')";
+                                                        break;
+                                                default: break; } }
+                        }
+
+                        if ($aM[1] == '+')
+                        {
+                                if ($aM[2] != '')
+                                {
+                                        $aPredicates[] = "(name() = '" . $aM[2] . "')";
+                                }
+
+                                $aPredicates[] = '(position() = 1)';
+                        }
+
+                        $sXPath .= implode(' and ', $aPredicates);
+                        $sXPath .= ']';
+                }
+
+                return $sXPath;
+        }
+
+        /**
+         * 
+         * @return string
+         */
+        public static function fontFiles()
+        {
+                $arr = array(
+                        'woff',
+                        'ttf',
+                        'otf',
+                        'eot'
+                );
+
+                return $arr;
+        }
 }

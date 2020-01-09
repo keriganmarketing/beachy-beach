@@ -21,6 +21,9 @@
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
+use JchOptimize\Platform\Cache;
+use JchOptimize\Core\Admin;
+
 class JchPluginInstaller {
 
 
@@ -43,7 +46,7 @@ class JchPluginInstaller {
 
 		try
 		{
-			$wp_filesystem = JchPlatformCache::getWpFileSystem();
+			$wp_filesystem = Cache::getWpFileSystem();
 		}
 		catch(Exception $e)
 		{
@@ -65,7 +68,7 @@ class JchPluginInstaller {
 PHPCODE;
 
 		$wp_filesystem->put_contents($file, $code, FS_CHMOD_FILE);
-		JchOptimizeAdmin::leverageBrowserCaching();
+		Admin::leverageBrowserCaching();
 	}
 
 	/**
@@ -84,7 +87,7 @@ PHPCODE;
 			$creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
 
 			/* initialize the API */
-			if ( ! WP_Filesystem($creds) ) {
+			if ( ! \WP_Filesystem($creds) ) {
 				/* any problems and we exit */
 				return false;
 			}	

@@ -19,13 +19,19 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
+
+use JchOptimize\Platform\Http;
+use JchOptimize\Platform\Paths;
 
 /**
  * 
  * 
  */
-class JchOptimizeFileRetriever
+class FileRetriever
 {
 
         protected static $instances = array();
@@ -39,7 +45,7 @@ class JchOptimizeFileRetriever
          */
         private function __construct($aDrivers)
         {
-               $this->oHttpAdapter = new JchPlatformHttp($aDrivers);
+               $this->oHttpAdapter = new Http($aDrivers);
         }
 
         /**
@@ -64,10 +70,10 @@ class JchOptimizeFileRetriever
 
                                 if (!isset($response) || $response === FALSE)
                                 {
-                                        throw new RuntimeException(sprintf('Failed getting file contents from %s', $sPath));
+                                        throw new \RuntimeException(sprintf('Failed getting file contents from %s', $sPath));
                                 }
                         }
-                        catch (RuntimeException $ex)
+                        catch (\RuntimeException $ex)
                         {
 				//Record error message
 				$this->response_error = $ex->getMessage();
@@ -103,7 +109,7 @@ class JchOptimizeFileRetriever
                         }
                         elseif ($this->oHttpAdapter->available())
                         {
-                                $sUriPath = JchPlatformPaths::path2Url($sPath);
+                                $sUriPath = Paths::path2Url($sPath);
 
                                 $sContents = $this->getFileContents($sUriPath, null, array(), $sPath);
                         }
@@ -126,7 +132,7 @@ class JchOptimizeFileRetriever
 
                 if (empty(static::$instances[$hash]))
                 {
-                        static::$instances[$hash] = new JchOptimizeFileRetriever($aDrivers);
+                        static::$instances[$hash] = new FileRetriever($aDrivers);
                 }
 
                 return static::$instances[$hash];

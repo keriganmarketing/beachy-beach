@@ -19,13 +19,16 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
 /**
  * Some basic utility functions required by the plugin and shared by class
  * 
  */
-class JchOptimizeBase extends JchOptimizeRegextokenizer
+class Base extends \JchOptimize\Minify\Base
 {
 
         /**
@@ -53,7 +56,7 @@ class JchOptimizeBase extends JchOptimizeRegextokenizer
 	public function setHeadHtml($sHtml)
 	{
 		$sHtml = $this->cleanRegexMarker($sHtml);
-		$this->sHtml = preg_replace($this->getHeadRegex(), JchOptimizeHelper::cleanReplacement($sHtml), $this->sHtml, 1);	
+		$this->sHtml = preg_replace($this->getHeadRegex(), Helper::cleanReplacement($sHtml), $this->sHtml, 1);	
 	}
 
         /**
@@ -74,7 +77,7 @@ class JchOptimizeBase extends JchOptimizeRegextokenizer
          */
         public function isHttpAdapterAvailable($sUrl)
         {
-                return !(preg_match('#^(?:http|//)#i', $sUrl) && !JchOptimizeUrl::isInternal($sUrl)
+                return !(preg_match('#^(?:http|//)#i', $sUrl) && !Url::isInternal($sUrl)
                         || $this->isPHPFile($sUrl));
         }
 

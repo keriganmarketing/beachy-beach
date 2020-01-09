@@ -7,7 +7,7 @@ Author: JP-Secure
 Author URI: http://www.jp-secure.com/eng/
 Text Domain: siteguard
 Domain Path: /languages/
-Version: 1.4.3
+Version: 1.5.0
 */
 
 /*  Copyright 2014 JP-Secure Inc
@@ -241,6 +241,14 @@ class SiteGuard extends SiteGuard_Base {
 		if ( version_compare( $old_version, '1.3.0' ) < 0 ) {
 			$siteguard_login_history->init( );
 			$siteguard_xmlrpc->init( );
+		}
+		if ( version_compare( $old_version, '1.5.0' ) < 0 ) {
+		    $admin_filter_exclude_path = $siteguard_config->get( 'admin_filter_exclude_path' );
+		    if( false === strpos($admin_filter_exclude_path, 'site-health.php' ) ){
+		        $admin_filter_exclude_path .= ', site-health.php';
+		        $siteguard_config->set( 'admin_filter_exclude_path',  $admin_filter_exclude_path );
+		        $siteguard_config->update( );
+		    }
 		}
 	}
 }

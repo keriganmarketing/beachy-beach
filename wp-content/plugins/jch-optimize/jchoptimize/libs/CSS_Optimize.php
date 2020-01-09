@@ -1,26 +1,12 @@
 <?php
 
-namespace JchOptimize;
-
 /**
- * Class Minify_CSS
- * @package Minify
+ * 
+ *
  */
 
-/**
- * Compress CSS
- *
- * This is a heavy regex-based removal of whitespace, unnecessary
- * comments and tokens, and some CSS value minimization, where practical.
- * Many steps have been taken to avoid breaking comment-based hacks,
- * including the ie5/mac filter (and its inversion), but expect tricky
- * hacks involving comment tokens in 'content' value strings to break
- * minimization badly. A test suite is available.
- *
- * @package Minify
- * @author Stephen Clay <steve@mrclay.org>
- * @author http://code.google.com/u/1stvamp/ (Issue 64 patch)
- */
+namespace JchOptimize\LIBS;
+
 class CSS_Optimize extends Optimize
 {
 
