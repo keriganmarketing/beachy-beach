@@ -16,6 +16,6 @@ wp-config.php
 
 # Content
 */cache/
-wp-content/wflogs
-wp-content/uploads
-wp-content/plugins
+wp-content/wflogs/
+wp-content/uploads/
+wp-content/plugins/

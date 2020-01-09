@@ -113,24 +113,24 @@ $bb = new BeachyBucket();
                     </div>
 
 
+                    </div>
                 </div>
-            </div>
-            <div class="clearfix"></div>
-        </header>
+                <div class="clearfix"></div>
+            </header>
 
-    </div>
-    <div class="hidden-lg-up">
-        <div class="navbar-collapse navbar-toggleable-lg text-center" id="navbar-mobile">
-            <?php wp_nav_menu(
-                array(
-                    'theme_location'  => 'menu-3',
-                    'container_class' => 'navbar-static',
-                    'container_id'    => 'mobile-navbar-dropdown',
-                    'menu_class'      => 'navbar-nav justify-content-end',
-                    'fallback_cb'     => '',
-                    'menu_id'         => 'menu-3',
-                    'walker'          => new WP_Bootstrap_Navwalker(),
-                )
-            ); ?>
         </div>
-    </div>
+        <div class="hidden-lg-up">
+            <div class="navbar-collapse navbar-toggleable-lg text-center" id="navbar-mobile">
+                <?php wp_nav_menu(
+                    array(
+                        'theme_location'  => 'menu-3',
+                        'container_class' => 'navbar-static',
+                        'container_id'    => 'navbarNavDropdown',
+                        'menu_class'      => 'navbar-nav justify-content-end',
+                        'fallback_cb'     => '',
+                        'menu_id'         => 'menu-3',
+                        'walker'          => new WP_Bootstrap_Navwalker(),
+                    )
+                ); ?>
+            </div>
+        </div>

@@ -72,10 +72,9 @@ class Leads
         $fullName = (isset($dataSubmitted['full_name']) ? $dataSubmitted['full_name'] : null);
         $dataSubmitted['full_name'] = (isset($dataSubmitted['first_name']) && isset($dataSubmitted['last_name']) ? $dataSubmitted['first_name'] . ' ' . $dataSubmitted['last_name'] : $fullName);
 
-        $this->addToDashboard($dataSubmitted);
         if(!$this->validateSubmission($dataSubmitted)){ return false; }
+        $this->addToDashboard($dataSubmitted);
         $this->sendNotifications($dataSubmitted);
-
     }
 
     /*
@@ -128,6 +127,8 @@ class Leads
             "1.0",                // Your website or app's software version (Used in the User-Agent: header when talking to Akismet)
             akismet_get_key()     
         );
+
+        // echo '<pre>',print_r($dataSubmitted),'</pre>';
 
         $result = $client->commentCheck([
             'user_ip'              => $dataSubmitted['ip_address'],

@@ -10,7 +10,6 @@ class RequestInfo extends Leads
     public function __construct ()
     {
         parent::__construct ();
-        parent::set('ccEmail','lacey@beachybeach.com');
         parent::assembleLeadData(
             [
                 'phone_number'       => 'Phone Number',
@@ -19,6 +18,7 @@ class RequestInfo extends Leads
                 'mls_number'         => 'MLS Number',
                 'message'            => 'Message',
                 'lead_for'           => 'Lead for',
+                'heard'              => 'How you heard about us'
             ]
         );
     }
@@ -33,6 +33,7 @@ class RequestInfo extends Leads
             $agent = new Agents();
             $agentInfo = $agent->assembleAgentData($dataSubmitted['selected_agent']);
             parent::set('adminEmail', (isset($agentInfo['email_address']) && $agentInfo['email_address'] != '' ? $agentInfo['email_address'] : $this->adminEmail));
+            parent::set('ccEmail','info@beachybeach.com');
             $dataSubmitted['lead_for'] = '';
 
         }elseif($dataSubmitted['lead_for'] == 'pcb'){
@@ -49,19 +50,22 @@ class RequestInfo extends Leads
 
         }
 
-        //parent::set($this->adminEmail,'bbaird85@gmail.com'); //temp
-        parent::addToDashboard($dataSubmitted);
-        if(parent::validateSubmission($dataSubmitted)){
-            echo '<div class="alert alert-success" role="alert">
-            <strong>Your request has been received. We will review your submission and get back with you soon.</strong>
-            </div>';
-        }else{
+        // parent::set('adminEmail','bryan@kerigan.com'); //temp
+
+        if(!parent::validateSubmission($dataSubmitted)){
             echo '<div class="alert alert-danger" role="alert">
             <strong>Errors were found. Please correct the indicated fields below.</strong>
             </div>';
-            return;
+            return false;
         }
+        
+        echo '<div class="alert alert-success" role="alert">
+        <strong>Your request has been received. We will review your submission and get back with you soon.</strong>
+        </div>';
+
+        parent::addToDashboard($dataSubmitted);
         $this->sendNotifications($dataSubmitted);
+            
     }
 
     protected function sendNotifications ($leadInfo)

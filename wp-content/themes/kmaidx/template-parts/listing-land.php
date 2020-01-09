@@ -7,7 +7,7 @@
  */
 ?>
 <div class="card" style="border-bottom:1px solid #ddd;">
-<table class="table table-striped listing-data mb-0">
+<table role="presentation" class="table table-striped listing-data mb-0">
 	<tbody>
 	<tr><td class="title">MLS#</td><td class="data"><?php echo $listingInfo->mls_account; ?></td></tr>
     <tr><td class="title">Status</td><td class="data"><?php echo $listingInfo->status; ?></td></tr>

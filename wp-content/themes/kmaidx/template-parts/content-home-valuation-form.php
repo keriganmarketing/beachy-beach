@@ -11,6 +11,7 @@ $youremail           = (isset($_GET['email_address']) ? $_GET['email_address'] :
 $phone               = (isset($_GET['phone_number']) ? $_GET['phone_number'] : '');
 $reason              = (isset($_GET['reason_for_contact']) ? $_GET['reason_for_contact'] : '');
 $mlsnumber           = (isset($_GET['mls_number']) ? $_GET['mls_number'] : '');
+$heard               = (isset($_GET['heard']) ? $_GET['heard'] : '');
 $agentOptions        = '';
 $listing_state       = '';
 
@@ -75,7 +76,6 @@ if( $formSubmitted ){ //FORM WAS SUBMITTED
             <label for="who" >Select an agent you'd like to work with.</label>
         </div>
         <div class="custom-controls-inline col-12 col-lg-4">
-
             <!-- <label class="custom-control custom-radio mt-2 mb-2">
                 <input id="radioStacked1" name="lead_for" type="radio" class="custom-control-input" onclick="toggleSelect();" value="pcb" <?= ($overrideFields ? 'disabled' : ''); ?>>
                 <span class="custom-control-indicator"></span>
@@ -96,10 +96,18 @@ if( $formSubmitted ){ //FORM WAS SUBMITTED
             <div class="form-group <?php echo ( $selectedAgent=='' && $formSubmitted ? 'has-error' : ''); ?> w-auto" id="agent-select-dd" style="margin:0;">
                 <label for="selected_agent" class="sr-only">Your Agent</label>
                 <select class="form-control" name="selected_agent" required>
+                    <option value="Pick the right agent for me" >Pick the right agent for me</option>
 			        <?php echo $agentOptions; ?>
                 </select>
             </div>
 
+        </div>
+
+        <div class="custom-controls-inline col-12 col-lg-8">
+            <label for="heard" class="sr-only">How did you hear about us?</label>
+            <div class="input-group mb-2">
+                <input name="heard" type="text" id="heard" class="textbox form-control <?php echo ( $phone && $formSubmitted ? 'has-error' : ''); ?>" value="<?php echo ($heard != '' ? $heard : ''); ?>" placeholder="How did you hear about us?">
+            </div>
         </div>
 
     </div>
