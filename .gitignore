@@ -5,7 +5,7 @@
 tags
 
 # Composer / Node
-# wp-content/themes/kmaidx/vendor/
+#wp-content/themes/kmaidx/vendor/
 #wp-content/themes/kmaidx/node_modules/
 
 # Logs & Config
@@ -16,6 +16,6 @@ wp-config.php
 
 # Content
 */cache/
-/wp-content/wflogs/
-/wp-content/uploads/
-/wp-content/plugins/
+wp-content/wflogs/
+wp-content/uploads/
+wp-content/plugins/

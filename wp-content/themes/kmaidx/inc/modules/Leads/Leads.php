@@ -72,10 +72,9 @@ class Leads
         $fullName = (isset($dataSubmitted['full_name']) ? $dataSubmitted['full_name'] : null);
         $dataSubmitted['full_name'] = (isset($dataSubmitted['first_name']) && isset($dataSubmitted['last_name']) ? $dataSubmitted['first_name'] . ' ' . $dataSubmitted['last_name'] : $fullName);
 
-        $this->addToDashboard($dataSubmitted);
         if(!$this->validateSubmission($dataSubmitted)){ return false; }
+        $this->addToDashboard($dataSubmitted);
         $this->sendNotifications($dataSubmitted);
-
     }
 
     /*
@@ -128,6 +127,8 @@ class Leads
             "1.0",                // Your website or app's software version (Used in the User-Agent: header when talking to Akismet)
             akismet_get_key()     
         );
+
+        // echo '<pre>',print_r($dataSubmitted),'</pre>';
 
         $result = $client->commentCheck([
             'user_ip'              => $dataSubmitted['ip_address'],
@@ -313,8 +314,8 @@ class Leads
 
             $defaults = array_merge(
                 [
-		    'cb'            => '<input type="checkbox" />',
-		    'title'         => 'Name',
+                    'cb'            => '<input type="checkbox" />',
+                    'title'         => 'Name',
                     'email_address' => 'Email',
                     'phone_number'  => 'Phone Number',
                 ], $additionalLabels
@@ -327,7 +328,7 @@ class Leads
 
         //Assigns values to columns
         add_action('manage_' . $this->uglify($this->postType) . '_posts_custom_column', function ($column_name, $post_ID) {
-            if($column_name != 'title' && $column_name != 'date'){
+            if($column_name != 'title' && $column_name != 'date' && $column_name != 'cb'){
                 switch ($column_name) {
                     case 'email_address':
                         $email_address = get_post_meta($post_ID, 'lead_info_email_address', true);

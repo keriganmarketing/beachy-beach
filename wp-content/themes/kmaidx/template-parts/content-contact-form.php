@@ -11,6 +11,7 @@ $youremail              = (isset($_GET['email_address']) ? $_GET['email_address'
 $phone                  = (isset($_GET['phone_number']) ? $_GET['phone_number'] : '');
 $reason                 = (isset($_GET['reason_for_contact']) ? $_GET['reason_for_contact'] : '');
 $mlsnumber              = (isset($_GET['mls_number']) ? $_GET['mls_number'] : '');
+$heard                  = (isset($_GET['heard']) ? $_GET['heard'] : '');
 $emailformattedbadly    = FALSE;
 $passCheck              = FALSE;
 $message                = '';
@@ -101,8 +102,14 @@ if( $formSubmitted ){ //FORM WAS SUBMITTED
                 <input type="text" class="form-control" value="<?php echo ($mlsnumber != '' ? $mlsnumber : ''); ?>" name="mls_number" placeholder="MLS number" />
             </div>
 		</div>
+		<div class="custom-controls-inline mb-3 col-12">
+            <label for="heard" class="sr-only">How did you hear about us?</label>
+            <div class="input-group mb-2">
+                <input name="heard" type="text" id="heard" class="textbox form-control <?php echo ( $phone && $formSubmitted ? 'has-error' : ''); ?>" value="<?php echo ($heard != '' ? $heard : ''); ?>" placeholder="How did you hear about us?">
+            </div>
+        </div>
     </div>
-        <hr>
+	<hr>
     <div class="row">
 		<div class="col-sm-6">
             <div class="custom-controls-stacked">

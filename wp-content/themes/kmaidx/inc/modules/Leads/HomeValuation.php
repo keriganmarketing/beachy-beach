@@ -18,6 +18,7 @@ class HomeValuation extends Leads
                 'property_type'    => 'Property Type',
                 'property_details' => 'Property Details',
                 'lead_for'         => 'Lead for',
+                'heard'            => 'How you heard about us'
             ]
         );
     }
@@ -38,6 +39,7 @@ class HomeValuation extends Leads
             $agent = new Agents();
             $agentInfo = $agent->assembleAgentData($dataSubmitted['selected_agent']);
             parent::set('adminEmail',($agentInfo['email_address'] != '' ? $agentInfo['email_address'] : 'info@beachybeach.com'));
+            parent::set('ccEmail','info@beachybeach.com');
             $dataSubmitted['lead_for'] = '';
 
         }elseif($dataSubmitted['lead_for'] == 'pcb'){
@@ -54,19 +56,22 @@ class HomeValuation extends Leads
 
         }
 
-        //parent::set($this->adminEmail,'bbaird85@gmail.com'); //temp
-        parent::addToDashboard($dataSubmitted);
-        if(parent::validateSubmission($dataSubmitted)){
-            echo '<div class="alert alert-success" role="alert">
-            <strong>Your request has been received. We will review your submission and get back with you soon.</strong>
-            </div>';
-        }else{
+        // parent::set($this->adminEmail,'bryan@kerigan.com'); //temp
+
+        if(!parent::validateSubmission($dataSubmitted)){
             echo '<div class="alert alert-danger" role="alert">
             <strong>Errors were found. Please correct the indicated fields below.</strong>
             </div>';
             return;
         }
+        
+        echo '<div class="alert alert-success" role="alert">
+        <strong>Your request has been received. We will review your submission and get back with you soon.</strong>
+        </div>';
+
+        parent::addToDashboard($dataSubmitted);
         parent::sendNotifications($dataSubmitted);
+        
     }
 
     public function checkSpam($dataSubmitted)
