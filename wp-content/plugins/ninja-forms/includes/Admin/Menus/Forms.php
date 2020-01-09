@@ -200,10 +200,18 @@ final class NF_Admin_Menus_Forms extends NF_Abstracts_Menu
             wp_enqueue_script( 'nf-moment', Ninja_Forms::$url . 'assets/js/lib/moment-with-locales.min.js', array( 'jquery', 'nf-dashboard' ) );
             wp_enqueue_script( 'nf-dashboard', Ninja_Forms::$url . 'assets/js/min/dashboard.min.js', array( 'backbone-radio', 'backbone-marionette-3' ), $this->ver );
             wp_enqueue_script( 'nf-sendwp', Ninja_Forms::$url . 'assets/js/lib/sendwp.js', array(), $this->ver );
+            wp_enqueue_script( 'nf-feature-scripts', Ninja_Forms::$url . 'assets/js/lib/feature-scripts.js', array(), $this->ver );
 
             $current_user = wp_get_current_user();
             wp_localize_script( 'nf-dashboard', 'nfi18n', Ninja_Forms::config( 'i18nDashboard' ) );
-            wp_localize_script( 'nf-dashboard', 'nfPromotions', array_values( Ninja_Forms::config( 'DashboardPromotions' ) ) );
+
+            $promotions = get_option( 'nf_active_promotions' );
+            $promotions = json_decode( $promotions, true );
+
+            if( ! empty( $promotions ) ) {
+                wp_localize_script( 'nf-dashboard', 'nfPromotions', array_values( $promotions[ 'dashboard' ] ) );
+            }
+
             wp_localize_script( 'nf-dashboard', 'nfAdmin', array(
                 'ajaxNonce'         => wp_create_nonce( 'ninja_forms_dashboard_nonce' ),
                 'batchNonce'        => wp_create_nonce( 'ninja_forms_batch_nonce' ),
@@ -318,6 +326,25 @@ final class NF_Admin_Menus_Forms extends NF_Abstracts_Menu
 
         $home_url = parse_url( home_url() );
 
+        global $wp_rewrite;
+        if($wp_rewrite->permalink_structure) {
+            $public_link_structure = site_url() . '/ninja-forms/[FORM_ID]';
+        } else {
+            $public_link_structure = site_url('?nf_public_link=[FORM_ID]');
+        }
+
+        if(isset($_GET['nf_dev_mode']) && $_GET['nf_dev_mode']){
+            $dev_mode = absint($_GET['nf_dev_mode']);
+        } else {
+            // @NOTE Check the settings array to avoid a default value in place of zero.
+            $settings = Ninja_Forms()->get_settings();
+            if( ! isset($settings['builder_dev_mode'])){
+                $dev_mode = 1;
+            } else {
+                $dev_mode = $settings['builder_dev_mode'];
+            }
+        }
+
         wp_localize_script( 'nf-builder', 'nfAdmin', array(
             'ajaxNonce'         => wp_create_nonce( 'ninja_forms_builder_nonce' ),
             'batchNonce'        => wp_create_nonce( 'ninja_forms_batch_nonce' ),
@@ -329,7 +356,9 @@ final class NF_Admin_Menus_Forms extends NF_Abstracts_Menu
             'currencySymbols'   => array_merge( array( '' => Ninja_Forms()->get_setting( 'currency_symbol' ) ), Ninja_Forms::config( 'CurrencySymbol' ) ),
             'dateFormat'        => Ninja_Forms()->get_setting( 'date_format' ),
             'formID'            => isset( $_GET[ 'form_id' ] ) ? absint( $_GET[ 'form_id' ] ) : 0,
-            'home_url_host'     => $home_url[ 'host' ]
+            'home_url_host'     => $home_url[ 'host' ],
+            'publicLinkStructure' => $public_link_structure,
+            'devMode'           => (bool) $dev_mode,
         ));
 
         do_action( 'nf_admin_enqueue_scripts' );
@@ -338,10 +367,15 @@ final class NF_Admin_Menus_Forms extends NF_Abstracts_Menu
     private function _localize_form_data( $form_id )
     {
         $form = Ninja_Forms()->form( $form_id )->get();
+        $form_cache = false;
 
         if( ! $form->get_tmp_id() ) {
 
-            if( $form_cache = WPN_Helper::get_nf_cache( $form_id ) ) {
+            if(WPN_Helper::use_cache()) {
+                $form_cache = WPN_Helper::get_nf_cache( $form_id );
+            } 
+
+            if( $form_cache ) {
                 $fields = $form_cache[ 'fields' ];
             } else {
                 $fields = ($form_id) ? Ninja_Forms()->form($form_id)->get_fields() : array();
@@ -364,7 +398,6 @@ final class NF_Admin_Menus_Forms extends NF_Abstracts_Menu
             foreach ($fields as $field) {
                 
                 $field_id = ( is_object( $field ) ) ? $field->get_id() : $field[ 'id' ];
-
                 /*
                  * Duplicate field check.
                  * TODO: Replace unique field key checks with a refactored model/factory.
@@ -451,7 +484,7 @@ final class NF_Admin_Menus_Forms extends NF_Abstracts_Menu
 
         // Use form cache for form settings.
         // TODO: Defer to refactor of factory/model.
-        if( isset( $form_cache[ 'settings' ] ) ) {
+        if( $form_cache && isset( $form_cache[ 'settings' ] ) ) {
             $form_data['settings'] = $form_cache[ 'settings' ];
         } else {
             $form_data['settings'] = $form->get_settings();
@@ -535,6 +568,7 @@ final class NF_Admin_Menus_Forms extends NF_Abstracts_Menu
         foreach( $saved_fields as $saved_field ){
 
             $settings = $saved_field->get_settings();
+            unset( $settings['cellcid'] );
 
             $id     = $saved_field->get_id();
             $type   = $settings[ 'type' ];

@@ -6,9 +6,13 @@
  * and open the template in the editor.
  */
 
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformPaths implements JchInterfacePaths
+use JchOptimize\Core\Helper;
+
+class Paths implements \JchOptimize\Interfaces\PathsInterface
 {
 
         /**
@@ -46,7 +50,7 @@ class JchPlatformPaths implements JchInterfacePaths
 
                 if (!isset($rewrite_base))
                 {
-                        $uri = JchPlatformUri::getInstance(plugins_url());
+                        $uri = Uri::getInstance(plugins_url());
                         $rewrite_base = trailingslashit($uri->toString(array('path')));
                 }
 
@@ -73,8 +77,8 @@ class JchPlatformPaths implements JchInterfacePaths
          */
         public static function path2Url($sPath)
         {
-                $oUri        = clone JchPlatformUri::getInstance();
-                $sBaseFolder = JchOptimizeHelper::getBaseFolder();
+                $oUri        = clone Uri::getInstance();
+                $sBaseFolder = Helper::getBaseFolder();
 
 		$abspath = str_replace(DIRECTORY_SEPARATOR, '/', self::rootPath()); 
                 $sPath   = str_replace(DIRECTORY_SEPARATOR, '/', $sPath);
@@ -118,7 +122,7 @@ class JchPlatformPaths implements JchInterfacePaths
          */
         public static function backupImagesParentFolder()
         {
-		$wp_filesystem = JchPlatformCache::getWPFileSystem();
+		$wp_filesystem = Cache::getWPFileSystem();
 
                 return $wp_filesystem->wp_content_dir();
         }
@@ -128,11 +132,11 @@ class JchPlatformPaths implements JchInterfacePaths
 	 */
 	public static function cachePath($rootrelative=true)
 	{
-		$wp_filesystem = JchPlatformCache::getWPFileSystem();
+		$wp_filesystem = Cache::getWPFileSystem();
 
 		if($rootrelative)
 		{
-			return content_url('cache/jch-optimize');
+			return content_url() . '/cache/jch-optimize';
 		}
 		else
 		{

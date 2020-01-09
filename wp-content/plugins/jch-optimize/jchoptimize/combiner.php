@@ -1,8 +1,5 @@
 <?php
 
-use JchOptimize\JS_Optimize;
-use JchOptimize\CSS_Optimize;
-
 /**
  * JCH Optimize - Aggregate and minify external resources for optmized downloads
  * 
@@ -22,9 +19,18 @@ use JchOptimize\CSS_Optimize;
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeCombinerBase
+use JchOptimize\Platform\Cache;
+use JchOptimize\Platform\Profiler;
+use JchOptimize\Platform\Utility;
+use JchOptimize\Minify\Js;
+use JchOptimize\Minify\Css;
+
+class CombinerBase
 {
         /**
          * 
@@ -42,7 +48,7 @@ class JchOptimizeCombinerBase
  * 
  * 
  */
-class JchOptimizeCombiner extends JchOptimizeCombinerBase
+class Combiner extends CombinerBase
 {
 
         public $params            = NULL;
@@ -60,18 +66,18 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
          * Constructor
          * 
          */
-        public function __construct($params, $oParser, $bBackend = FALSE)
+        public function __construct($params, $oParser, $bBackend = false)
         {
                 $this->params   = $params;
                 $this->oParser  = $oParser;
                 $this->bBackend = $bBackend;
 
-                $this->sLnEnd = JchPlatformUtility::lnEnd();
-                $this->sTab   = JchPlatformUtility::tab();
+                $this->sLnEnd = Utility::lnEnd();
+                $this->sTab   = Utility::tab();
 
-                $this->oCssParser = new JchOptimizeCssParser($params, $bBackend);
+                $this->oCssParser = new CssParser($params, $bBackend);
 
-                self::$bLogErrors = $this->params->get('jsmin_log', 0) ? TRUE : FALSE;
+                self::$bLogErrors = $this->params->get('jsmin_log', 0) ? true : false;
         }
 
         /**
@@ -91,24 +97,27 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
         /**
          * Get aggregated and possibly minified content from js and css files
          *
-         * @param array $aUrlArray      Array of urls of css or js files for aggregation
-         * @param string $sType         css or js
-         * @return string               Aggregated (and possibly minified) contents of files
+         * @param  array    $aUrlArray     Indexed multidimensional array of urls of css or js files for aggregation
+         * @param  string   $sType         css or js
+	 *
+         * @return string   Aggregated (and possibly minified) contents of files
          */
         public function getContents($aUrlArray, $sType)
         {
-                JCH_DEBUG ? JchPlatformProfiler::start('GetContents - ' . $sType, TRUE) : null;
+                JCH_DEBUG ? Profiler::start('GetContents - ' . $sType, true) : null;
 
                 $oCssParser   = $this->oCssParser;
                 $aSpriteCss   = array();
-
                 $aContentsArray = array();
+		$sCriticalCss = '';
 
+		//Iterate through top array. Each index represent a separate combined file
                 foreach ($aUrlArray as $index => $aUrlInnerArray)
                 {
                         $sContents = $this->combineFiles($aUrlInnerArray, $sType, $oCssParser);
                         $sContents = $this->prepareContents($sContents);
 
+			//Save contents of each combined file in $aContentsArray
                         $aContentsArray[$index] = $sContents;
                 }
 
@@ -118,26 +127,38 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
                         {
                                 try
                                 {
-                                        $oSpriteGenerator = new JchOptimizeSpriteGenerator($this->params);
+                                        $oSpriteGenerator = new SpriteGenerator($this->params);
                                         $aSpriteCss       = $oSpriteGenerator->getSprite($this->$sType);
                                 }
                                 catch (Exception $ex)
                                 {
-                                        JchOptimizeLogger::log($ex->getMessage(), $this->params);
+                                        Logger::log($ex->getMessage(), $this->params);
                                         $aSpriteCss = array();
                                 }
                         }
+
+			if ($this->params->get('optimizeCssDelivery_enable', '0'))
+			{
+				$this->params->set('InlineScripts', '1');
+				$this->params->set('InlineStyles', '1');
+
+				$sHtml = $this->oParser->cleanHtml();
+
+				$sCriticalCss = $oCssParser->optimizeCssDelivery($aContentsArray, $sHtml);
+			}
+
                 }
 
+		//Save contents in array to store in cache
                 $aContents = array(
-                        'filemtime'   => JchPlatformUtility::unixCurrentDate(),
+                        'filemtime'   => Utility::unixCurrentDate(),
                         'etag'        => md5($this->$sType),
                         'file'        => $aContentsArray,
                         'spritecss'   => $aSpriteCss,
-			'optimizecssdelivery' => $this->params->get('pro_optimizeCssDelivery_enable', '0')
+			'criticalcss' => $sCriticalCss
                 );
 
-                JCH_DEBUG ? JchPlatformProfiler::stop('GetContents - ' . $sType) : null;
+                JCH_DEBUG ? Profiler::stop('GetContents - ' . $sType) : null;
 
                 return $aContents;
         }
@@ -154,7 +175,7 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
         {
                 $sContents = '';
 
-                $oFileRetriever = JchOptimizeFileRetriever::getInstance();
+                $oFileRetriever = FileRetriever::getInstance();
 
 		//Iterate through each file/script to optimize and combine
                 foreach ($aUrlArray as $aUrl)
@@ -162,7 +183,7 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
 			//Truncate url to less than 40 characters
                         $sUrl = $this->prepareFileUrl($aUrl, $sType);
 
-                        JCH_DEBUG ? JchPlatformProfiler::start('CombineFile - ' . $sUrl) : null;
+                        JCH_DEBUG ? Profiler::start('CombineFile - ' . $sUrl) : null;
 
 			//If a cache id is present then cache this individual file to avoid
 			//optimizing it again if it's present on another page
@@ -177,7 +198,7 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
                                 $args     = array($aUrl, $sType, $oFileRetriever, $oCssParser, TRUE);
 
 				//Optimize and cache file/script returning the optimized content
-                                $sCachedContent = JchPlatformCache::getCallbackCache($aUrl['id'], $function, $args);
+                                $sCachedContent = Cache::getCallbackCache($aUrl['id'], $function, $args);
 
                                 $this->$sType .= $sCachedContent;
                                 
@@ -192,7 +213,7 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
                                 $sContents .= $this->addCommentedUrl($sType, $aUrl) . $sContent . '|"LINE_END"|';
                         }
 
-                        JCH_DEBUG ? JchPlatformProfiler::stop('CombineFile - ' . $sUrl, TRUE) : null;
+                        JCH_DEBUG ? Profiler::stop('CombineFile - ' . $sUrl, TRUE) : null;
                 }
 
                 return $sContents;
@@ -216,7 +237,7 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
                 if (isset($aUrl['url']))
                 {
 			//Convert local urls to file path
-                        $sPath = JchOptimizeHelper::getFilePath($aUrl['url']);
+                        $sPath = Helper::getFilePath($aUrl['url']);
                         $sContent .= $oFileRetriever->getFileContents($sPath);
                 }
                 else
@@ -244,7 +265,7 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
 
                         if (is_null($sImportContent))
                         {
-                                JchOptimizeLogger::log(sprintf('There was an error when trying to find "@imports" in the CSS file: %s',
+                                Logger::log(sprintf('There was an error when trying to find "@imports" in the CSS file: %s',
                                                                                              $aUrl['url']), $this->params);
 
                                 $sImportContent = $sContent;
@@ -299,11 +320,11 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
                 {
                         $sUrl = $this->prepareFileUrl($aUrl, $sType);
 
-                        $sMinifiedContent = trim($sType == 'css' ? CSS_Optimize::optimize($sContent) : JS_Optimize::optimize($sContent));
+                        $sMinifiedContent = trim($sType == 'css' ? Css::optimize($sContent) : Js::optimize($sContent));
 
                         if (is_null($sMinifiedContent) || $sMinifiedContent == '')
                         {
-				JchOptimizeLogger::log(sprintf('Error occurred trying to minify: %s', $sUrl), $this->params); 
+				Logger::log(sprintf('Error occurred trying to minify: %s', $sUrl), $this->params); 
                                 $sMinifiedContent = $sContent;
                         }
 
@@ -323,7 +344,7 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
         public function prepareFileUrl($aUrl, $sType)
         {
                 $sUrl = isset($aUrl['url']) ?
-                        JchOptimizeAdmin::prepareFileValues($aUrl['url'], '', 40) :
+                        Admin::prepareFileValues($aUrl['url'], '', 40) :
                         ($sType == 'css' ? 'Style' : 'Script') . ' Declaration';
 
                 return $sUrl;
@@ -415,6 +436,115 @@ class JchOptimizeCombiner extends JchOptimizeCombinerBase
                 return $sContents;
         }
 
-        
-        ##<procode>##
+        /**
+         * Resolves @imports in css files, fetching contents of these files and adding them to the aggregated file
+         * 
+         * @param string $sContent      
+         * @return string
+         */
+
+        protected function replaceImports($sContent)
+        {
+                if ($this->params->get('replaceImports', '1'))
+                {
+                        $oCssParser = $this->oCssParser;
+
+                        $u = $oCssParser->u;
+
+			$regex = "#(?>@?[^@'\"/]*+(?:{$u}|/|\()?)*?\K(?:@import\s*+(?:url\()?['\"]?([^\)'\";]+)['\"]?(?:\))?\s*+([^;]*);|\K$)#";
+                        $sImportFileContents = preg_replace_callback($regex, array($this, 'getImportFileContents'), $sContent);
+
+                        if (is_null($sImportFileContents))
+                        {
+                                Logger::log(
+                                        'The plugin failed to get the contents of the file that was imported into the document by the "@import" rule',
+                                                                                     $this->params
+                                        );
+
+                                return $sContent;
+                        }
+
+                        $sContent = $sImportFileContents;
+                }
+                else
+                {
+                        $sContent = parent::replaceImports($sContent);
+                }
+
+                return $sContent;
+        }
+
+        /**
+         * Fetches the contents of files declared with @import 
+         * 
+         * @param array $aMatches       Array of regex matches
+         * @return string               file contents
+         */
+        protected function getImportFileContents($aMatches)
+        {
+                if (empty($aMatches[1])
+                        || preg_match('#^(?>\(|/\*)#', $aMatches[0])
+                        || !$this->oParser->isHttpAdapterAvailable($aMatches[1])
+                        || (Url::isSSL($aMatches[1]) && !extension_loaded('openssl'))
+                        || (!Url::isHttpScheme($aMatches[1]))
+                )
+                {
+                        return $aMatches[0];
+                }
+                
+                if($this->oParser->isDuplicated($aMatches[1]))
+                {
+                        return '';
+                }
+
+		//Need to handle file specially if it imports google font
+                if (strpos($aMatches[1], 'fonts.googleapis.com') !== FALSE)
+                {
+			//Get array of files from cache that imports Google font files
+			$containsgf = Cache::getCache('jch_hidden_containsgf');
+
+			//If not cache found initialize to empty array
+			if($containsgf === false)
+			{
+				$containsgf = array();
+			}
+				
+			//If not in array, add to array
+                        if (!in_array($this->current_file, $containsgf))
+                        {
+                                $containsgf[] = $this->current_file;
+
+				//Store array of filenames that imports google font files to cache
+				Cache::saveCache($containsgf, 'jch_hidden_containsgf');
+                        }
+                }
+
+                $aUrlArray = array();
+
+                $aUrlArray[0]['url']   = $aMatches[1];
+                $aUrlArray[0]['media'] = $aMatches[2];
+                //$aUrlArray[0]['id']    = md5($aUrlArray[0]['url'] . $this->oParser->sFileHash);
+
+                $oCssParser    = $this->oCssParser;
+                $sFileContents = $this->combineFiles($aUrlArray, 'css', $oCssParser);
+
+                if ($sFileContents === FALSE)
+                {
+                        return $aMatches[0];
+                }
+
+                return $sFileContents;
+        }
+
+	/**
+	 * Save filenames of Google fonts or files that import them
+	 *
+	 *
+	 *
+	 */
+	public function saveHiddenGf($sUrl)
+	{
+		//Get array of Google font files from cache
+		$containsgf = Cache::get('jch_hidden_containsgf');
+	}
 }

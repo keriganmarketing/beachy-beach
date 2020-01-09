@@ -20,9 +20,14 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformProfiler implements JchInterfaceProfiler
+use JchOptimize\Core\Helper;
+
+class Profiler implements \JchOptimize\Interfaces\ProfilerInterface
 {
 
         /**
@@ -82,7 +87,7 @@ class JchPlatformProfiler implements JchInterfaceProfiler
                 $current_time = timer_stop();
                 
                 $time_taken = $last_time > 0 ? $current_time - $last_time : 0;
-                $time_taken = number_format($time_taken, 3);
+		$time_taken = ( function_exists( 'number_format_i18n' ) ) ? number_format_i18n( $time_taken, 3 ) : number_format( $time_taken, 3 );
                 
                 $last_time = $current_time;
 
@@ -100,16 +105,16 @@ class JchPlatformProfiler implements JchInterfaceProfiler
                         return;
                 }
                 
-                $items = JchPlatformProfiler::mark(TRUE);
+                $items = Profiler::mark(TRUE);
 
                 $node = self::getAdminBarNodeBegin() . $items . self::getAdminBarNodeEnd();
 
                 $script = '<script type="application/javascript">' .
-			(JchOptimizeHelper::isXhtml($sHtml) ? '/*<![CDATA[*/' : '').
+			(Helper::isXhtml($sHtml) ? '/*<![CDATA[*/' : '').
                            'var ul = document.getElementById("wp-admin-bar-root-default");' .
 			   'if (ul !== null){' .
                            'ul.insertAdjacentHTML(\'beforeend\', \'' . $node . '\');}' .
-			(JchOptimizeHelper::isXhtml($sHtml) ? '/*]]>*/' : '').
+			(Helper::isXhtml($sHtml) ? '/*]]>*/' : '').
                         '</script>';
 
                 $sHtml = str_replace('</body>', $script . '</body>', $sHtml);

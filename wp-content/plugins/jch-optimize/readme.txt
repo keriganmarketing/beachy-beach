@@ -1,16 +1,19 @@
 === JCH Optimize ===
+
 Contributors: codealfa
 Tags: improve performance, optimize download speed, minify, aggregate, pagespeed, gtmetrix, webpagetest, yslow, minification, css, javascript, html, lazy load, seo, search engine optimization, website optimization, download speed, speed up website, optimize css delivery, render blocking, css sprite, gzip, combine css, combine javascript, cdn, content delivery network, website performance, website speed, fast download, web performance, website analysis, speed up download, minimize http requests, reduce bandwidth, caching, cache, page cache, speed up wordpress, http/2 push
-Tested up to: 5.1.1
-Stable tag: 2.4.2
+Tested up to: 5.2.4
+Stable tag: 2.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 This plugin automatically performs several front end optimizations to your site to increase download speed and reduce server load and bandwidth.
 
+
 == Description ==
 
-Speed up your WordPress site instantly with JCH Optimize! This plugin provides all the front end optimizations you need to optimize your website download speed. Core feature is to automatically combine CSS and javascript files to reduce the number of http requests made by the browser to download your web page. The combined CSS and javascript files can be further optimized by minifying and compressing the file with gzip. Also, the HTML output can be minified for optimized download. These optimizations will reduce server load, bandwidth requirements, and page loading times.
+Speed up your WordPress site instantly with JCH Optimize! This plugin provides all the front end optimizations you need to optimize your website download speed. These optimizations are applied automatically by the plugin based on how it's configured and reduce both your webpage size and the number of http requests required to download your webpages and results in reduced server load, lower bandwidth requirements, and faster page loading times.
+
 
 = Major Features =
 
@@ -20,16 +23,23 @@ Speed up your WordPress site instantly with JCH Optimize! This plugin provides a
 * GZip compress the combined files.
 * Generate sprite to combine background images.
 * Ability to exclude files from combining to resolve conflicts
-
-This plugin runs on a framework that is tried and proven within the Joomla! community. View the [plugin's page](http://extensions.joomla.org/extensions/extension/core-enhancements/performance/jch-optimize/) on Joomla!'s Extension Directory to see the reviews it has earned and why it has gain so much popularity in that community.
-
-There is a [pro version available](https://www.jch-optimize.net/subscribe/levels.html/?tab=wordpress) on the [plugin's website](https://www.jch-optimize.net) with more features to further optimize your website such as:
-
-* Load combined javascript file asynchronously
+* Defer/Load combined javascript file asynchronously
 * Optimize CSS Delivery to eliminate render blocking
 * CDN/Cookie-less Domain support
-* Optimize images
 * Lazy load images
+
+= How to use =
+
+To use, first temporarily deactivate all page caching features and plugins, then use the 'Automatic Settings' (Minimum - Optimum) to configure the plugin. The 'Automatic Settings' are concerned with the combining of the CSS and javascript files, and the management of the combined files, and automatically sets the options in the 'Automatic Settings Groups'. Use the Exclude options to exclude files or plugins that don't work so well when combined with JCH Optimize. You can then try the other optimization features in turn such as Sprite Generator, Add Image Attributes, Lazy Load Images, CDN/Cookieless Domain, Optimize CSS Delivery, etc., based on the optimization needs of your site. Flush all your cache before re-enabling caching features and plugins.
+
+= Documentation =
+
+Visit our [documentation](https://www.jch-optimize.net/documentation.html) on the main plugin site for more information on how the plugin works and how to configure it to improve your scores on [GtMetrix](https://gtmetrix.com/) and [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/)
+
+= Advanced Features and Premium Support =
+
+If you need assistance on your website in configuring the plugin to resolve any conflicts or if you need access to more advanced features such as Http/2 support, Remove unused CSS, Lazy-load iframes, Optimize Images, using multiple domains with CDN, then there's a [Pro version](https://www.jch-optimize.net/subscribe/levels.html#wordpress) available on a subscription basis. With an active subsscription you get premium technical support through our ticket system, access to downloads of new versions, and access to our Optimize Image API. 
+
 
 == Installation ==
 
@@ -40,11 +50,17 @@ Just install from your WordPress "Plugins|Add New" screen. Manual installation i
 3. Go to `Settings -> JCH Optimize` and enable the options you want
 4. Use the Automatic Settings (Minimum - Optimum) to configure the plugin. This automatically sets the options in the 'Automatic Settings Groups'. You can then try the other manual options to further configure the plugin and optimize your site. Use the Exclude options to exclude files/plugins/images that don't work so well with the plugin.
 
+
+
 == Frequently Asked Questions ==
+
+= How does the plugin speed up your site? =
+
+The plugin modifies the generated HTML of your website in ways that makes it faster to download and parsed by the browser. Simply put, the changes makes the webpage and resources smaller, and reduces the number of http requests the browser has to make to render the page. The result is a better user experience and higher search engine rankings.
 
 = How do I know if it's working? =
 
-After installing and activating the plugin, combining CSS and javascript files are selected by default so it should start working right away. If you look at your web page and it doesn't look any different that's a good sign...maybe. To confirm if it's working, take a look at the page source. You can do that in most browsers by right clicking on the page and selecting that option. You should see the links to your CSS/Js files removed and replaced by the aggregated file URL in the source that looks like this:
+After installing and activating the plugin, combining CSS and javascript files are selected by default so it should start working right away. If you look at your web page and it doesn't look any different that's a good sign...maybe. To confirm if it's working, take a look at the HTML page source. You can do that in most browsers by right clicking on the page and selecting that option. You should see the links to your CSS/Js files removed and replaced by the aggregated file URL in the source that looks like this:
 `/wp-content/plugins/jch-optimize/assets/wp-content/plugins/nz/30/1/63fccd8dc82e3f5da947573d8ded3bd4.css`
 
 = There's no CSS Formatting after enabling the plugin =
@@ -55,7 +71,20 @@ The combined files are accessed by the browser via a jscss.php file in the `/wp-
 
 Simply deactivate or uninstall the plugin to reverse any changes it has made. The plugin doesn't modify any existing file or code but merely manipulates the HTML before it is sent to the brower. Any apparent persistent change after the plugin is deactivated is due to caching so ensure to flush all your WordPress, third party or browser cache.
 
+
 == Changelog ==
+
+= 2.5.2 =
+* Bug fix: Add image attributes will use the same type of delimiter for width/height as that used around the url to avoid potential issues
+* Bug Fix: Validate HTML before processing to avoid problems.
+
+= 2.5.1 =
+* Bug fix: PHP error in html.php file
+* Bug fix: Occasionally shows blank page while using Page Cache
+
+= 2.5.0 =
+* Changes to the settings admin page and availability of features
+* Bux fixes and code improvements
 
 = 2.4.2 =
 * Minor bug fixes and improvements

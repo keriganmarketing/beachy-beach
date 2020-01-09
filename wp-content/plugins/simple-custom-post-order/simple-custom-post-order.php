@@ -3,10 +3,10 @@
 * Plugin Name: Simple Custom Post Order
 * Plugin URI: https://wordpress.org/plugins-wp/simple-custom-post-order/
 * Description: Order Items (Posts, Pages, and Custom Post Types) using a Drag and Drop Sortable JavaScript.
-* Version: 2.4.4
+* Version: 2.4.7
 * Author: Colorlib
 * Author URI: https://colorlib.com/
-* Tested up to: 5.1
+* Tested up to: 5.2
 * Requires: 4.6 or higher
 * License: GPLv3 or later
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -36,7 +36,7 @@
 
 define('SCPORDER_URL', plugins_url('', __FILE__));
 define('SCPORDER_DIR', plugin_dir_path(__FILE__));
-define('SCPORDER_VERSION', '2.4.4');
+define('SCPORDER_VERSION', '2.4.7');
 
 $scporder = new SCPO_Engine();
 
@@ -71,6 +71,17 @@ class SCPO_Engine {
         add_action( 'wp_ajax_scporder_dismiss_notices', array( $this, 'dismiss_notices' ) );
 
         add_action( 'plugins_loaded', array( $this, 'load_scpo_textdomain' ) );
+
+        add_filter('scpo_post_types_args',array($this,'scpo_filter_post_types'),10,2);
+    }
+
+    public function scpo_filter_post_types($args,$options){
+
+        if(isset($options['show_advanced_view']) && '1' == $options['show_advanced_view'] ){
+            unset($args['show_in_menu']);
+        }
+
+        return $args;
     }
 
     public function load_scpo_textdomain(){
@@ -298,6 +309,8 @@ class SCPO_Engine {
                 $wpdb->update($wpdb->posts, array('menu_order' => $menu_order_arr[$position]), array('ID' => intval($id)));
             }
         }
+
+        do_action('scp_update_menu_order');
     }
 
     public function update_menu_order_tags() {
@@ -329,6 +342,8 @@ class SCPO_Engine {
                 $wpdb->update($wpdb->terms, array('term_order' => $menu_order_arr[$position]), array('term_id' => intval($id)));
             }
         }
+
+        do_action('scp_update_menu_order_tags');
     }
 
     public function update_options() {
@@ -342,6 +357,7 @@ class SCPO_Engine {
         $input_options = array();
         $input_options['objects'] = isset($_POST['objects']) ? $_POST['objects'] : '';
         $input_options['tags'] = isset($_POST['tags']) ? $_POST['tags'] : '';
+        $input_options['show_advanced_view'] = isset($_POST['show_advanced_view']) ? $_POST['show_advanced_view'] : '';
 
         update_option('scporder_options', $input_options);
 
@@ -460,6 +476,7 @@ class SCPO_Engine {
 
     public function scporder_pre_get_posts($wp_query) {
         $objects = $this->get_scporder_options_objects();
+
         if (empty($objects))
             return false;
         if (is_admin()) {
@@ -500,6 +517,7 @@ class SCPO_Engine {
                 if (!$wp_query->get('order'))
                     $wp_query->set('order', 'ASC');
             }
+
         }
     }
 
@@ -512,7 +530,17 @@ class SCPO_Engine {
         if (!isset($args['taxonomy']))
             return $orderby;
 
-        $taxonomy = $args['taxonomy'];
+        if(is_array($args['taxonomy'])){
+            if(isset($args['taxonomy'][0])){
+                $taxonomy = $args['taxonomy'][0];
+            } else {
+                $taxonomy = false;
+            }
+
+        } else {
+            $taxonomy = $args['taxonomy'];
+        }
+
         if (!in_array($taxonomy, $tags))
             return $orderby;
 
@@ -589,5 +617,3 @@ function scporder_uninstall_db() {
     }
     delete_option('scporder_install');
 }
-
-require_once 'class-colorlib-dashboard-widget-extend-feed.php';

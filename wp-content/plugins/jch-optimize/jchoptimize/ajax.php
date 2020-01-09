@@ -19,18 +19,28 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeAjax
+use JchOptimize\Platform\Settings;
+use JchOptimize\Platform\Cache;
+use JchOptimize\Platform\Paths;
+use JchOptimize\Platform\Utility;
+use JchOptimize\LIBS\ImageOptimizer;
+
+
+class Ajax
 {
 
         /**
          * 
-         * @param JchPlatformSettings $params
+         * @param JchOptimize\Platform\Settings $params
          */
-        public static function garbageCron(JchPlatformSettings $params)
+        public static function garbageCron(Settings $params)
         {
-                JchPlatformCache::gc();
+                Cache::gc();
         }
 
         

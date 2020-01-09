@@ -60,7 +60,7 @@ return apply_filters( 'ninja_forms_field_settings', array(
             ),
         ),
         'width' => 'one-half',
-        'group' => 'primary',
+        'group' => 'advanced',
         'value' => 'default',
         'help' => __( 'Select the position of your label relative to the field element itself.', 'ninja-forms' ),
 
@@ -171,6 +171,61 @@ return apply_filters( 'ninja_forms_field_settings', array(
     ),
 
     /*
+     * List Display Style
+     */
+    'list_orientation' => array(
+        'name' => 'list_orientation',
+        'type' => 'button-toggle',
+        'width' => 'full',
+        'group' => 'primary',
+        'options' => array(
+            array( 'label' => __( 'Horizontal', 'ninja-forms' ), 'value' => 'horizontal' ),
+            array( 'label' => __( 'Vertical', 'ninja-forms' ), 'value' => 'vertical' )
+        ),
+        'label' => __( 'List Orientation', 'ninja-forms' ),
+        'value' => 'horizontal',
+    ),
+
+    /*
+     * Max Columns
+     */
+    'num_columns'       => array(
+        'name'          => 'num_columns',
+        'type'          => 'number',
+        'label'         => __( 'Number of Columns', 'ninja-forms'),
+        'width'         => 'one-half',
+        'group'         => 'primary',
+        'value'         => 3,
+        'deps'          => array(
+            'list_orientation' => 'horizontal'
+        ),
+    ),
+
+    /*
+     * Allow multi-select
+     */
+    'allow_multi_select' => array(
+        'name' => 'allow_multi_select',
+        'type' => 'toggle',
+        'label' => __( 'Allow Multiple Selections', 'ninja-forms' ),
+        'width' => 'one-half',
+        'group' => 'primary',
+        'value' => FALSE,
+    ),
+
+    /*
+     * Show option labels
+     */
+    'show_option_labels' => array(
+        'name' => 'show_option_labels',
+        'type' => 'toggle',
+        'label' => __( 'Show Labels', 'ninja-forms' ),
+        'width' => 'one-half',
+        'group' => 'primary',
+        'value' => TRUE,
+    ),
+
+    /*
      * OPTIONS
      */
 
@@ -192,6 +247,43 @@ return apply_filters( 'ninja_forms_field_settings', array(
                 'default'   => '',
             ),
 
+            'value'         => array(
+                'header'    => __( 'Value', 'ninja-forms' ),
+                'default'   => '',
+            ),
+            'calc'          => array(
+                'header'    =>__( 'Calc Value', 'ninja-forms' ),
+                'default'   => '',
+            ),
+            'selected'      => array(
+                'header'    => '<span class="dashicons dashicons-yes"></span>',
+                'default'   => 0,
+            ),
+        ),
+
+    ),
+
+    /*
+     * IMAGE OPTIONS
+     */
+
+    'image_options' => array(
+        'name' => 'image_options',
+        'type' => 'image-option-repeater',
+        'label' => __( 'Image Options', 'ninja-forms' ) . ' <a href="#" class="nf-add-new">' . __( 'Add New', 'ninja-forms' ) . '</a>',
+        'width' => 'full',
+        'group' => 'primary',
+        // 'value' => 'option-repeater',
+        'value' => array(
+            array( 'label' => '', 'image' => '', 'value' => '', 'image_id' => '', 'calc' => '', 'selected' => 0, 'order' => 0 ),
+            array( 'label' => '', 'image' => '', 'value' => '', 'image_id' => '', 'calc' => '', 'selected' => 0, 'order' => 1 ),
+            array( 'label' => '', 'image' => '', 'value' => '', 'image_id' => '', 'calc' => '', 'selected' => 0, 'order' => 2 ),
+        ),
+        'columns'           => array(
+            'label'          => array(
+                'header'    => __( 'Label', 'ninja-forms' ),
+                'default'   => '',
+            ),
             'value'         => array(
                 'header'    => __( 'Value', 'ninja-forms' ),
                 'default'   => '',
@@ -356,7 +448,7 @@ return apply_filters( 'ninja_forms_field_settings', array(
         'type' => 'textbox',
         'label' => __( 'Placeholder', 'ninja-forms' ),
         'width' => 'full',
-        'group' => 'advanced',
+        'group' => 'display',
         'value' => '',
         'help' => __( 'Enter text you would like displayed in the field before a user enters any data.', 'ninja-forms' ),
         'use_merge_tags' => FALSE,
@@ -373,7 +465,7 @@ return apply_filters( 'ninja_forms_field_settings', array(
         'type' => 'textbox',
         'width' => 'full',
         'value' => '',
-        'group' => 'advanced',
+        'group' => 'display',
         'use_merge_tags' => array(
             'exclude' => array(
                 'fields'
@@ -675,7 +767,7 @@ return apply_filters( 'ninja_forms_field_settings', array(
         'type' => 'number',
         'label' => __( 'Multi-Select Box Size', 'ninja-forms'),
         'width' => 'one-half',
-        'group' => 'primary',
+        'group' => 'advanced',
         'value' => 5,
     ),
 

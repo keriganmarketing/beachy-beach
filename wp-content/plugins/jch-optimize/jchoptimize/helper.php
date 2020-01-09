@@ -1,9 +1,5 @@
 <?php
 
-use JchOptimize\JS_Optimize;
-use JchOptimize\CSS_Optimize;
-use JchOptimize\HTML_Optimize;
-
 /**
  * JCH Optimize - Aggregate and minify external resources for optmized downloads
  * 
@@ -23,9 +19,22 @@ use JchOptimize\HTML_Optimize;
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Core;
+
 defined('_JCH_EXEC') or die('Restricted access');
 
-class JchOptimizeHelperBase
+use JchOptimize\Minify\Js;
+use JchOptimize\Minify\Css;
+use JchOptimize\Minify\Html;
+use JchOptimize\Platform\Settings;
+use JchOptimize\Platform\Uri;
+use JchOptimize\Platform\Plugin;
+use JchOptimize\Platform\Utility;
+use JchOptimize\Platform\Profiler;
+use JchOptimize\Platform\Paths;
+
+class HelperBase
 {
 
         /**
@@ -46,7 +55,7 @@ class JchOptimizeHelperBase
  * Some helper functions
  * 
  */
-class JchOptimizeHelper extends JchOptimizeHelperBase
+class Helper extends HelperBase
 {
 	public static $preloads = array();
 
@@ -76,7 +85,7 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
          */
         public static function isMsieLT10()
         {
-                $browser = JchOptimizeBrowser::getInstance();
+                $browser = Browser::getInstance();
 
                 return ($browser->getBrowser() == 'IE' && $browser->getVersion() < 10);
         }
@@ -100,15 +109,15 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
          */
         public static function getFilePath($sUrl)
         {
-                $sUriPath = JchPlatformUri::base(TRUE);
+                $sUriPath = Uri::base(TRUE);
 
-                $oUri = clone JchPlatformUri::getInstance();
-                $oUrl = clone JchPlatformUri::getInstance(html_entity_decode($sUrl));
+                $oUri = clone Uri::getInstance();
+                $oUrl = clone Uri::getInstance(html_entity_decode($sUrl));
 
                 //Use absolute file path if file is internal and a static file
-                if (JchOptimizeUrl::isInternal($sUrl) && !JchOptimizeUrl::requiresHttpProtocol($sUrl))
+                if (Url::isInternal($sUrl) && !Url::requiresHttpProtocol($sUrl))
                 {
-                        return JchPlatformPaths::absolutePath(preg_replace('#^' . preg_quote($sUriPath, '#') . '#', '', $oUrl->getPath()));
+                        return Paths::absolutePath(preg_replace('#^' . preg_quote($sUriPath, '#') . '#', '', $oUrl->getPath()));
                 }
                 else
                 {
@@ -187,67 +196,12 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
 
                 if (!isset($sEditor))
                 {
-                        $sEditor = JchPlatformUtility::getEditorName();
+                        $sEditor = Utility::getEditorName();
                 }
 
                 return $sEditor;
         }
 
-
-        /**
-         * 
-         * @staticvar string $sContents
-         * @return boolean
-         */
-        public static function checkModRewriteEnabled($params)
-        {
-                JCH_DEBUG ? JchPlatformProfiler::start('CheckModRewriteEnabled') : null;
-
-                $oFileRetriever = JchOptimizeFileRetriever::getInstance();
-
-                if (!$oFileRetriever->isHttpAdapterAvailable())
-                {
-                        $params->set('htaccess', 0);
-                }
-                else
-                {
-                        $oUri  = JchPlatformUri::getInstance();
-                        $sUrl  = $oUri->toString(array('scheme', 'user', 'pass', 'host', 'port')) . JchPlatformPaths::assetPath(TRUE);
-                        $sUrl2 = JchPlatformPaths::rewriteBase() . 'test_mod_rewrite';
-
-                        try
-                        {
-                                $sContents = $oFileRetriever->getFileContents($sUrl . $sUrl2);
-
-                                if ($sContents == 'TRUE')
-                                {
-                                        $params->set('htaccess', 1);
-                                }
-                                else
-                                {
-                                        $sContents2 = $oFileRetriever->getFileContents($sUrl . '3' . $sUrl2);
-
-                                        if ($sContents2 == 'TRUE')
-                                        {
-                                                $params->set('htaccess', 3);
-                                        }
-                                        else
-                                        {
-                                                $params->set('htaccess', 0);
-                                        }
-                                }
-                        }
-                        catch (Exception $e)
-                        {
-                                $params->set('htaccess', 0);
-                        }
-                }
-
-
-                JchPlatformPlugin::saveSettings($params);
-
-                JCH_DEBUG ? JchPlatformProfiler::stop('CheckModRewriteEnabled', TRUE) : null;
-        }
 
         /**
          * 
@@ -261,11 +215,11 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
                 {
                         if ($sType == 'js')
                         {
-                                $sString = JS_Optimize::optimize($sString);
+                                $sString = Js::optimize($sString);
                         }
                         elseif ($sType == 'css')
                         {
-                                $sString = CSS_Optimize::optimize($sString);
+                                $sString = Css::optimize($sString);
                         }
 
                         if ($sValue && strpos(htmlspecialchars_decode($sString), $sValue) !== FALSE)
@@ -283,7 +237,7 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
          */
         public static function getBaseFolder()
         {
-                return JchPlatformUri::base(true) . '/';
+                return Uri::base(true) . '/';
         }
 
         /**
@@ -337,7 +291,7 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
          */
         public static function minifyHtml($sHtml, $oParams)
         {
-                JCH_DEBUG ? JchPlatformProfiler::start('MinifyHtml') : null;
+                JCH_DEBUG ? Profiler::start('MinifyHtml') : null;
 
 
                 if ($oParams->get('html_minify', 0))
@@ -346,31 +300,31 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
 
                         if ($oParams->get('css_minify', 0))
                         {
-                                $aOptions['cssMinifier'] = array('JchOptimize\CSS_Optimize', 'optimize');
+                                $aOptions['cssMinifier'] = array('JchOptimize\Minify\Css', 'optimize');
                         }
 
                         if ($oParams->get('js_minify', 0))
                         {
-                                $aOptions['jsMinifier'] = array('JchOptimize\JS_Optimize', 'optimize');
+				$aOptions['jsMinifier'] = array('JchOptimize\Minify\Js', 'optimize');
                         }
 
-			$aOptions['jsonMinifier'] = array('JchOptimize\JSON_Optimize', 'optimize');
+			$aOptions['jsonMinifier'] = array('JchOptimize\Minify\Json', 'optimize');
                         $aOptions['minifyLevel'] = $oParams->get('html_minify_level', 2);
                         $aOptions['isXhtml']     = self::isXhtml($sHtml);
                         $aOptions['isHtml5']     = self::isHtml5($sHtml);
 
-                        $sHtmlMin = HTML_Optimize::optimize($sHtml, $aOptions);
+                        $sHtmlMin = Html::optimize($sHtml, $aOptions);
 
                         if ($sHtmlMin == '')
                         {
-                                JchOptimizeLogger::log('Error while minifying HTML', $oParams);
+                                Logger::log('Error while minifying HTML', $oParams);
 
                                 $sHtmlMin = $sHtml;
                         }
 
                         $sHtml = $sHtmlMin;
 
-                        JCH_DEBUG ? JchPlatformProfiler::stop('MinifyHtml', TRUE) : null;
+                        JCH_DEBUG ? Profiler::stop('MinifyHtml', TRUE) : null;
                 }
 
                 return $sHtml;
@@ -420,7 +374,7 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
 
                 $post_string = implode('&', $post_params);
 
-                $parts = JchOptimizeHelper::parseUrl($url);
+                $parts = Helper::parseUrl($url);
 
                 if (isset($parts['scheme']) && ($parts['scheme'] == 'https'))
                 {
@@ -437,8 +391,8 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
 
                 if (!$fp)
                 {
-                        JchOptimizeLogger::log($errno . ': ' . $errstr, $params);
-			JchOptimizeLogger::debug($errno . ': ' . $errstr, 'JCH_post-error');
+                        Logger::log($errno . ': ' . $errstr, $params);
+			Logger::debug($errno . ': ' . $errstr, 'JCH_post-error');
                 }
                 else
                 {
@@ -455,7 +409,7 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
 
                         fwrite($fp, $out);
                         fclose($fp);
-			JchOptimizeLogger::debug($out, 'JCH_post');
+			Logger::debug($out, 'JCH_post');
                 }
         }
 
@@ -476,18 +430,192 @@ class JchOptimizeHelper extends JchOptimizeHelperBase
          */
         public static function prepareImageUrl($image)
         {
-                return array('path' => JchPlatformUtility::encrypt($image));
+                //return array('path' => Utility::encrypt($image));
+                return array('path' => $image);
         }
 
         /**
          * 
-         * @param JchPlatformSettings $params
+         * @param JchOptimize\Platform\Settings $params
          */
-        public static function clearHiddenValues(JchPlatformSettings $params)
+        public static function clearHiddenValues(Settings $params)
         {
                 $params->set('hidden_containsgf', '');
-                JchPlatformPlugin::saveSettings($params);
+                Plugin::saveSettings($params);
         }
 	
+        /**
+         * 
+         */
 
+        public static function cookieLessDomain($params, $path, $orig_path, $domains_only=false, $reset=false)
+        {
+		//If feature disabled just return the path if present
+                if (!$params->get('cookielessdomain_enable', '0') && !$domains_only)
+                {
+                        return parent::cookieLessDomain($params, $path, $orig_path, $domains_only);
+                }
+
+		//Cache processed files to ensure the same file isn't placed on a different domain
+		//if it occurs on the page twice
+                static $aDomain    = array();
+                static $aFilePaths = array();
+
+		//reset $aFilePaths for unit testing
+		if ($reset)
+		{
+			foreach ($aFilePaths as $key => $value)
+			{
+				unset($aFilePaths[$key]);
+			}
+			
+			foreach ($aDomain as $key => $value)
+			{
+				unset($aDomain[$key]);
+			}
+
+			return false;
+		}
+
+                if (empty($aDomain))
+                {
+			switch ($params->get('cdn_scheme', '0'))
+			{
+				case '1':
+					$scheme = 'http:';
+					break;
+				case '2':
+					$scheme = 'https:';
+					break;
+				case '0':
+				default:
+					$scheme = '';
+					break;
+			}
+			
+			$aDefaultFiles = self::getStaticFiles();
+
+			if (trim($params->get('cookielessdomain', '')) != '')
+			{
+				$domain1 = $params->get('cookielessdomain');
+				$staticfiles1 = implode('|', array_merge($params->get('staticfiles', $aDefaultFiles), $params->get('pro_customcdnextensions', array()))); 
+
+				$aDomain[$scheme . self::prepareDomain($domain1)] = $staticfiles1;
+			}
+			
+                }
+
+		//Sprite Generator needs this to remove CDN domains from images to create sprite
+		if ($domains_only)
+		{
+			return $aDomain;
+		}
+
+		//if no domain is configured abort
+                if (empty($aDomain))
+                {
+                        return parent::cookieLessDomain($params, $path, $orig_path);
+                }
+
+		//If we haven't matched a cdn domain to this file yet then find one.
+		if (!isset($aFilePaths[$path]))
+		{
+			$aFilePaths[$path] = self::selectDomain($aDomain, $path);
+		}
+
+		if ($aFilePaths[$path] === false)
+		{
+			return $orig_path;
+		}
+
+		return $aFilePaths[$path];
+        }
+
+        /**
+         * 
+         * @param type $domain
+         * @return type
+         */
+        private static function prepareDomain($domain)
+        {
+
+                return '//' . preg_replace('#^(?:https?:)?//|/$#i', '', trim($domain));
+        }
+
+        /**
+         * 
+         * @staticvar int $iIndex
+         * @param type $aDomain
+         * @return type
+	 */
+        private static function selectDomain(&$aDomain, $sPath)
+        {
+		//If no domain is matched to a configured file type then we'll just return the file
+		$sCdnUrl = false;
+
+		for ($i=0; count($aDomain) > $i; $i++) 
+		{
+			$sStaticFiles = current($aDomain);
+			$sDomain = key($aDomain);
+			next($aDomain);
+
+			if(current($aDomain) === false)
+			{
+				reset($aDomain);
+			}
+
+			if (preg_match('#\.(?>' . $sStaticFiles . ')#i', $sPath))
+			{
+				//Prepend the cdn domain to the file path if a match is found.
+				$sCdnUrl = $sDomain . $sPath;
+
+				break;
+			}
+		}
+
+                return $sCdnUrl;
+        }
+
+	/**
+	 * Returns array of default static files to load from CDN
+	 *
+	 *
+	 * @return array $aStaticFiles Array of file type extensions
+	 */
+	public static function getStaticFiles()
+	{
+		$aStaticFiles = array('css', 'js', 'jpe?g', 'gif', 'png', 'ico', 'bmp', 'pdf', 'webp', 'svg');
+
+		return $aStaticFiles;
+	}
+
+	/**
+	 * Returns an array of file types that will be loaded by CDN
+	 *
+	 * @return array $aCdnFileTypes Array of file type extensions
+	 */
+	public static function getCdnFileTypes($params)
+	{
+		$aCdnFileTypes = null;
+
+		if (is_null($aCdnFileTypes))
+		{
+			$aCdnFileTypes = array();
+			$aDomains = Helper::cookieLessDomain($params, '', '', true);
+
+			if (!empty($aDomains))
+			{
+				foreach($aDomains as $cdn_file_types)
+				{
+					$aCdnFileTypes = array_merge($aCdnFileTypes, explode('|', $cdn_file_types));
+				}
+
+				$aCdnFileTypes = array_unique($aCdnFileTypes);
+			}
+		}
+
+		return $aCdnFileTypes;
+	}
+
+			
 }

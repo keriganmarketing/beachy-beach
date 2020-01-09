@@ -20,7 +20,9 @@
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
-class JchOptimizeRegextokenizer
+namespace JchOptimize\Core;
+
+class Regextokenizer
 {
         //regex for double quoted strings
         const DOUBLE_QUOTE_STRING = '"(?>(?:\\\\.)?[^\\\\"]*+)+?(?:"|(?=$))';

@@ -18,9 +18,12 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformPlugin implements JchInterfacePlugin
+class Plugin implements \JchOptimize\Interfaces\PluginInterface
 {
 
         protected static $plugin = null;
@@ -65,7 +68,7 @@ class JchPlatformPlugin implements JchInterfacePlugin
                 if (is_null($params))
                 {
                         $options = get_option('jch_options');
-                        $params  = JchPlatformSettings::getInstance($options);
+                        $params  = Settings::getInstance($options);
                 }
 
                 return $params;

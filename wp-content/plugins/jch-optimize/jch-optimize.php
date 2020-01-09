@@ -4,7 +4,7 @@
  * Plugin Name: JCH Optimize
  * Plugin URI: http://www.jch-optimize.net/
  * Description: This plugin aggregates and minifies CSS and Javascript files for optimized page download
- * Version: 2.4.2
+ * Version: 2.5.2
  * Author: Samuel Marshall
  * License: GNU/GPLv3
  * Text Domain: jch-optimize
@@ -36,16 +36,25 @@ $jch_no_optimize = false;
 
 define('_WP_EXEC', '1');
 
+use JchOptimize\Platform\Plugin;
+use JchOptimize\Platform\Uri;
+use JchOptimize\Platform\Cache;
+use JchOptimize\Core\Helper;
+use JchOptimize\Core\Optimize;
+use JchOptimize\Core\Logger;
+use JchOptimize\Core\PageCache;
+use JchOptimize\Core\Admin;
+
 define('JCH_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('JCH_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 
 if (!defined('JCH_VERSION'))
 {
-        define('JCH_VERSION', '2.4.2');
+        define('JCH_VERSION', '2.5.2');
 }
 
-require_once(JCH_PLUGIN_DIR . 'jchoptimize/loader.php');
+require_once(JCH_PLUGIN_DIR . 'loader.php');
 
 //Handles activation routines
 include_once JCH_PLUGIN_DIR. 'jchplugininstaller.php';
@@ -63,7 +72,7 @@ if (is_admin())
 }
 else
 {
-        $params = JchPlatformPlugin::getPluginParams();
+        $params = Plugin::getPluginParams();
         $url_exclude = $params->get('url_exclude', array());
                
         if (defined('WP_USE_THEMES')
@@ -75,26 +84,36 @@ else
                 && !defined('APP_REQUEST')
                 && !defined('XMLRPC_REQUEST')
                 && (!defined('SHORTINIT') || (defined('SHORTINIT') && !SHORTINIT))
-                && !JchOptimizeHelper::findExcludes($url_exclude, JchPlatformUri::getInstance()->toString()))
+                && !Helper::findExcludes($url_exclude, Uri::getInstance()->toString()))
         {
-                add_action('init', 'jch_buffer_start', 0);
-                add_action('template_redirect', 'jch_buffer_start', 0);
-                add_action('shutdown', 'jch_buffer_end', -1);
-
 		//Disable NextGen Resource Manager; incompatible with plugin
 		//add_filter( 'run_ngg_resource_manager', '__return_false' );
+		
+		add_action('init', 'jch_init', 0);
+
+		ob_start('jchoptimize');
         }
+}
+
+function jch_init()
+{
+	Pagecache::initialize();
 }
 
 function jch_load_plugin_textdomain()
 {
-        load_plugin_textdomain('jch-optimize', FALSE, basename(dirname(__FILE__)) . '/languages');
+        load_plugin_textdomain('jch-optimize', false, basename(dirname(__FILE__)) . '/languages');
 }
 
 add_action('plugins_loaded', 'jch_load_plugin_textdomain');
 
 function jchoptimize($sHtml)
 {
+	if (!Helper::validateHtml($sHtml))
+	{
+		return $sHtml;
+	}
+
         global $jch_no_optimize;
         
         if($jch_no_optimize)
@@ -102,61 +121,22 @@ function jchoptimize($sHtml)
                 return $sHtml;
         }
         
-        $params = JchPlatformPlugin::getPluginParams();
+        $params = Plugin::getPluginParams();
         
         try
         {
-                $sOptimizedHtml = JchOptimize::optimize($params, $sHtml);
+                $sOptimizedHtml = Optimize::optimize($params, $sHtml);
+		Pagecache::store($sOptimizedHtml);
         }
         catch (Exception $e)
         {
-                JchOptimizeLogger::log($e->getMessage(), $params);
+                Logger::log($e->getMessage(), $params);
 
                 $sOptimizedHtml = $sHtml;
         }
 
+
         return $sOptimizedHtml;
-}
-
-function jch_buffer_start()
-{
-	JchOptimizePagecache::initialize();
-
-        ob_start();
-}
-
-function jch_buffer_end()
-{
-	//Iterate through all active buffers
-        while ($level = ob_get_level())
-        {
-		//Need to access the final buffer, apparently using ob_get_status is more reliable
-		$buffer_status = ob_get_status();
-
-		//If there's a valid HTML at the last buffer, optimize, cache and exit loop
-		if ($buffer_status['level'] == '1' && JchOptimizeHelper::validateHtml(ob_get_contents()))
-		{
-			//Retrieve and erase the contents of buffer
-			$sHtml = ob_get_clean();
-			//Optimize and store HTML
-			$sOptimizedHtml = jchoptimize($sHtml);
-			JchOptimizePagecache::store($sOptimizedHtml);
-			
-			//Send optimized HTML to browser
-			echo $sOptimizedHtml;
-
-			//Exit loop
-			break;
-		}
-
-		ob_end_flush();
-
-                //buffer not turned off for some reason.
-                if ($level == ob_get_level())
-                {
-                        break;
-                }
-        }
 }
 
 add_filter('plugin_action_links', 'jch_plugin_action_links', 10, 2);
@@ -183,10 +163,61 @@ function jch_optimize_uninstall()
 {
         delete_option('jch_options');
 
-        JchPlatformCache::deleteCache();
-	JchOptimizeAdmin::cleanHtaccess();
+        Cache::deleteCache();
+	Admin::cleanHtaccess();
 }
 
 register_uninstall_hook(__FILE__, 'jch_optimize_uninstall');
+
+$options = get_option('jch_options');
+
+if (!isset($options['order_plugin']) || (isset($options['order_plugin']) && $options['order_plugin']))
+{
+	//Adjusts the plugins load order when a plugin is activated
+	function jch_order_plugin(){
+		$active_plugins = (array) get_option('active_plugins', array());
+		$order = array(
+			'wp-super-cache/wp-cache.php',
+			'w3-total-cache/w3-total-cache.php',
+			'litespeed-cache/litespeed-cache.php',
+			'wp-fastest-cache/wpFastestCache.php',
+			'comet-cache/comet-cache.php',
+			'hyper-cache/plugin.php',
+			'jch-optimize/jch-optimize.php'
+		);
+
+		//Get the plugins in $order that are currently activated
+		$order_short_list = array_intersect($order, $active_plugins);
+		//Remove plugins in $order_short_list from list of activated plugins
+		$active_plugins_slist = array_diff($active_plugins, $order_short_list);
+		//Merge $order with $active_plugins_list
+		$ordered_active_plugins = array_merge($order_short_list, $active_plugins_slist);
+
+		update_option('active_plugins', $ordered_active_plugins);
+	}
+
+	add_action('activated_plugin', 'jch_order_plugin');
+}
+
+
+if (!empty($options['lazyload_enable'])) {
+	function jch_load_lazy_images() {
+		$params = Plugin::getPluginParams();
+
+		wp_register_script('jch-lazyloader-js', JCH_PLUGIN_URL . 'media/js/ls.loader.js', array(), JCH_VERSION);
+		wp_enqueue_script('jch-lazyloader-js');
+		
+		if ($params->get('lazyload_autosize', '0'))
+		{
+			wp_register_script('jch-lsautosize-js', JCH_PLUGIN_URL . 'media/js/ls.autosize.js', array('jch-lazyloader-js'), JCH_VERSION); 
+			wp_enqueue_script('jch-lsautosize-js');
+		}
+
+		wp_register_script('jch-lazyload-js', JCH_PLUGIN_URL . 'media/js/lazysizes.js', array('jch-lazyloader-js'), JCH_VERSION);
+		wp_enqueue_script('jch-lazyload-js');
+	}
+
+        add_action('wp_head', 'jch_load_lazy_images');
+}
 
 

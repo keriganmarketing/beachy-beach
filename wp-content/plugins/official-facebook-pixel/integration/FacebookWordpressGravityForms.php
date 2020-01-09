@@ -27,33 +27,44 @@ class FacebookWordpressGravityForms extends FacebookWordpressIntegrationBase {
   const TRACKING_NAME = 'gravity-forms';
 
   public static function injectPixelCode() {
-    add_action(
-      'gform_after_submission',
-      array(__CLASS__, 'injectLeadEventHook'),
-      10, 2);
+    add_filter(
+      'gform_confirmation',
+      array(__CLASS__, 'injectLeadEvent'),
+      10, 4);
   }
 
-  public static function injectLeadEventHook($entry, $form) {
-    add_action(
-      'wp_footer', array(__CLASS__, 'injectLeadEvent'),
-      11);
-  }
-
-  public static function injectLeadEvent() {
+  public static function injectLeadEvent($confirmation, $form, $entry, $ajax) {
     if (FacebookPluginUtils::isAdmin()) {
-      return;
+      return $confirmation;
     }
 
-    $param = array();
-    $code = FacebookPixel::getPixelLeadCode($param, self::TRACKING_NAME, false);
-
-    printf("
+    $pixel_code = FacebookPixel::getPixelLeadCode(
+                    array(), self::TRACKING_NAME, false);
+    $code = sprintf("
     <!-- Facebook Pixel Event Code -->
     <script>
     %s
     </script>
     <!-- End Facebook Pixel Event Code -->
-          ",
-      $code);
+    ", $pixel_code);
+
+    if (is_string($confirmation)) {
+        $confirmation .= $code;
+    } elseif ( is_array($confirmation) && isset($confirmation['redirect'])) {
+        $redirect_code = sprintf("
+            <!-- Facebook Pixel Gravity Forms Redirect Code -->
+            <script>%sdocument.location.href=%s;%s</script>
+            <!-- End Facebook Pixel Gravity Forms Redirect Code -->",
+            apply_filters('gform_cdata_open', ''),
+            defined('JSON_HEX_TAG') ?
+              json_encode($confirmation['redirect'], JSON_HEX_TAG)
+              : json_encode($confirmation['redirect']),
+            apply_filters('gform_cdata_close', '')
+          );
+
+        $confirmation = $code . $redirect_code;
+    }
+
+    return $confirmation;
   }
 }

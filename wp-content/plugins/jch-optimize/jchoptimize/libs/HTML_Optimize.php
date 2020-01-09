@@ -1,7 +1,5 @@
 <?php
 
-namespace JchOptimize;
-
 /**
  * Class HTML_Optimize
  */
@@ -18,6 +16,9 @@ namespace JchOptimize;
  *
  * @author Samuel Marshall<sdmarshall73@gmail.com>
  */
+
+namespace JchOptimize\LIBS;
+
 class HTML_Optimize extends Optimize
 {
         

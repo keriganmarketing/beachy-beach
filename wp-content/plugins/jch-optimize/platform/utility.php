@@ -20,9 +20,12 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformUtility implements JchInterfaceUtility
+class Utility implements \JchOptimize\Interfaces\UtilityInterface
 {
 
         /**
@@ -62,7 +65,7 @@ class JchPlatformUtility implements JchInterfaceUtility
          */
         public static function log($message, $priority, $filename)
         {
-                $file = JchPlatformUtility::getLogsPath() . '/jch-optimize.log';
+                $file = Utility::getLogsPath() . '/jch-optimize.log';
 
                 error_log($message . "\n", 3, $file);
         }
@@ -100,7 +103,7 @@ class JchPlatformUtility implements JchInterfaceUtility
 			}
 		}
 
-                $wp_filesystem = JchPlatformCache::getWpFileSystem();
+                $wp_filesystem = Cache::getWpFileSystem();
 
                 return $wp_filesystem->mkdir($path);
         }
@@ -121,7 +124,7 @@ class JchPlatformUtility implements JchInterfaceUtility
 			}
 		}
 
-                $wp_filesystem = JchPlatformCache::getWpFileSystem();
+                $wp_filesystem = Cache::getWpFileSystem();
 
                 return $wp_filesystem->put_contents($file, $contents);
         }
@@ -286,7 +289,7 @@ class JchPlatformUtility implements JchInterfaceUtility
          */
         public static function lsFiles($path, $filter = '.', $recurse = false, $exclude = array())
         {
-                $wp_filesystem = JchPlatformCache::getWpFileSystem();
+                $wp_filesystem = Cache::getWpFileSystem();
 
                 $items = $wp_filesystem->dirlist($path, false, $recurse);
 

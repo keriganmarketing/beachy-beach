@@ -1,4 +1,4 @@
 <?php
            
-$DIR = '/home/forge/demo.beachybeach.com/';
+$DIR = '/home/forge/beachybeach.com/';
            

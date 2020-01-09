@@ -20,20 +20,23 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformSettings implements JchInterfaceSettings
+class Settings implements \JchOptimize\Interfaces\SettingsInterface
 {
         private $params;
         
         /**
          * 
          * @param type $params
-         * @return \JchOptimizeSettings
+         * @return \JchOptimize\Core\Settings
          */
         public static function getInstance($params)
         {
-                return new JchPlatformSettings($params);
+                return new Settings($params);
         }
 
         /**
@@ -84,4 +87,16 @@ class JchPlatformSettings implements JchInterfaceSettings
         {
                 return $this->params;
         }
+
+	/**
+	 * Delete a value from the settings object
+	 *
+	 * @param    mixed    $param    The parameter value to be deleted
+	 *
+	 * @return   null
+	 */
+	public function remove($param)
+	{
+		unset($this->params[$param]);
+	}
 }

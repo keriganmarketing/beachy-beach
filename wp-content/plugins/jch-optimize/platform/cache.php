@@ -20,9 +20,13 @@
  *
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
+namespace JchOptimize\Platform;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class JchPlatformCache implements JchInterfaceCache
+use JchOptimize\Core\Exception;
+
+class Cache implements \JchOptimize\Interfaces\CacheInterface
 {
 
         protected static $wp_filesystem;
@@ -94,7 +98,7 @@ class JchPlatformCache implements JchInterfaceCache
 		//Purge LiteSpeed cache
 		if (class_exists('LiteSpeed_Cache_API'))
 		{
-			LiteSpeed_Cache_API::purge_all();
+			\LiteSpeed_Cache_API::purge_all();
 		}
 
                 $wp_filesystem = self::getWpFileSystem();
@@ -178,10 +182,10 @@ class JchPlatformCache implements JchInterfaceCache
 
                         if (!function_exists('request_filesystem_credentials'))
                         {
-                                include_once JchPlatformPaths::rootPath() . 'wp-admin/includes/file.php';
+                                include_once Paths::rootPath() . 'wp-admin/includes/file.php';
                         }
 
-                        add_filter('request_filesystem_credentials', array('JchPlatformCache', 'requestFilesystemCredentials'), 10, 7);
+                        add_filter('request_filesystem_credentials', array('JchOptimize\Platform\Cache', 'requestFilesystemCredentials'), 10, 7);
                         
                         if (false === ($creds = request_filesystem_credentials(admin_url('options-general.php?page=jchoptimize-settings'), '', false,
                                                                                          WP_CONTENT_DIR, null, true)))
@@ -202,7 +206,7 @@ class JchPlatformCache implements JchInterfaceCache
                                 }
                         }
 
-                        if (false === WP_Filesystem($creds, WP_CONTENT_DIR, true))
+                        if (false === \WP_Filesystem($creds, WP_CONTENT_DIR, true))
                         {
                                 $message = 'Could not connect to the filesystem. Please check your FTP credentials in wp_config.php file';
 
@@ -245,7 +249,7 @@ class JchPlatformCache implements JchInterfaceCache
 
 		if(!function_exists('wp_generate_password'))
 		{
-			include_once JchPlatformPaths::rootPath() . 'wp-includes/pluggable.php';
+			include_once Paths::rootPath() . 'wp-includes/pluggable.php';
 		}
 
                 $credentials = get_option('ftp_credentials', array('hostname' => '', 'username' => ''));
@@ -293,7 +297,7 @@ class JchPlatformCache implements JchInterfaceCache
 
                 $result = true;
 
-                $files = JchPlatformUtility::lsFiles(rtrim(JCH_CACHE_DIR, '/\\'), '.', TRUE);
+                $files = Utility::lsFiles(rtrim(JCH_CACHE_DIR, '/\\'), '.', TRUE);
                 $now   = time();
 
                 foreach ($files as $file)
@@ -341,7 +345,7 @@ class JchPlatformCache implements JchInterfaceCache
 
 		if(!$lifetime)
 		{
-			$params = JchPlatformPlugin::getPluginParams();
+			$params = Plugin::getPluginParams();
 
 			$lifetime = $params->get('cache_lifetime', '900');
 		}

@@ -20,24 +20,28 @@
  * If LICENSE file missing, see <http://www.gnu.org/licenses/>.
  */
 
+namespace JchOptimize\Core;
 
 defined('_JCH_EXEC') or die('Restricted access');
+
+use JchOptimize\Platform\Settings;
+use JchOptimize\Platform\Utility;
 
 /**
  * 
  * 
  */
-class JchOptimizeLogger
+class Logger
 {
         /**
          * 
          * @param type $sMessage
-         * @param JchPlatformSettings $params
+         * @param JchOptimize\Platform\Settings $params
          * @param type $sCategory
          */
-        public static function log($sMessage, JchPlatformSettings $params)
+        public static function log($sMessage, Settings $params)
         {
-		JCH_DEBUG ? JchPlatformUtility::log($sMessage, 'ERROR', 'plg_jch_optimize.errors.php') : null;
+		JCH_DEBUG ? Utility::log($sMessage, 'ERROR', 'plg_jch_optimize.errors.php') : null;
         }
         
         /**
@@ -49,7 +53,7 @@ class JchOptimizeLogger
         {
                 $sMessage = $name != '' ? "$name = '" . $variable . "'" : $variable;
                 
-                JchPlatformUtility::log($sMessage, 'DEBUG', 'plg_jch_optimize.debug.php');
+                Utility::log($sMessage, 'DEBUG', 'plg_jch_optimize.debug.php');
         }
         
         /**
@@ -58,7 +62,7 @@ class JchOptimizeLogger
          */
         public static function logInfo($sMessage)
         {
-                JchPlatformUtility::log($sMessage, 'INFO', 'plg_jch_optimize.logs.php');
+                Utility::log($sMessage, 'INFO', 'plg_jch_optimize.logs.php');
         }
 
 }
