@@ -14,14 +14,17 @@ $modalIndicators = '<ol class="carousel-indicators hidden-sm-down">';
 $modalImages     = '<div class="carousel-inner" role="listbox">';
 ?>
 <div class="listing-photo">
-    <div class="embed-responsive embed-responsive-16by9">
-        <div class="main-prop-photo" style="overflow:hidden;">
+    <div 
+        style="background-image: url('<?php echo str_replace('http://','//', $preferredImage); ?>'); background-size: cover; background-position:center;"
+        class="embed-responsive embed-responsive-4by3"
+        >
+        <!-- <div class="main-prop-photo" style="overflow:hidden;">
             <img 
                  src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                  data-src="<?php echo str_replace('http://','//', $preferredImage); ?>" 
                  class="embed-responsive-item lazy"
                  alt="MLS Property <?php echo $listingInfo->mls_account; ?>" style="width:100%"/>
-        </div>
+        </div> -->
     </div>
 </div>
 <div class="row no-gutters">
