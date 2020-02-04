@@ -77,6 +77,22 @@ $modalImages     = '<div class="carousel-inner" role="listbox">';
         }
         $i++;
     } ?>
+
+    <div class="hidden-sm-down col-sm-6 col-md-4 col-xl-3 listing-photo">
+        <div class="embed-responsive embed-responsive-16by9">
+            <div class="sub-photo-container">
+                <a href="#" class="thumbnail" data-toggle="modal" data-target="#lightbox" data-slide-to="<?php echo $nextImage - 1; ?>">
+                    <img 
+                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                            data-src="<?php echo str_replace('http://','//', $preferredImage); ?>"
+                            class="embed-responsive-item lazy" style="width:100%"
+                            alt="MLS Property <?php echo $listingInfo->mls_account; ?>"
+                            data-slide-to="0"/>
+                </a>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <?php
