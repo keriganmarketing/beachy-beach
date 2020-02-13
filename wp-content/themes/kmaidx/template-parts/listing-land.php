@@ -21,6 +21,15 @@
     <?php if(intval($listingInfo->last_taxes) > 0){ ?>
 	<tr><td class="title">Taxes</td><td class="data">$<?php echo number_format( intval($listingInfo->last_taxes), 2,'.',','); ?> in <?php echo $listingInfo->last_tax_year; ?></td></tr>
 	<?php } ?>
+	
+	<?php if($listingInfo->hoa_amount != 0){ ?>
+		<tr><td class="title">HOA Term</td><td class="data">$<?php echo number_format( intval($listingInfo->hoa_amount), 2,'.',','); ?></td></tr>
+	<?php } ?>
+
+	<?php if($listingInfo->hoa_frequency != ''){ ?>
+		<tr><td class="title">HOA Term</td><td class="data"><?php echo $listingInfo->hoa_frequency; ?></td></tr>
+	<?php } ?>
+
     </tbody>
 </table>
 </div>
