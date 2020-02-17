@@ -49,7 +49,7 @@ $bb = new BeachyBucket();
                     <div id="beach-bucket-mobile" class="beach-bucket col-md-5 d-lg-none" >
                         <div class="bucket-left" >
                             <p class="saved-num">
-                                <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : '0'); ?>
+                                <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : ''); ?>
                             </p>
                             <?php echo (is_user_logged_in() ? '<a href="/beachy-bucket/">' : ''); ?>
                             <img src="<?php echo get_template_directory_uri().'/img/beach-bucket.png'; ?>" alt="Save &amp; Compare Beach Properties">
@@ -82,7 +82,7 @@ $bb = new BeachyBucket();
                             <div class="beach-bucket" >
                                 <div class="bucket-left" >
                                     <p class="saved-num">
-                                        <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : '0'); ?>
+                                        <?php echo (is_user_logged_in() ? $bb->getNumberOfBucketItems($current_user->ID) : ''); ?>
                                     </p>
                                     <?php echo (is_user_logged_in() ? '<a href="/beachy-bucket/">' : ''); ?>
                                     <img src="<?php echo get_template_directory_uri().'/img/beach-bucket.png'; ?>" alt="Save &amp; Compare Beach Properties">
