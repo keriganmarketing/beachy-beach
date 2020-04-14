@@ -15,7 +15,7 @@
 get_header(); ?>
 <div id="illustration" class="text-center">
     <div class="container nopad">
-        <h1 id="main-title">Beachy is a Way of Life.</h1>
+        <h1 id="main-title"><a href="/beachy-is-a-way-of-life/" >Beachy is a Way of Life.</a></h1>
         <p id="sub-title">Bringing families and the beach together.</p>
 	    <?php get_template_part( 'template-parts/mls', 'quick-search' ); ?>
     </div>

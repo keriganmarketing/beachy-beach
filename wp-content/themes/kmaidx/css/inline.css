@@ -550,7 +550,19 @@ div#map-header p, h1#main-title, h1.entry-title {
     text-shadow: 2px 2px 0 rgba(26,110,138,.8);
 }
 
-.page-id-4 h1#main-title {
+div#map-header p, h1#main-title, h1.entry-title {
+    font-family: 'Bebas Neue';
+    text-align: center;
+    margin: 0;
+    padding: 65px 0 0;
+    font-size: 85px;
+    color: #FFFFFF;
+    line-height: 80px;
+    text-shadow: 2px 2px 0 rgba(26,110,138,.8);
+}
+
+.page-id-4 h1#main-title a {
+    font-family: 'Bebas Neue';
     color:#21879c;
     text-shadow: none;
     padding: 13px 0 0;
@@ -623,7 +635,8 @@ div#map-header p, h1#main-title, h1.entry-title {
         font-size: 49px;
     }
 
-    .page-id-4 h1#main-title {
+    .page-id-4 h1#main-title a {
+        font-family: 'Bebas Neue';
         color:#21879c;
         text-shadow: none;
         font-size: 57px;
@@ -649,7 +662,8 @@ div#map-header p, h1#main-title, h1.entry-title {
         line-height: 87px;
     }
 
-    .page-id-4 h1#main-title {
+    .page-id-4 h1#main-title a {
+        font-family: 'Bebas Neue';
         font-size: 85px;
         padding: 60px 0 0;
     }
