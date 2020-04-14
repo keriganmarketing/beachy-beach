@@ -21,6 +21,9 @@ defined('ABSPATH') or die('Direct access not allowed');
 
 use FacebookPixelPlugin\Core\FacebookPixel;
 use FacebookPixelPlugin\Core\FacebookPluginUtils;
+use FacebookPixelPlugin\Core\ServerEventFactory;
+use FacebookPixelPlugin\Core\FacebookServerSideEvent;
+use FacebookPixelPlugin\Core\PixelRenderer;
 
 class FacebookWordpressEasyDigitalDownloads extends FacebookWordpressIntegrationBase {
   const PLUGIN_FILE = 'easy-digital-downloads/easy-digital-downloads.php';
@@ -73,10 +76,10 @@ jQuery(document).ready(function ($) {
       'inject_function' => 'injectInitiateCheckoutEvent'));
 
     // Purchase
-    self::addPixelFireForHook(array(
-      'hook_name' => 'edd_payment_receipt_after',
-      'classname' => __CLASS__,
-      'inject_function' => 'injectPurchaseEvent'));
+    add_action(
+      'edd_payment_receipt_after',
+      array(__CLASS__, 'trackPurchaseEvent'),
+      10, 2);
 
     // ViewContent
     self::addPixelFireForHook(array(
@@ -112,14 +115,14 @@ jQuery(document).ready(function ($) {
       return;
     }
 
-    $currency = edd_get_currency();
-    $value = EDD()->cart->get_total();
-    $param = array(
-      'currency' => $currency,
-      'value' => $value,
+    $server_event = ServerEventFactory::safeCreateEvent(
+      'InitiateCheckout',
+      array(__CLASS__, 'createInitiateCheckoutEvent'),
+      array()
     );
-    $code = FacebookPixel::getPixelInitiateCheckoutCode($param, self::TRACKING_NAME, true);
+    FacebookServerSideEvent::getInstance()->track($server_event);
 
+    $code = PixelRenderer::render(array($server_event), self::TRACKING_NAME);
     printf("
 <!-- Facebook Pixel Event Code -->
 %s
@@ -128,27 +131,28 @@ jQuery(document).ready(function ($) {
       $code);
   }
 
-  public static function injectPurchaseEvent($payment) {
+  public static function trackPurchaseEvent($payment, $edd_receipt_args) {
     if (FacebookPluginUtils::isAdmin() || empty($payment->ID)) {
       return;
     }
 
-    $payment_meta = edd_get_payment_meta($payment->ID);
-
-    $content_ids = array();
-    $value = 0;
-    foreach ($payment_meta['cart_details'] as $item) {
-      $content_ids[] = $item['id'];
-      $value += $item['price'];
-    }
-    $currency = $payment_meta['currency'];
-    $param = array(
-      'content_ids' => $content_ids,
-      'content_type' => 'product',
-      'currency' => $currency,
-      'value' => $value,
+    $server_event = ServerEventFactory::safeCreateEvent(
+      'Purchase',
+      array(__CLASS__, 'createPurchaseEvent'),
+      array($payment)
     );
-    $code = FacebookPixel::getPixelPurchaseCode($param, self::TRACKING_NAME, true);
+    FacebookServerSideEvent::getInstance()->track($server_event);
+
+    add_action(
+      'wp_footer',
+       array(__CLASS__, 'injectPurchaseEvent'),
+       20
+    );
+  }
+
+  public static function injectPurchaseEvent() {
+    $events = FacebookServerSideEvent::getInstance()->getTrackedEvents();
+    $code = PixelRenderer::render($events, self::TRACKING_NAME);
 
     printf("
 <!-- Facebook Pixel Event Code -->
@@ -188,5 +192,40 @@ jQuery(document).ready(function ($) {
 <!-- End Facebook Pixel Event Code -->
       ",
       $code);
+  }
+
+  public static function createInitiateCheckoutEvent() {
+    $event_data = FacebookPluginUtils::getLoggedInUserInfo();
+    $event_data['currency'] = EDDUtils::getCurrency();
+    $event_data['value'] = EDDUtils::getCartTotal();
+
+    return $event_data;
+  }
+
+  public static function createPurchaseEvent($payment) {
+    $event_data = array();
+
+    $payment_meta = \edd_get_payment_meta($payment->ID);
+    if (empty($payment_meta)) {
+      return $event_data;
+    }
+
+    $event_data['email'] = $payment_meta['email'];
+    $event_data['first_name'] = $payment_meta['user_info']['first_name'];
+    $event_data['last_name'] = $payment_meta['user_info']['last_name'];
+
+    $content_ids = array();
+    $value = 0;
+    foreach ($payment_meta['cart_details'] as $item) {
+      $content_ids[] = $item['id'];
+      $value += $item['price'];
+    }
+
+    $event_data['currency'] = $payment_meta['currency'];
+    $event_data['value'] = $value;
+    $event_data['content_ids'] = $content_ids;
+    $event_data['content_type'] = 'product';
+
+    return $event_data;
   }
 }

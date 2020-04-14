@@ -2,11 +2,11 @@
 
 /**
  * JCH Optimize - Aggregate and minify external resources for optmized downloads
- * 
- * @author Samuel Marshall <sdmarshall73@gmail.com>
+ *
+ * @author    Samuel Marshall <sdmarshall73@gmail.com>
  * @copyright Copyright (c) 2010 Samuel Marshall
- * @license GNU/GPLv3, See LICENSE file
- * 
+ * @license   GNU/GPLv3, See LICENSE file
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -35,13 +35,15 @@ class Ajax
 {
 
         /**
-         * 
-         * @param JchOptimize\Platform\Settings $params
+         *
+         * @param   Settings  $params
+         *
+         * @throws Exception
          */
-        public static function garbageCron(Settings $params)
-        {
-                Cache::gc();
-        }
+	public static function garbageCron(Settings $params)
+	{
+		Cache::gc();
+	}
 
-        
+	
 }

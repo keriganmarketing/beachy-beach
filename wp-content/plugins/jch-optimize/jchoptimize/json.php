@@ -68,7 +68,7 @@ class Json
 		$this->message = $message;
 
 		// Check if we are dealing with an error
-		if ($response instanceof Exception)
+		if ($response instanceof \Exception)
 		{
 			// Prepare the error response
 			$this->success = false;

@@ -2,11 +2,11 @@
 
 /**
  * JCH Optimize - Aggregate and minify external resources for optmized downloads
- * 
- * @author Samuel Marshall <sdmarshall73@gmail.com>
+ *
+ * @author    Samuel Marshall <sdmarshall73@gmail.com>
  * @copyright Copyright (c) 2010 Samuel Marshall
- * @license GNU/GPLv3, See LICENSE file
- * 
+ * @license   GNU/GPLv3, See LICENSE file
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,279 +24,291 @@ namespace JchOptimize\Core;
 
 defined('_JCH_EXEC') or die('Restricted access');
 
+use JchOptimize\Platform\Settings;
 use JchOptimize\Platform\Uri;
 use JchOptimize\Platform\Profiler;
 use JchOptimize\Platform\Utility;
 
 /**
- * 
- * 
+ *
+ *
  */
 class CssParser extends \JchOptimize\Minify\Base
 {
 
-        public $sLnEnd      = '';
-        public $params;
-        protected $bBackend = false;
-        public $e           = '';
-        public $u           = '';
+	public $sLnEnd = '';
+	public $params;
+	protected $bBackend = false;
+	public $e = '';
+	public $u = '';
 
-        /**
-         * 
-         * @param type $sLnEnd
-         * @param type $bBackend
-         */
-        public function __construct($params = NULL, $bBackend = false)
-        {
-                $this->sLnEnd = is_null($params) ? "\n" : Utility::lnEnd();
-                $this->params = $params;
+	/**
+	 *
+	 * @param   Settings|null  $params
+	 * @param   bool           $bBackend
+	 */
+	public function __construct($params = null, $bBackend = false)
+	{
+		$this->sLnEnd = is_null($params) ? "\n" : Utility::lnEnd();
+		$this->params = $params;
 
-                $this->bBackend = $bBackend;
-                $e              = self::DOUBLE_QUOTE_STRING . '|' . self::SINGLE_QUOTE_STRING . '|' . self::BLOCK_COMMENT . '|'
-                        . self::LINE_COMMENT;
-                $this->e        = "(?<!\\\\)(?:$e)|[\'\"/]";
-                $this->u        = '(?<!\\\\)(?:' . self::URI . '|' . $e . ')|[\'\"/(]';
-        }
+		$this->bBackend = $bBackend;
+		$e              = self::DOUBLE_QUOTE_STRING . '|' . self::SINGLE_QUOTE_STRING . '|' . self::BLOCK_COMMENT . '|'
+			. self::LINE_COMMENT;
+		$this->e        = "(?<!\\\\)(?:$e)|[\'\"/]";
+		$this->u        = '(?<!\\\\)(?:' . self::URI . '|' . $e . ')|[\'\"/(]';
+	}
 
-        /**
-         * 
-         * @param type $sContent
-         * @return type
-         */
-        public function handleMediaQueries($sContent, $sParentMedia = '')
-        {
-                if ($this->bBackend)
-                {
-                        return $sContent;
-                }
+	/**
+	 *
+	 * @param   string  $sContent
+	 * @param   string  $sParentMedia
+	 *
+	 * @return string|string[]|null
+	 */
+	public function handleMediaQueries($sContent, $sParentMedia = '')
+	{
+		if ($this->bBackend)
+		{
+			return $sContent;
+		}
 
-                if (isset($sParentMedia) && ($sParentMedia != ''))
-                {
-                        $obj = $this;
+		if (isset($sParentMedia) && ($sParentMedia != ''))
+		{
+			$obj = $this;
 
-                        $sContent = preg_replace_callback(
-                                "#(?>@?[^@'\"/(]*+(?:{$this->u})?)*?\K(?:@media ([^{]*+)|\K$)#i",
-                                function($aMatches) use ($sParentMedia, $obj)
-                        {
-                                return $obj->_mediaFeaturesCB($aMatches, $sParentMedia);
-                        }, $sContent
-                        );
+			$sContent = preg_replace_callback(
+				"#(?>@?[^@'\"/(]*+(?:{$this->u})?)*?\K(?:@media ([^{]*+)|\K$)#i",
+				function ($aMatches) use ($sParentMedia, $obj) {
+					return $obj->_mediaFeaturesCB($aMatches, $sParentMedia);
+				}, $sContent
+			);
 
-                        $a = $this->nestedAtRulesRegex();
+			$a = $this->nestedAtRulesRegex();
 
-                        $sContent = preg_replace(
-                                "#(?>(?:\|\"[^|]++(?<=\")\||$a)\s*+)*\K"
-                                . "(?>(?:$this->u|/|\(|@(?![^{};]++(?1)))?(?:[^|@'\"/(]*+|$))*+#i",
-                                '@media ' . $sParentMedia . ' {' . $this->sLnEnd . '$0' . $this->sLnEnd . '}', trim($sContent)
-                        );
+			$sContent = preg_replace(
+				"#(?>(?:\|\"[^|]++(?<=\")\||$a)\s*+)*\K"
+				. "(?>(?:$this->u|/|\(|@(?![^{};]++(?1)))?(?:[^|@'\"/(]*+|$))*+#i",
+				'@media ' . $sParentMedia . ' {' . $this->sLnEnd . '$0' . $this->sLnEnd . '}', trim($sContent)
+			);
 
-                        $sContent = preg_replace("#(?>@?[^@'\"/(]*+(?:{$this->u})?)*?\K(?:@media[^{]*+{((?>\s*+|$this->e)++)}|$)#i", '$1', $sContent);
-                }
+			$sContent = preg_replace("#(?>@?[^@'\"/(]*+(?:{$this->u})?)*?\K(?:@media[^{]*+{((?>\s*+|$this->e)++)}|$)#i", '$1', $sContent);
+		}
 
-                return $sContent;
-        }
+		return $sContent;
+	}
 
-        /**
-         * 
-         * @return string
-         */
-        public static function nestedAtRulesRegex()
-        {
-                return '@[^{};]++({(?>[^{}]++|(?1))*+})';
-        }
+	/**
+	 *
+	 * @return string
+	 */
+	public static function nestedAtRulesRegex()
+	{
+		return '@[^{};]++({(?>[^{}]++|(?1))*+})';
+	}
 
-        /**
-         * 
-         * @param type $aMatches
-         * @return type
-         */
-        public function _mediaFeaturesCB($aMatches, $sParentMedia)
-        {
-                if (!isset($aMatches[1]) || $aMatches[1] == '' || preg_match('#^(?>\(|/(?>/|\*))#', $aMatches[0]))
-                {
-                        return $aMatches[0];
-                }
+	/**
+	 *
+	 * @param   array   $aMatches
+	 * @param   string  $sParentMedia
+	 *
+	 * @return string
+	 */
+	public function _mediaFeaturesCB($aMatches, $sParentMedia)
+	{
+		if (!isset($aMatches[1]) || $aMatches[1] == '' || preg_match('#^(?>\(|/(?>/|\*))#', $aMatches[0]))
+		{
+			return $aMatches[0];
+		}
 
-                return '@media ' . $this->combineMediaQueries($sParentMedia, trim($aMatches[1]));
-        }
+		return '@media ' . $this->combineMediaQueries($sParentMedia, trim($aMatches[1]));
+	}
 
-        /**
-         * 
-         * @param type $sParentMediaQueries
-         * @param type $sChildMediaQueries
-         * @return type
-         */
-        protected function combineMediaQueries($sParentMediaQueries, $sChildMediaQueries)
-        {
-                $aParentMediaQueries = preg_split('#\s++or\s++|,#i', $sParentMediaQueries);
-                $aChildMediaQueries  = preg_split('#\s++or\s++|,#i', $sChildMediaQueries);
+	/**
+	 *
+	 * @param   string  $sParentMediaQueries
+	 * @param   string  $sChildMediaQueries
+	 *
+	 * @return string
+	 */
+	protected function combineMediaQueries($sParentMediaQueries, $sChildMediaQueries)
+	{
+		$aParentMediaQueries = preg_split('#\s++or\s++|,#i', $sParentMediaQueries);
+		$aChildMediaQueries  = preg_split('#\s++or\s++|,#i', $sChildMediaQueries);
 
-                //$aMediaTypes = array('all', 'aural', 'braille', 'handheld', 'print', 'projection', 'screen', 'tty', 'tv', 'embossed');
+		//$aMediaTypes = array('all', 'aural', 'braille', 'handheld', 'print', 'projection', 'screen', 'tty', 'tv', 'embossed');
 
-                $aMediaQuery = array();
+		$aMediaQuery = array();
 
-                foreach ($aParentMediaQueries as $sParentMediaQuery)
-                {
-                        $aParentMediaQuery = $this->parseMediaQuery(trim($sParentMediaQuery));
+		foreach ($aParentMediaQueries as $sParentMediaQuery)
+		{
+			$aParentMediaQuery = $this->parseMediaQuery(trim($sParentMediaQuery));
 
-                        foreach ($aChildMediaQueries as $sChildMediaQuery)
-                        {
-                                $sMediaQuery = '';
+			foreach ($aChildMediaQueries as $sChildMediaQuery)
+			{
+				$sMediaQuery = '';
 
-                                $aChildMediaQuery = $this->parseMediaQuery(trim($sChildMediaQuery));
+				$aChildMediaQuery = $this->parseMediaQuery(trim($sChildMediaQuery));
 
-                                if ($aParentMediaQuery['keyword'] == 'only' || $aChildMediaQuery['keyword'] == 'only')
-                                {
-                                        $sMediaQuery .= 'only ';
-                                }
+				if ($aParentMediaQuery['keyword'] == 'only' || $aChildMediaQuery['keyword'] == 'only')
+				{
+					$sMediaQuery .= 'only ';
+				}
 
-                                if ($aParentMediaQuery['keyword'] == 'not' && $sChildMediaQuery['keyword'] == '')
-                                {
-                                        if ($aParentMediaQuery['media_type'] == 'all')
-                                        {
-                                                $sMediaQuery .= '(not ' . $aParentMediaQuery['media_type'] . ')';
-                                        }
-                                        elseif ($aParentMediaQuery['media_type'] == $aChildMediaQuery['media_type'])
-                                        {
-                                                $sMediaQuery .= '(not ' . $aParentMediaQuery['media_type'] . ') and ' . $aChildMediaQuery['media_type'];
-                                        }
-                                        else
-                                        {
-                                                $sMediaQuery .= $aChildMediaQuery['media_type'];
-                                        }
-                                }
-                                elseif ($aParentMediaQuery['keyword'] == '' && $aChildMediaQuery['keyword'] == 'not')
-                                {
-                                        if ($aChildMediaQuery['media_type'] == 'all')
-                                        {
-                                                $sMediaQuery .= '(not ' . $aChildMediaQuery['media_type'] . ')';
-                                        }
-                                        elseif ($aParentMediaQuery['media_type'] == $aChildMediaQuery['media_type'])
-                                        {
-                                                $sMediaQuery .= $aParentMediaQuery['media_type'] . ' and (not ' . $aChildMediaQuery['media_type'] . ')';
-                                        }
-                                        else
-                                        {
-                                                $sMediaQuery .= $aChildMediaQuery['media_type'];
-                                        }
-                                }
-                                elseif ($aParentMediaQuery['keyword'] == 'not' && $aChildMediaQuery['keyword'] == 'not')
-                                {
-                                        $sMediaQuery .= 'not ' . $aChildMediaQuery['keyword'];
-                                }
-                                else
-                                {
-                                        if ($aParentMediaQuery['media_type'] == $aChildMediaQuery['media_type']
-                                                || $aParentMediaQuery['media_type'] == 'all')
-                                        {
-                                                $sMediaQuery .= $aChildMediaQuery['media_type'];
-                                        }
-                                        elseif ($aChildMediaQuery['media_type'] == 'all')
-                                        {
-                                                $sMediaQuery .= $aParentMediaQuery['media_type'];
-                                        }
-                                        else
-                                        {
+				if ($aParentMediaQuery['keyword'] == 'not' && $sChildMediaQuery['keyword'] == '')
+				{
+					if ($aParentMediaQuery['media_type'] == 'all')
+					{
+						$sMediaQuery .= '(not ' . $aParentMediaQuery['media_type'] . ')';
+					}
+					elseif ($aParentMediaQuery['media_type'] == $aChildMediaQuery['media_type'])
+					{
+						$sMediaQuery .= '(not ' . $aParentMediaQuery['media_type'] . ') and ' . $aChildMediaQuery['media_type'];
+					}
+					else
+					{
+						$sMediaQuery .= $aChildMediaQuery['media_type'];
+					}
+				}
+				elseif ($aParentMediaQuery['keyword'] == '' && $aChildMediaQuery['keyword'] == 'not')
+				{
+					if ($aChildMediaQuery['media_type'] == 'all')
+					{
+						$sMediaQuery .= '(not ' . $aChildMediaQuery['media_type'] . ')';
+					}
+					elseif ($aParentMediaQuery['media_type'] == $aChildMediaQuery['media_type'])
+					{
+						$sMediaQuery .= $aParentMediaQuery['media_type'] . ' and (not ' . $aChildMediaQuery['media_type'] . ')';
+					}
+					else
+					{
+						$sMediaQuery .= $aChildMediaQuery['media_type'];
+					}
+				}
+				elseif ($aParentMediaQuery['keyword'] == 'not' && $aChildMediaQuery['keyword'] == 'not')
+				{
+					$sMediaQuery .= 'not ' . $aChildMediaQuery['keyword'];
+				}
+				else
+				{
+					if ($aParentMediaQuery['media_type'] == $aChildMediaQuery['media_type']
+						|| $aParentMediaQuery['media_type'] == 'all')
+					{
+						$sMediaQuery .= $aChildMediaQuery['media_type'];
+					}
+					elseif ($aChildMediaQuery['media_type'] == 'all')
+					{
+						$sMediaQuery .= $aParentMediaQuery['media_type'];
+					}
+					else
+					{
 						//Two different media types are nested and neither is 'all' then
 						//the enclosed rule will not be applied on any media type
 						//We put 'not all' to maintain a syntaticaly correct combined media type
-                                                $sMediaQuery .= 'not all';
-                                        }
-                                }
+						$sMediaQuery .= 'not all';
+					}
+				}
 
-                                if (isset($aParentMediaQuery['expression']))
-                                {
-                                        $sMediaQuery .= ' and ' . $aParentMediaQuery['expression'];
-                                }
+				if (isset($aParentMediaQuery['expression']))
+				{
+					$sMediaQuery .= ' and ' . $aParentMediaQuery['expression'];
+				}
 
-                                if (isset($aChildMediaQuery['expression']))
-                                {
-                                        $sMediaQuery .= ' and ' . $aChildMediaQuery['expression'];
-                                }
+				if (isset($aChildMediaQuery['expression']))
+				{
+					$sMediaQuery .= ' and ' . $aChildMediaQuery['expression'];
+				}
 
-                                $aMediaQuery[] = $sMediaQuery;
-                        }
-                }
+				$aMediaQuery[] = $sMediaQuery;
+			}
+		}
 
-                return implode(', ', $aMediaQuery);
-        }
+		return implode(', ', $aMediaQuery);
+	}
 
-        /**
-         * 
-         * @param type $sMediaQuery
-         * @return type
-         */
-        protected function parseMediaQuery($sMediaQuery)
-        {
-                $aParts = array();
+	/**
+	 *
+	 * @param   string  $sMediaQuery
+	 *
+	 * @return array
+	 */
+	protected function parseMediaQuery($sMediaQuery)
+	{
+		$aParts = array();
 
-                $sMediaQuery = preg_replace(array('#\(\s++#', '#\s++\)#'), array('(', ')'), $sMediaQuery);
-                preg_match('#(?:\(?(not|only)\)?)?\s*+(?:\(?(all|aural|braille|handheld|print|projection|screen|tty|tv|embossed)\)?)?(?:\s++and\s++)?(.++)?#si',
-                           $sMediaQuery, $aMatches);
+		$sMediaQuery = preg_replace(array('#\(\s++#', '#\s++\)#'), array('(', ')'), $sMediaQuery);
+		preg_match('#(?:\(?(not|only)\)?)?\s*+(?:\(?(all|aural|braille|handheld|print|projection|screen|tty|tv|embossed)\)?)?(?:\s++and\s++)?(.++)?#si',
+			$sMediaQuery, $aMatches);
 
-                $aParts['keyword'] = isset($aMatches[1]) ? strtolower($aMatches[1]) : '';
+		$aParts['keyword'] = isset($aMatches[1]) ? strtolower($aMatches[1]) : '';
 
-                if (isset($aMatches[2]) && $aMatches[2] != '')
-                {
-                        $aParts['media_type'] = strtolower($aMatches[2]);
-                }
-                else
-                {
-                        $aParts['media_type'] = 'all';
-                }
+		if (isset($aMatches[2]) && $aMatches[2] != '')
+		{
+			$aParts['media_type'] = strtolower($aMatches[2]);
+		}
+		else
+		{
+			$aParts['media_type'] = 'all';
+		}
 
-                if (isset($aMatches[3]) && $aMatches[3] != '')
-                {
-                        $aParts['expression'] = $aMatches[3];
-                }
+		if (isset($aMatches[3]) && $aMatches[3] != '')
+		{
+			$aParts['expression'] = $aMatches[3];
+		}
 
-                return $aParts;
-        }
+		return $aParts;
+	}
 
-        /**
-         * 
-         * @param string $sContent
-         * @param type $sAtRulesRegex
-         * @param type $sUrl
-         * @return string
-         */
-        public function removeAtRules($sContent, $sAtRulesRegex, $sUrl = array('url' => 'CSS'))
-        {
-                if (preg_match_all($sAtRulesRegex, $sContent, $aMatches) === FALSE)
-                {
-                        //Logger::log(sprintf('Error parsing for at rules in %s', $sUrl['url']), $this->params);
+	/**
+	 *
+	 * @param   string  $sContent
+	 * @param   string  $sAtRulesRegex
+	 * @param   array   $sUrl
+	 *
+	 * @return string
+	 */
+	public function removeAtRules($sContent, $sAtRulesRegex, $sUrl = array('url' => 'CSS'))
+	{
+		if (preg_match_all($sAtRulesRegex, $sContent, $aMatches) === false)
+		{
+			//Logger::log(sprintf('Error parsing for at rules in %s', $sUrl['url']), $this->params);
 
-                        return $sContent;
-                }
+			return $sContent;
+		}
 
-                $m = array_filter($aMatches[0]);
+		$m = array_filter($aMatches[0]);
 
-                if (!empty($m))
-                {
-                        $m = array_unique($m);
+		if (!empty($m))
+		{
+			$m = array_unique($m);
 
-                        $sAtRules = implode($this->sLnEnd, $m);
+			$sAtRules = implode($this->sLnEnd, $m);
 
-                        $sContentReplaced = str_replace($m, '', $sContent);
+			$sContentReplaced = str_replace($m, '', $sContent);
 
-                        $sContent = $sAtRules . $this->sLnEnd . $this->sLnEnd . $sContentReplaced;
-                }
+			$sContent = $sAtRules . $this->sLnEnd . $this->sLnEnd . $sContentReplaced;
+		}
 
-                return $sContent;
-        }
+		return $sContent;
+	}
 
-        /**
-         * Converts url of background images in css files to absolute path
-         * 
-         * @param string $sContent
-         * @return string
-         */
-        public function correctUrl($sContent, $aUrl, $bInFontFace=false, $http2=false)
-        {
-		$regex = "(?>[(@]?[^('/\"@]*+(?:{$this->e}|/)?)*?(?:(?<=url)\(\s*+\K['\"]?((?<!['\"])[^)]*+|(?<!')[^\"]*+|[^']*+)['\"]?|\K@font-face\s*+({(?>[^{}]++|(?2))*+})|\K$)";
-                $sCorrectedContent = preg_replace_callback( "#{$regex}#i", function ($aMatches) use ($aUrl, $bInFontFace, $http2)
-                {
-			if(preg_match('#^@font-face#i', $aMatches[0]))
+	/**
+	 * Converts url of background images in css files to absolute path
+	 *
+	 * @param   string  $sContent
+	 *
+	 * @param   array   $aUrl
+	 * @param   bool    $bInFontFace
+	 * @param   bool    $http2
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	public function correctUrl($sContent, $aUrl, $bInFontFace = false, $http2 = false)
+	{
+		$regex             = "(?>[(@]?[^('/\"@]*+(?:{$this->e}|/)?)*?(?:(?<=url)\(\s*+\K['\"]?((?<!['\"])[^)]*+|(?<!')[^\"]*+|[^']*+)['\"]?|\K@font-face\s*+({(?>[^{}]++|(?2))*+})|\K$)";
+		$sCorrectedContent = preg_replace_callback("#{$regex}#i", function ($aMatches) use ($aUrl, $bInFontFace, $http2) {
+			if (preg_match('#^@font-face#i', $aMatches[0]))
 			{
 				return '@font-face' . $this->correctUrl($aMatches[2], $aUrl, true, $http2);
 			}
@@ -304,57 +316,72 @@ class CssParser extends \JchOptimize\Minify\Base
 			{
 				return $this->_correctUrlCB($aMatches, $aUrl, $bInFontFace, $http2);
 			}
-                }, $sContent);
+		}, $sContent);
 
-                if (is_null($sCorrectedContent))
-                {
-                        throw new Exception('The plugin failed to correct the url of the background images');
-                }
+		if (is_null($sCorrectedContent))
+		{
+			throw new Exception('The plugin failed to correct the url of the background images');
+		}
 
-                $sContent = $sCorrectedContent;
+		$sContent = $sCorrectedContent;
 
-                return $sContent;
-        }
+		return $sContent;
+	}
 
-        /**
-         * Callback function to correct urls in aggregated css files
-         *
-         * @param array $aMatches Array of all matches
-         * @return string         Correct url of images from aggregated css file
-         */
-        public function _correctUrlCB($aMatches, $aUrl, $bInFontFace, $http2)
-        {
-                if (empty($aMatches[1]) || $aMatches[1] == '/' || preg_match('#^(?:\(|/\*)#', $aMatches[0]))
-                {
-                        return $aMatches[0];
-                }
+	/**
+	 * Callback function to correct urls in aggregated css files
+	 *
+	 * @param   array  $aMatches  Array of all matches
+	 *
+	 * @param   array  $aUrl
+	 * @param   bool   $bInFontFace
+	 * @param   bool   $http2
+	 *
+	 * @return string|void         Correct url of images from aggregated css file
+	 */
+	public function _correctUrlCB($aMatches, $aUrl, $bInFontFace, $http2)
+	{
+		if (empty($aMatches[1]) || $aMatches[1] == '/' || preg_match('#^(?:\(|/\*)#', $aMatches[0]))
+		{
+			return $aMatches[0];
+		}
 
-                $sImageUrl   = $aMatches[1];
-                $sCssFileUrl = empty($aUrl['url']) ? '' : $aUrl['url'];
+		$sImageUrl   = $aMatches[1];
+		$sCssFileUrl = empty($aUrl['url']) ? '' : $aUrl['url'];
 
-                if (Url::isHttpScheme($sImageUrl))
-                {
-                        if (($sCssFileUrl == '' || Url::isInternal($sCssFileUrl)) && Url::isInternal($sImageUrl))
-                        {
+		if (Url::isHttpScheme($sImageUrl))
+		{
+			if (($sCssFileUrl == '' || Url::isInternal($sCssFileUrl)) && Url::isInternal($sImageUrl))
+			{
 				
 
-                                $sImageUrl = Url::toRootRelative($sImageUrl, $sCssFileUrl);
+				$sImageUrl = Url::toRootRelative($sImageUrl, $sCssFileUrl);
 
-                                $oImageUri = clone Uri::getInstance($sImageUrl);
+				$oImageUri = clone Uri::getInstance($sImageUrl);
 
-                                if ($this->params->get('pro_cookielessdomain_enable', '0') && $bInFontFace)
-                                {
-                                        $oUri = clone Uri::getInstance();
+				if ($this->params->get('cookielessdomain_enable', '0') && $bInFontFace)
+				{
+					$oUri = clone Uri::getInstance();
 
-                                        $sImageUrl = '//' . $oUri->toString(array('host', 'port')) .
-                                                $oImageUri->toString(array('path', 'query', 'fragment'));
-                                }
+					$sImageUrlCdn = Helper::cookieLessDomain($this->params, $oImageUri->toString(array('path')), $sImageUrl);
+
+					//If image(font) not loaded over CDN
+					if ($sImageUrlCdn == $sImageUrl)
+					{
+						$sImageUrl = '//' . $oUri->toString(array('host', 'port')) .
+							$oImageUri->toString(array('path', 'query', 'fragment'));
+					}
+					else
+					{
+						$sImageUrl = $sImageUrlCdn;
+					}
+				}
 				else
 				{
 					$sImageUrlCdn = Helper::cookieLessDomain($this->params, $oImageUri->toString(array('path')), $sImageUrl);
-					
+
 					//If CSS file will be loaded by CDN but image won't then return absolute url
-					if ($this->params->get('pro_cookielessdomain_enable', '0') && in_array('css', Helper::getCdnFileTypes($this->params)) && $sImageUrlCdn == $sImageUrl)
+					if ($this->params->get('cookielessdomain_enable', '0') && in_array('css', Helper::getCdnFileTypes($this->params)) && $sImageUrlCdn == $sImageUrl)
 					{
 						$sImageUrl = Url::toAbsolute($sImageUrl);
 					}
@@ -364,115 +391,114 @@ class CssParser extends \JchOptimize\Minify\Base
 					}
 				}
 
-                        }
-                        else
-                        {
-                                if (!Url::isAbsolute($sImageUrl))
-                                {
-                                        $sImageUrl = Url::toAbsolute($sImageUrl, $sCssFileUrl);
-                                }
+			}
+			else
+			{
+				if (!Url::isAbsolute($sImageUrl))
+				{
+					$sImageUrl = Url::toAbsolute($sImageUrl, $sCssFileUrl);
+				}
 				else
 				{
 					return $aMatches[0];
 				}
-                        }
+			}
 
 			$sImageUrl = preg_match('#(?<!\\\\)[\s\'"(),]#', $sImageUrl) ? '"' . $sImageUrl . '"' : $sImageUrl;
 
 			return $sImageUrl;
 
-                }
+		}
 		else
 		{
 			return $aMatches[0];
 		}
 
-        }
+	}
 
-        /**
-         * Sorts @import and @charset as according to w3C <http://www.w3.org/TR/CSS2/cascade.html> Section 6.3
-         *
-         * @param string $sCss       Combined css
-         * @return string           CSS with @import and @charset properly sorted
-         * @todo                     replace @imports with media queries
-         */
-        public function sortImports($sCss)
-        {
-		$r = "#(?>@?[^@('\"/]*+(?:{$this->u}|/|\()?)*?\K(?:@media\s([^{]++)({(?>[^{}]++|(?2))*+})|\K$)#i";
-                $sCssMediaImports = preg_replace_callback($r, array($this, '_sortImportsCB'), $sCss);
+	/**
+	 * Sorts @import and @charset as according to w3C <http://www.w3.org/TR/CSS2/cascade.html> Section 6.3
+	 *
+	 * @param   string  $sCss  Combined css
+	 *
+	 * @return string           CSS with @import and @charset properly sorted
+	 * @todo                     replace @imports with media queries
+	 */
+	public function sortImports($sCss)
+	{
+		$r                = "#(?>@?[^@('\"/]*+(?:{$this->u}|/|\()?)*?\K(?:@media\s([^{]++)({(?>[^{}]++|(?2))*+})|\K$)#i";
+		$sCssMediaImports = preg_replace_callback($r, array($this, '_sortImportsCB'), $sCss);
 
-                if (is_null($sCssMediaImports))
-                {
-                        //Logger::log('Failed matching for imports within media queries in css', $this->params);
+		if (is_null($sCssMediaImports))
+		{
+			//Logger::log('Failed matching for imports within media queries in css', $this->params);
 
-                        return $sCss;
-                }
+			return $sCss;
+		}
 
-                $sCss = $sCssMediaImports;
+		$sCss = $sCssMediaImports;
 
-                $sCss = preg_replace('#@charset[^;}]++;?#i', '', $sCss);
-                $sCss = $this->removeAtRules($sCss, '#(?>[/@]?[^/@]*+(?:/\*(?>\*?[^\*]*+)*?\*/)?)*?\K(?:@import[^;}]++;?|\K$)#i');
+		$sCss = preg_replace('#@charset[^;}]++;?#i', '', $sCss);
+		$sCss = $this->removeAtRules($sCss, '#(?>[/@]?[^/@]*+(?:/\*(?>\*?[^\*]*+)*?\*/)?)*?\K(?:@import[^;}]++;?|\K$)#i');
 
-                return $sCss;
-        }
+		return $sCss;
+	}
 
-        /**
-         * Callback function for sort Imports
-         * 
-         * @param type $aMatches
-         * @return string
-         */
-        protected function _sortImportsCB($aMatches)
-        {
-                if (!isset($aMatches[1]) || $aMatches[1] == '' || preg_match('#^(?>\(|/(?>/|\*))#', $aMatches[0]))
-                {
-                        return $aMatches[0];
-                }
+	/**
+	 * Callback function for sort Imports
+	 *
+	 * @param   array  $aMatches
+	 *
+	 * @return string
+	 */
+	protected function _sortImportsCB($aMatches)
+	{
+		if (!isset($aMatches[1]) || $aMatches[1] == '' || preg_match('#^(?>\(|/(?>/|\*))#', $aMatches[0]))
+		{
+			return $aMatches[0];
+		}
 
-                $sMedia = $aMatches[1];
+		$sMedia = $aMatches[1];
 
-                $sImports = preg_replace_callback('#(@import\surl\([^)]++\))([^;}]*+);?#',
-                                                  function($aM) use ($sMedia)
-                {
-                        if (!empty($aM[2]))
-                        {
-                                return $aM[1] . ' ' . $this->combineMediaQueries($sMedia, $aM[2]) . ';';
-                        }
-                        else
-                        {
-                                return $aM[1] . ' ' . $sMedia . ';';
-                        }
-                }, $aMatches[2]);
+		$sImports = preg_replace_callback('#(@import\surl\([^)]++\))([^;}]*+);?#',
+			function ($aM) use ($sMedia) {
+				if (!empty($aM[2]))
+				{
+					return $aM[1] . ' ' . $this->combineMediaQueries($sMedia, $aM[2]) . ';';
+				}
+				else
+				{
+					return $aM[1] . ' ' . $sMedia . ';';
+				}
+			}, $aMatches[2]);
 
-                $sCss = str_replace($aMatches[2], $sImports, $aMatches[0]);
+		return str_replace($aMatches[2], $sImports, $aMatches[0]);
+	}
 
-                return $sCss;
-        }
+	/**
+	 *
+	 * @param   string  $sCss
+	 *
+	 * @return string
+	 */
+	public function addRightBrace($sCss)
+	{
+		$sRCss = '';
+		$r     = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b))*+})|$)#";
+		preg_replace_callback("#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b))*+})|(?=}}$))#",
+			function ($m) use (&$sRCss) {
+				$sRCss .= $m[0];
 
-        /**
-         * 
-         * @param type $sCss
-         * @return type
-         */
-        public function addRightBrace($sCss)
-        {
-                $sRCss = '';
-$r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b))*+})|$)#";
-                preg_replace_callback("#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b))*+})|(?=}}$))#",
-                                      function($m) use (&$sRCss)
-                {
-                        $sRCss .= $m[0];
+				return;
+			}, rtrim($sCss) . '}}');
 
-                        return;
-                }, rtrim($sCss) . '}}');
-
-                return $sRCss;
-        }
+		return $sRCss;
+	}
 
 	public function removeFontFace($sCss)
 	{
-		$sCss = preg_replace_callback('#' . self::cssRulesRegex() . '#', function($aMatches){
-			if(preg_match('#^@(?:-[^-]+-)?font-face#i', ltrim($aMatches[0])))
+		$sCss = preg_replace_callback('#' . self::cssRulesRegex() . '#', function ($aMatches) {
+			if (preg_match('#^@(?:-[^-]+-)?font-face#i', ltrim($aMatches[0])))
 			{
 				return '';
 			}
@@ -485,27 +511,26 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 		return $sCss;
 	}
 
-        public static function cssRulesRegex()
-        {
-                $c = self::BLOCK_COMMENT . '|' . self::LINE_COMMENT;
+	public static function cssRulesRegex()
+	{
+		$c = self::BLOCK_COMMENT . '|' . self::LINE_COMMENT;
 
-                $r =  "(?:\s*+(?>$c)\s*+)*+\K"
-                        . "((?>[^{}@/]*+(?:/(?![*/])|(?<=\\\\)[{}@/])?)*?)(?>{[^{}]*+}|(@[^{};]*+)(?>({((?>[^{}]++|(?3))*+)})|;?)|$)";
+		$r = "(?:\s*+(?>$c)\s*+)*+\K"
+			. "((?>[^{}@/]*+(?:/(?![*/])|(?<=\\\\)[{}@/])?)*?)(?>{[^{}]*+}|(@[^{};]*+)(?>({((?>[^{}]++|(?3))*+)})|;?)|$)";
 
 		return $r;
-        }
+	}
 
-        /**
+	/**
 	 * Extracts the critical CSS required to render content above the fold from the combined CSS contents
 	 *
-	 * @param    array      $aContents   Array of combined CSS contents, passed by reference. @font-face (and possibly
-	 * 				     unused CSS) will be removed
-         * @param    string     $sHtml       The HTML content of the page stripped of all <style/>'s and <scripts/>'s
+	 * @param   string  $sCombinedCss  Combined contents of CSS files
+	 * @param   string  $sHtml         The HTML content of the page stripped of all <style/>'s and <scripts/>'s
 	 *
-	 * @return   string     Critical CSS 
-         */
-        public function optimizeCssDelivery(&$aContents, $sHtml)
-        {
+	 * @return   string     Critical CSS
+	 */
+	public function optimizeCssDelivery(&$sCombinedCss, $sHtml)
+	{
 		if (!class_exists('DOMDocument') || !class_exists('DOMXPath'))
 		{
 			Logger::log('Document Object Model not supported', $this->params);
@@ -513,96 +538,93 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 			return parent::optimizeCssDelivery($aContents, $sHtml);
 		}
 
-                JCH_DEBUG ? Profiler::start('OptimizeCssDelivery') : null;
+		JCH_DEBUG ? Profiler::start('OptimizeCssDelivery') : null;
 
-                $this->_debug('', '');
+		$this->_debug('', '');
 
 		//Place space around HTML attributes for easy processing with XPath
-                $sHtml = preg_replace('#\s*=\s*["\']([^"\']++)["\']#i', '=" $1 "', $sHtml);
+		$sHtml = preg_replace('#\s*=\s*["\']([^"\']++)["\']#i', '=" $1 "', $sHtml);
 		//Remove text nodes from HTML elements
-                $sHtml = preg_replace_callback('#(<(?>[^<>]++|(?1))*+>)|((?<=>)(?=[^<>\S]*+[^<>\s])[^<>]++)#',
-                                                        function($m)
-                {
-                        if (!empty($m[1]))
-                        {
-                                return $m[0];
-                        }
+		$sHtml = preg_replace_callback('#(<(?>[^<>]++|(?1))*+>)|((?<=>)(?=[^<>\S]*+[^<>\s])[^<>]++)#',
+			function ($m) {
+				if (!empty($m[1]))
+				{
+					return $m[0];
+				}
 
-                        if (!empty($m[2]))
-                        {
-                                return ' ';
-                        }
+				if (!empty($m[2]))
+				{
+					return ' ';
+				}
 
-                }, $sHtml);
+			}, $sHtml);
 
-                $this->_debug('', '', 'afterHtmlAdjust');
+		$this->_debug('', '', 'afterHtmlAdjust');
 
 		//Truncate HTML to number of elements set in params
-                $sHtmlAboveFold = '';
-                preg_replace_callback('#<(?:[a-z0-9]++)(?:[^>]*+)>(?><?[^<]*+)*?(?=<[a-z0-9])#i',
-                                      function($aM) use (&$sHtmlAboveFold)
-                {
-                        $sHtmlAboveFold .= $aM[0];
+		$sHtmlAboveFold = '';
+		preg_replace_callback('#<(?:[a-z0-9]++)(?:[^>]*+)>(?><?[^<]*+)*?(?=<[a-z0-9])#i',
+			function ($aM) use (&$sHtmlAboveFold) {
+				$sHtmlAboveFold .= $aM[0];
 
-                        return;
-                }, $sHtml, (int) $this->params->get('optimizeCssDelivery', '200'));
+				return;
+			}, $sHtml, (int) $this->params->get('optimizeCssDelivery', '200'));
 
-                $this->_debug('', '', 'afterHtmlTruncated');
+		$this->_debug('', '', 'afterHtmlTruncated');
 
-                $oDom = new \DOMDocument();
+		$oDom = new \DOMDocument();
 
 		//Load HTML in DOM 
-                libxml_use_internal_errors(TRUE);
-                $oDom->loadHtml($sHtmlAboveFold);
-                libxml_clear_errors();
+		libxml_use_internal_errors(true);
+		$oDom->loadHtml($sHtmlAboveFold);
+		libxml_clear_errors();
 
-                $oXPath = new \DOMXPath($oDom);
+		$oXPath = new \DOMXPath($oDom);
 
-                $this->_debug('', '', 'afterLoadHtmlDom');
+		$this->_debug('', '', 'afterLoadHtmlDom');
 
-		//There should be only one value in array if feature enabled. All CSS should be combined in one file
-		$sCombinedCss = $aContents[0];
-		$sFullHtml    = $sHtml;
+		$sFullHtml = $sHtml;
 
-		//Extracts critical css, storing in $sCriticalCss. @font-face will be returned in $sContents
-                $sCriticalCss = '';
-                $sCombinedCss = preg_replace_callback(
-                        '#' . self::cssRulesRegex() . '#',
-                        function ($aMatches) use ($oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss)
-                {
-                        return $this->extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, $sCriticalCss);
-                }, $sCombinedCss);
+		//Extracts critical css, storing in $sCriticalCss. @font-face will be returned in $sCriticalCss
+		$sCriticalCss = '';
+		$sUnusedCss   = '';
 
-                $this->_debug('', '', 'afterExtractCriticalCss');
+		$sCombinedCss = preg_replace_callback(
+			'#' . self::cssRulesRegex() . '#',
+			function ($aMatches) use ($oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss, &$sUnusedCss) {
+				return $this->extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, $sCriticalCss, $sUnusedCss);
+			}, $sCombinedCss);
 
+		$this->_debug('', '', 'afterExtractCriticalCss');
+
+		
 		$aContents[0] = $sCombinedCss;
 
-                $sCriticalCss = preg_replace('#@media[^{]*+{[^\S}]*+}#', '', $sCriticalCss);
-                //$sCriticalCss = preg_replace('#@media[^{]*+{[^\S}]*+}#', '', $sCriticalCss);
-                $sCriticalCss = preg_replace('#/\*\*\*!+[^!]+!\*\*\*+/[^\S]*+(?=\/\*\*\*!|$)#', '', $sCriticalCss);
-                $sCriticalCss = preg_replace('#\s*[\r\n]{2,}\s*#', "\n\n", $sCriticalCss);
+		$this->_debug(self::cssRulesRegex(), '', 'afterCleanCriticalCss');
 
-                $this->_debug(self::cssRulesRegex(), '', 'afterCleanCriticalCss');
+		JCH_DEBUG ? Profiler::stop('OptimizeCssDelivery', true) : null;
 
-                JCH_DEBUG ? Profiler::stop('OptimizeCssDelivery', TRUE) : null;
+		return $sCriticalCss;
+	}
 
-                return $sCriticalCss;
-        }
+	
 
-        /**
+
+	/**
 	 * Callback function to extract critical css
 	 *
-         * @param    array    $aMatches         Match of each CSS declaration
-         * @param    DOMXPath $oXPath
-	 * @param    string   $sHtmlAboveFold   Section of HTML above the fold
-	 * @param    string   $sFullHtml        Complete HTML
-         * @param    string   $sCriticalCss     Variable holding critical css
+	 * @param   array      $aMatches        Match of each CSS declaration
+	 * @param   \DOMXPath  $oXPath
+	 * @param   string     $sHtmlAboveFold  Section of HTML above the fold
+	 * @param   string     $sFullHtml       Complete HTML
+	 * @param   string     $sCriticalCss    Variable holding critical css
+	 * @param   string     $sUnusedCss      Css evaluated as not being used on page
 	 *
-         * @return   string   The original matched CSS declaration or empty string if removed
-         */
-        public function extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss)
-        {
-                $matches0 = trim($aMatches[0]);
+	 * @return   string|void   The original matched CSS declaration or empty string if removed
+	 */
+	public function extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss, &$sUnusedCss)
+	{
+		$matches0 = trim($aMatches[0]);
 
 		if (empty($matches0))
 		{
@@ -610,11 +632,11 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 		}
 
 		//add all @font-face to the critical css
-                if (preg_match('#^(?>@(?:-[^-]+-)?(?:font-face))#i', $matches0))
-                {
+		if (preg_match('#^(?>@(?:-[^-]+-)?(?:font-face))#i', $matches0))
+		{
 			if (!preg_match('#font-display#i', $matches0))
 			{
-				$sCriticalCss .= rtrim(substr($matches0, 0, -1),';') . ';font-display:swap}';
+				$sCriticalCss .= rtrim(substr($matches0, 0, -1), ';') . ';font-display:swap}';
 
 			}
 			else
@@ -623,44 +645,45 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 			}
 
 			//Remove @font-face from combined CSS
-                        return '';
-                }
+			return '';
+		}
 
 		//recurse into each @media rule
-                if (preg_match('#^@media#', $matches0))
-                {
-                        $sCriticalCss .= $aMatches[2] . '{';
+		if (preg_match('#^@media#', $matches0))
+		{
+			$sCriticalCssInner = '';
+			$sUnusedCssInner   = '';
 
-                        $sMediaCss = preg_replace_callback(
-                                '#' . self::cssRulesRegex() . '#',
-                                function ($aMatches) use ($oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCss)
-                        {
-                                return $this->extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, $sCriticalCss);
-                        }, $aMatches[4]);
+			$sMediaCss = preg_replace_callback(
+				'#' . self::cssRulesRegex() . '#',
+				function ($aMatches) use ($oXPath, $sHtmlAboveFold, $sFullHtml, &$sCriticalCssInner, &$sUnusedCssInner) {
+					return $this->extractCriticalCss($aMatches, $oXPath, $sHtmlAboveFold, $sFullHtml, $sCriticalCssInner, $sUnusedCssInner);
+				}, $aMatches[4]);
 
-                        $sCriticalCss .= $this->sLnEnd . '}' . $this->sLnEnd;
+			$sCriticalCss .= trim($sCriticalCssInner) != '' ? $aMatches[2] . '{' . $sCriticalCssInner . '}' . $this->sLnEnd : '';
+			$sUnusedCss   .= trim($sUnusedCssInner) != '' ? $aMatches[2] . '{' . $sUnusedCssInner . '}' . $this->sLnEnd : '';
 
-                        return $aMatches[2] . '{' . $sMediaCss . '}' . $this->sLnEnd;
-                }
+			return trim($sMediaCss) != '' ? $aMatches[2] . '{' . $sMediaCss . '}' . $this->sLnEnd : '';
+		}
 
 		//Return all other @rules
-                if (preg_match('#^\s*+@(?:-[^-]+-)?(?:page|keyframes|charset|namespace)#i', $matches0))
-                {
-                        return $aMatches[0];
-                }
+		if (preg_match('#^\s*+@(?:-[^-]+-)?(?:page|keyframes|charset|namespace)#i', $matches0))
+		{
+			return $aMatches[0];
+		}
 
 		//we're inside a @media rule or global css
 		//remove pseudo-selectors
-                $sSelectorGroup = preg_replace('#:not\([^)]+\)|::?[a-zA-Z0-9(\[\])-]+#', '', $aMatches[1]);
+		$sSelectorGroup = preg_replace('#:not\([^)]+\)|::?[a-zA-Z0-9(\[\])-]+#', '', $aMatches[1]);
 		//Split selector groups into individual selector chains
-                $aSelectorChains = array_filter(explode(',', $sSelectorGroup));
-                $aFoundSelectorChains = array();
+		$aSelectorChains      = array_filter(explode(',', $sSelectorGroup));
+		$aFoundSelectorChains = array();
 
 		//Iterate through each selector chain 
-                foreach ($aSelectorChains as $sSelectorChain)
-                {
+		foreach ($aSelectorChains as $sSelectorChain)
+		{
 			//If Selector chain is already in critical css just go ahead and add this group
-			if(strpos($sCriticalCss, $sSelectorChain) !== false)
+			if (strpos($sCriticalCss, $sSelectorChain) !== false)
 			{
 				$sCriticalCss .= $aMatches[0];
 
@@ -674,38 +697,38 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 				//Match found, add selector chain to array
 				$aFoundSelectorChains[] = $sSelectorChain;
 			}
-                }
+		}
 
 		//If no valid selector chain was found in the group then we don't add this selector group to the critical CSS
-                if (empty($aFoundSelectorChains))
-                {
-                        $this->_debug('', '', 'afterSelectorNotFound');
+		if (empty($aFoundSelectorChains))
+		{
+			$this->_debug('', '', 'afterSelectorNotFound');
 
 			
 			//
 			//Simply return match to combined CSS without adding to critical css
-                        return $aMatches[0];
-                }
+			return $aMatches[0];
+		}
 
 		//Group the found selector chains
-                $sFoundSelectorGroup = implode(',', array_unique($aFoundSelectorChains));
+		$sFoundSelectorGroup = implode(',', array_unique($aFoundSelectorChains));
 		//remove any backslash used for escaping
 		//$sFoundSelectorGroup = str_replace('\\', '', $sFoundSelectorGroup);
 
-                $this->_debug($sFoundSelectorGroup, '', 'afterSelectorFound');
+		$this->_debug($sFoundSelectorGroup, '', 'afterSelectorFound');
 
 		//Convert the selector group to Xpath
-                $sXPath = $this->convertCss2XPath($sFoundSelectorGroup);
+		$sXPath = $this->convertCss2XPath($sFoundSelectorGroup);
 
-                $this->_debug($sXPath, '', 'afterConvertCss2XPath');
+		$this->_debug($sXPath, '', 'afterConvertCss2XPath');
 
-                if ($sXPath)
-                {
-                        $aXPaths = array_unique(explode(' | ', str_replace('\\', '', $sXPath)));
+		if ($sXPath)
+		{
+			$aXPaths = array_unique(explode(' | ', str_replace('\\', '', $sXPath)));
 
-                        foreach ($aXPaths as $sXPathValue)
-                        {
-                                $oElement = $oXPath->query($sXPathValue);
+			foreach ($aXPaths as $sXPathValue)
+			{
+				$oElement = $oXPath->query($sXPathValue);
 
 //                                if ($oElement === FALSE)
 //                                {
@@ -716,29 +739,29 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 //                                }
 
 				//Match found! Add to critical CSS
-                                if ($oElement !== false && $oElement->length)
-                                {
-                                        $sCriticalCss .= $aMatches[0];
-                                        $this->_debug($sXPathValue, '', 'afterCriticalCssFound');
+				if ($oElement !== false && $oElement->length)
+				{
+					$sCriticalCss .= $aMatches[0];
+					$this->_debug($sXPathValue, '', 'afterCriticalCssFound');
 
-                                        return $aMatches[0];
-                                }
+					return $aMatches[0];
+				}
 
-                                $this->_debug($sXPathValue, '', 'afterCriticalCssNotFound');
-                        }
-                }
+				$this->_debug($sXPathValue, '', 'afterCriticalCssNotFound');
+			}
+		}
 
 		//No match found for critical CSS. 
 		//Just return the original CSS declaration match to combined file
-                return $aMatches[0];
-        }
+		return $aMatches[0];
+	}
 
 	/**
 	 * Do a preliminary simple check to see if a CSS declaration is used by the HTML
 	 *
-	 * @param    string    $sSelectorChain
-	 * @param    string    $sHtml
-	 * 
+	 * @param   string  $sSelectorChain
+	 * @param   string  $sHtml
+	 *
 	 * @return   boolean   True is all parts of the CSS selector is found in the HTML, false if not
 	 */
 	protected function checkCssAgainstHtml($sSelectorChain, $sHtml)
@@ -748,7 +771,7 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 
 		//We'll do a quick check first if all parts of each simple selector is found in the HTML
 		//Iterate through each simple selector
-		foreach ($aSimpleSelectors  as $sSimpleSelector)
+		foreach ($aSimpleSelectors as $sSimpleSelector)
 		{
 			//Match the simple selector into its components
 			$sSimpleSelectorRegex = '#([a-z0-9]*)(?:([.\#]((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))|(\[((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+)(?:[~|^$*]?=(?|"([^"\]]*+)"|\'([^\'\]]*+)\'|([^\]]*+)))?\]))*#i';
@@ -806,163 +829,167 @@ $r = "#(?>[^{}'\"/(]*+(?:{$this->u})?)+?(?:(?<b>{(?>[^{}'\"/(]++|{$this->u}|(?&b
 		return true;
 	}
 
-        /**
-         * 
-         * @param type $sSelector
-         * @return boolean
-         */
-        public function convertCss2XPath($sSelector)
-        {
-                $sSelector = preg_replace('#\s*([>+~,])\s*#', '$1', $sSelector);
-                $sSelector = trim($sSelector);
-                $sSelector = preg_replace('#\s+#', ' ', $sSelector);
+	/**
+	 *
+	 * @param   string  $sSelector
+	 *
+	 * @return boolean
+	 */
+	public function convertCss2XPath($sSelector)
+	{
+		$sSelector = preg_replace('#\s*([>+~,])\s*#', '$1', $sSelector);
+		$sSelector = trim($sSelector);
+		$sSelector = preg_replace('#\s+#', ' ', $sSelector);
 
 
-                if (!$sSelector)
-                {
-                        return FALSE;
-                }
+		if (!$sSelector)
+		{
+			return false;
+		}
 
-                $sSelectorRegex = '#(?!$)'
-                        . '([>+~, ]?)' //separator
-                        . '([*a-z0-9]*)' //element
-                        . '(?:(([.\#])((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))(([.\#])((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))?|'//class or id
-                        . '(\[((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+)(([~|^$*]?=)["\']?([^\]"\']+)["\']?)?\]))*' //attribute
-                        . '#i';
+		$sSelectorRegex = '#(?!$)'
+			. '([>+~, ]?)' //separator
+			. '([*a-z0-9]*)' //element
+			. '(?:(([.\#])((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))(([.\#])((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+))?|'//class or id
+			. '(\[((?:[_a-z0-9-]|\\\\[^\r\n\f0-9a-z])+)(([~|^$*]?=)["\']?([^\]"\']+)["\']?)?\]))*' //attribute
+			. '#i';
 
-                return preg_replace_callback($sSelectorRegex, array($this, '_tokenizer'), $sSelector) . '[1]';
-        }
+		return preg_replace_callback($sSelectorRegex, array($this, '_tokenizer'), $sSelector) . '[1]';
+	}
 
-        /**
-         * 
-         * @param type $aM
-         */
-        protected function _tokenizer($aM)
-        {
-                $sXPath = '';
+	/**
+	 *
+	 * @param   array  $aM
+	 *
+	 * @return string
+	 */
+	protected function _tokenizer($aM)
+	{
+		$sXPath = '';
 
-                switch ($aM[1])
-                {
-                        case '>':
-                                $sXPath .= '/';
+		switch ($aM[1])
+		{
+			case '>':
+				$sXPath .= '/';
 
-                                break;
-                        case '+':
-                                $sXPath .= '/following-sibling::*';
+				break;
+			case '+':
+				$sXPath .= '/following-sibling::*';
 
-                                break;
-                        case '~':
-                                $sXPath .= '/following-sibling::';
+				break;
+			case '~':
+				$sXPath .= '/following-sibling::';
 
-                                break;
-                        case ',':
-                                $sXPath .= '[1] | descendant-or-self::';
+				break;
+			case ',':
+				$sXPath .= '[1] | descendant-or-self::';
 
-                                break;
-                        case ' ':
-                                $sXPath .= '/descendant::';
+				break;
+			case ' ':
+				$sXPath .= '/descendant::';
 
-                                break;
-                        default:
-                                $sXPath .= 'descendant-or-self::';
-                                break;
-                }
+				break;
+			default:
+				$sXPath .= 'descendant-or-self::';
+				break;
+		}
 
-                if ($aM[1] != '+')
-                {
-                        $sXPath .= $aM[2] == '' ? '*' : $aM[2];
-                }
+		if ($aM[1] != '+')
+		{
+			$sXPath .= $aM[2] == '' ? '*' : $aM[2];
+		}
 
-                if (isset($aM[3]) || isset($aM[9]))
-                {
-                        $sXPath .= '[';
+		if (isset($aM[3]) || isset($aM[9]))
+		{
+			$sXPath .= '[';
 
-                        $aPredicates = array();
+			$aPredicates = array();
 
-                        if (isset($aM[4]) && $aM[4] == '.')
-                        {
-                                $aPredicates[] = "contains(@class, ' " . $aM[5] . " ')";
-                        }
+			if (isset($aM[4]) && $aM[4] == '.')
+			{
+				$aPredicates[] = "contains(@class, ' " . $aM[5] . " ')";
+			}
 
-                        if (isset($aM[7]) && $aM[7] == '.')
-                        {
-                                $aPredicates[] = "contains(@class, ' " . $aM[8] . " ')";
-                        }
+			if (isset($aM[7]) && $aM[7] == '.')
+			{
+				$aPredicates[] = "contains(@class, ' " . $aM[8] . " ')";
+			}
 
-                        if (isset($aM[4]) && $aM[4] == '#')
-                        {
-                                $aPredicates[] = "@id = ' " . $aM[5] . " '";
-                        }
+			if (isset($aM[4]) && $aM[4] == '#')
+			{
+				$aPredicates[] = "@id = ' " . $aM[5] . " '";
+			}
 
-                        if (isset($aM[7]) && $aM[7] == '#')
-                        {
-                                $aPredicates[] = "@id = ' " . $aM[8] . " '";
-                        }
+			if (isset($aM[7]) && $aM[7] == '#')
+			{
+				$aPredicates[] = "@id = ' " . $aM[8] . " '";
+			}
 
-                        if (isset($aM[9]))
-                        {
-                                if (!isset($aM[11]))
-                                {
-                                        $aPredicates[] = '@' . $aM[10];
-                                }
-                                else
-                                {
-                                        switch ($aM[12])
-                                        {
-                                                case '=':
-                                                        $aPredicates[] = "@{$aM[10]} = ' {$aM[13]} '";
+			if (isset($aM[9]))
+			{
+				if (!isset($aM[11]))
+				{
+					$aPredicates[] = '@' . $aM[10];
+				}
+				else
+				{
+					switch ($aM[12])
+					{
+						case '=':
+							$aPredicates[] = "@{$aM[10]} = ' {$aM[13]} '";
 
-                                                        break;
-                                                case '|=':
-                                                        $aPredicates[] = "(@{$aM[10]} = ' {$aM[13]} ' or "
-                                                                . "starts-with(@{$aM[10]}, ' {$aM[13]}'))";
-                                                        break;
-                                                case '^=':
-                                                        $aPredicates[] = "starts-with(@{$aM[10]}, ' {$aM[13]}')";
-                                                        break;
-                                                case '$=':
-                                                        $aPredicates[] = "substring(@{$aM[10]}, string-length(@{$aM[10]})-"
-                                                                . strlen($aM[13]) . ") = '{$aM[13]} '";
-                                                        break;
-                                                case '~=':
-                                                        $aPredicates[] = "contains(@{$aM[10]}, ' {$aM[13]} ')";
-                                                        break;
-                                                case '*=':
-                                                        $aPredicates[] = "contains(@{$aM[10]}, '{$aM[13]}')";
-                                                        break;
-                                                default: break; } }
-                        }
+							break;
+						case '|=':
+							$aPredicates[] = "(@{$aM[10]} = ' {$aM[13]} ' or "
+								. "starts-with(@{$aM[10]}, ' {$aM[13]}'))";
+							break;
+						case '^=':
+							$aPredicates[] = "starts-with(@{$aM[10]}, ' {$aM[13]}')";
+							break;
+						case '$=':
+							$aPredicates[] = "substring(@{$aM[10]}, string-length(@{$aM[10]})-"
+								. strlen($aM[13]) . ") = '{$aM[13]} '";
+							break;
+						case '~=':
+							$aPredicates[] = "contains(@{$aM[10]}, ' {$aM[13]} ')";
+							break;
+						case '*=':
+							$aPredicates[] = "contains(@{$aM[10]}, '{$aM[13]}')";
+							break;
+						default:
+							break;
+					}
+				}
+			}
 
-                        if ($aM[1] == '+')
-                        {
-                                if ($aM[2] != '')
-                                {
-                                        $aPredicates[] = "(name() = '" . $aM[2] . "')";
-                                }
+			if ($aM[1] == '+')
+			{
+				if ($aM[2] != '')
+				{
+					$aPredicates[] = "(name() = '" . $aM[2] . "')";
+				}
 
-                                $aPredicates[] = '(position() = 1)';
-                        }
+				$aPredicates[] = '(position() = 1)';
+			}
 
-                        $sXPath .= implode(' and ', $aPredicates);
-                        $sXPath .= ']';
-                }
+			$sXPath .= implode(' and ', $aPredicates);
+			$sXPath .= ']';
+		}
 
-                return $sXPath;
-        }
+		return $sXPath;
+	}
 
-        /**
-         * 
-         * @return string
-         */
-        public static function fontFiles()
-        {
-                $arr = array(
-                        'woff',
-                        'ttf',
-                        'otf',
-                        'eot'
-                );
-
-                return $arr;
-        }
+	/**
+	 *
+	 * @return array
+	 */
+	public static function fontFiles()
+	{
+		return array(
+			'woff',
+			'ttf',
+			'otf',
+			'eot'
+		);
+	}
 }

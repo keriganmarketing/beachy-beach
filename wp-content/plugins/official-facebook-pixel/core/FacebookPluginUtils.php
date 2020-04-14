@@ -40,4 +40,17 @@ class FacebookPluginUtils {
   public static function isAdmin() {
     return current_user_can('install_plugins');
   }
+
+  public static function getLoggedInUserInfo() {
+    $current_user = wp_get_current_user();
+    if (empty($current_user)) {
+      return array();
+    }
+
+    return array(
+      'email' => $current_user->user_email,
+      'first_name' => $current_user->user_firstname,
+      'last_name' => $current_user->user_lastname,
+    );
+  }
 }

@@ -9,4 +9,5 @@ return array(
     'FacebookPixelPlugin\\Integration\\' => array($baseDir . '/integration'),
     'FacebookPixelPlugin\\Core\\' => array($baseDir . '/core'),
     'FacebookPixelPlugin\\' => array($baseDir . '/'),
+    'FacebookAds\\' => array($vendorDir . '/facebook/php-business-sdk/src/FacebookAds'),
 );

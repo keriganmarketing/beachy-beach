@@ -27,12 +27,12 @@ defined('_WP_EXEC') or die('Restricted access');
 class Excludes implements \JchOptimize\Interfaces\ExcludesInterface
 {
 
-        /**
-         * 
-         * @param type $type
-         * @param type $section
-         * @return type
-         */
+	/**
+	 * @param   string  $type
+	 * @param   string  $section
+	 *
+	 * @return array|void
+	 */
         public static function body($type, $section = 'file')
         {
                 if ($type == 'js')
@@ -51,23 +51,25 @@ class Excludes implements \JchOptimize\Interfaces\ExcludesInterface
                 {
                         return array();
                 }
+
+                return;
         }
 
-        /**
-         * 
-         * @return type
-         */
+	/**
+	 *
+	 * @return string
+	 */
         public static function extensions()
         {
-                return Paths::rewriteBase();
+                return Paths::rewriteBaseFolder();
         }
 
-        /**
-         * 
-         * @param type $type
-         * @param type $section
-         * @return type
-         */
+	/**
+	 * @param   string  $type
+	 * @param   string  $section
+	 *
+	 * @return array|void
+	 */
         public static function head($type, $section = 'file')
         {
                 if ($type == 'js')
@@ -86,13 +88,15 @@ class Excludes implements \JchOptimize\Interfaces\ExcludesInterface
                 {
                         return array();
                 }
+
+                return;
         }
 
-        /**
-         * 
-         * @param type $url
-         * @return type
-         */
+	/**
+	 * @param   string  $url
+	 *
+	 * @return boolean
+	 */
         public static function editors($url)
         {
                 return (preg_match('#/editors/#i', $url));

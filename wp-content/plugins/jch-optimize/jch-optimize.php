@@ -4,7 +4,7 @@
  * Plugin Name: JCH Optimize
  * Plugin URI: http://www.jch-optimize.net/
  * Description: This plugin aggregates and minifies CSS and Javascript files for optimized page download
- * Version: 2.5.2
+ * Version: 2.6.1
  * Author: Samuel Marshall
  * License: GNU/GPLv3
  * Text Domain: jch-optimize
@@ -39,6 +39,7 @@ define('_WP_EXEC', '1');
 use JchOptimize\Platform\Plugin;
 use JchOptimize\Platform\Uri;
 use JchOptimize\Platform\Cache;
+use JchOptimize\Platform\Utility;
 use JchOptimize\Core\Helper;
 use JchOptimize\Core\Optimize;
 use JchOptimize\Core\Logger;
@@ -51,10 +52,12 @@ define('JCH_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 if (!defined('JCH_VERSION'))
 {
-        define('JCH_VERSION', '2.5.2');
+        define('JCH_VERSION', '2.6.1');
 }
 
-require_once(JCH_PLUGIN_DIR . 'loader.php');
+require_once(JCH_PLUGIN_DIR . 'jchoptimize/loader.php');
+
+$params = Plugin::getPluginParams();
 
 //Handles activation routines
 include_once JCH_PLUGIN_DIR. 'jchplugininstaller.php';
@@ -72,9 +75,8 @@ if (is_admin())
 }
 else
 {
-        $params = Plugin::getPluginParams();
         $url_exclude = $params->get('url_exclude', array());
-               
+
         if (defined('WP_USE_THEMES')
                 && WP_USE_THEMES
                 && $jch_backend != 1
@@ -114,15 +116,18 @@ function jchoptimize($sHtml)
 		return $sHtml;
 	}
 
-        global $jch_no_optimize;
-        
-        if($jch_no_optimize)
+	//need to check this here, it could be set dynamically
+	global $jch_no_optimize;
+
+        $params = Plugin::getPluginParams();
+        $disable_logged_in = $params->get('disable_logged_in_users', '0');
+
+        //Need to call Utility::isGuest after init has been called
+        if($jch_no_optimize || ($disable_logged_in && !Utility::isGuest()))
         {
                 return $sHtml;
         }
-        
-        $params = Plugin::getPluginParams();
-        
+
         try
         {
                 $sOptimizedHtml = Optimize::optimize($params, $sHtml);
@@ -163,8 +168,15 @@ function jch_optimize_uninstall()
 {
         delete_option('jch_options');
 
-        Cache::deleteCache();
-	Admin::cleanHtaccess();
+        try
+        {
+                Cache::deleteCache();
+        }
+        catch (\JchOptimize\Core\Exception $e)
+        {
+        }
+
+        Admin::cleanHtaccess();
 }
 
 register_uninstall_hook(__FILE__, 'jch_optimize_uninstall');

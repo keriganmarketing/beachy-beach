@@ -27,8 +27,9 @@ defined('_WP_EXEC') or die('Restricted access');
 use JchOptimize\Core\FileRetriever;
 use JchOptimize\Core\Logger;
 use JchOptimize\Core\Exception;
+use JchOptimize\Interfaces\HtmlInterface;
 
-class Html implements \JchOptimize\Interfaces\HtmlInterface
+class Html implements HtmlInterface
 {
         protected $params;
         

@@ -5,7 +5,7 @@
  * Description: <strong><em>***ATTENTION: After upgrade the plugin may be deactivated due to a known issue, to workaround please refresh this page and activate plugin.***</em></strong> The Facebook pixel is an analytics tool that helps you measure the effectiveness of your advertising. You can use the Facebook pixel to understand the actions people are taking on your website and reach audiences you care about.
  * Author: Facebook
  * Author URI: https://www.facebook.com/
- * Version: 1.8.0
+ * Version: 2.0.1
  * Text Domain: official-facebook-pixel
  */
 
@@ -36,6 +36,7 @@ use FacebookPixelPlugin\Core\FacebookPluginConfig;
 use FacebookPixelPlugin\Core\FacebookWordpressOptions;
 use FacebookPixelPlugin\Core\FacebookWordpressPixelInjection;
 use FacebookPixelPlugin\Core\FacebookWordpressSettingsPage;
+use FacebookPixelPlugin\Core\ServerEventAsyncTask;
 
 class FacebookForWordpress {
   public function __construct() {
@@ -43,24 +44,30 @@ class FacebookForWordpress {
     FacebookWordpressOptions::initialize();
 
     // load textdomain
-    load_plugin_textdomain(FacebookPluginConfig::TEXT_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages/');
+    load_plugin_textdomain(
+      FacebookPluginConfig::TEXT_DOMAIN,
+      false,
+      dirname(plugin_basename(__FILE__)) . '/languages/');
 
     // initialize pixel
     $options = FacebookWordpressOptions::getOptions();
     FacebookPixel::initialize(FacebookWordpressOptions::getPixelId());
-
     // Register WordPress pixel injection controlling where to fire pixel
     add_action('init', array($this, 'registerPixelInjection'), 0);
 
     // initialize admin page config
     $this->registerSettingsPage();
+
+    // initialize the s2s event async task
+    new ServerEventAsyncTask();
   }
 
   /**
    * Helper function for registering pixel injection.
    */
   public function registerPixelInjection() {
-    return new FacebookWordpressPixelInjection();
+    $injectionObj = new FacebookWordpressPixelInjection();
+    $injectionObj->inject();
   }
 
   /**

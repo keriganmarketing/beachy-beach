@@ -22,10 +22,12 @@
 
 namespace JchOptimize\Core;
 
-class Regextokenizer
+defined('_JCH_EXEC') or die('Restricted access');
+
+abstract class Regextokenizer
 {
         //regex for double quoted strings
-        const DOUBLE_QUOTE_STRING = '"(?>(?:\\\\.)?[^\\\\"]*+)+?(?:"|(?=$))';
+        public const DOUBLE_QUOTE_STRING = '"(?>(?:\\\\.)?[^\\\\"]*+)+?(?:"|(?=$))';
         //regex for single quoted string
         const SINGLE_QUOTE_STRING = "'(?>(?:\\\\.)?[^\\\\']*+)+?(?:'|(?=$))";
         //regex for block comments
@@ -36,8 +38,8 @@ class Regextokenizer
 	const HTML_COMMENT = '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
 
 	const HTML_ATTRIBUTE = '[^\s/"\'=<>]*+(?:\s*=(?>\s*+"[^">]*+"|\s*+\'[^\'>]*+\'|[^\s>]*+[\s>]))?';
-	
-	const ATTRIBUTE_VALUE = '(?>(?<=")[^">]*+|(?<=\')[^\'>]*+|(?<==)[^\s*+>]*+)'; 
+
+	const ATTRIBUTE_VALUE = '(?>(?<=")[^">]*+|(?<=\')[^\'>]*+|(?<==)[^\s*+>]*+)';
 
         const URI = '(?<=url)\(\s*+(?:"[^"]*+"|\'[^\']*+\'|[^)]*+)\s*+\)';
 }

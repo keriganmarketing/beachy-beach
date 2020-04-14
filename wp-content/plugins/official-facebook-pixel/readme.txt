@@ -4,18 +4,16 @@ Tags: Facebook, Facebook Conversion Pixel, Facebook Pixel, Facebook Pixel Events
 Requires at least: 4.4
 Tested up to: 5.3
 Requires PHP: 5.3
-Stable tag: 1.8.0
+Stable tag: 2.0.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Grow your business with Official Facebook Pixel!
 
 == Description ==
-***ATTENTION: Due to a known issue, upgrading this plugin may result in plugin deactivation (especially if you are upgrading from version 1.7.10 - 1.7.19). Please go to your site's 'Plugins' tab, refresh the page, and activate the plugin if it's deactivated to prevent losing your future pixel events.***
+This plugin will install a Facebook Pixel for your page so you can capture the actions people take when they interact with your page, such as Lead, ViewContent, AddToCart, InitiateCheckout and Purchase events. Version 2.0.0 also includes support for the server-side API, which lets you send events directly from your page's server so you can capture a more of these events when they happen. This can help you better understand your customer's journey from the moment they show interest in your business to the moment they complete a conversion. You can use this information to create ad campaigns that are relevant to your audience. [Learn More](https://www.facebook.com/business/learn/facebook-ads-pixel)
 
-This plugin will install a Facebook Pixel for your page. There is also built in support for other WordPress plugins. The Official Facebook Pixel allows you to fire lower funnel events: Lead, ViewContent, AddToCart, InitiateCheckout and Purchase. Tracking lower funnel events can help you understand the actions people are taking on your website. You can then use this information to make adjustments accordingly in your advertising campaigns.
-
-Current plugins that we support:
+This plugin also includes built-in support for these other WordPress plugins:
 * Caldera Forms
 * Contact Form 7
 * Easy Digital Downloads
@@ -51,7 +49,17 @@ If you get stuck, or have any questions, you can ask for help in the [Official F
 Of course! This plugin is open sourced on the Facebook Incubator GitHub. You can find the code and contribution instructions in the [plugin repository](https://github.com/facebookincubator/Facebook-Pixel-for-WordPress).
 
 == Changelog ==
-= 2019-02-18 version 1.8.0 =
+= 2020-03-23 version 2.0.1 =
+* Fixing an Undefined index error
+
+= 2020-03-09 version 2.0.0 =
+* Added support for Server-Side API [Learn More](https://developers.facebook.com/docs/marketing-api/server-side-api)
+
+= 2019-12-02 version 1.8.0 =
+* Support for WordPress 5.3
+* Fix Gravity Forms confirmation redirect
+
+= 2019-02-18 version 1.7.25 =
 * remove get_called_class from the codebase
 
 = 2019-02-10 version 1.7.24 =

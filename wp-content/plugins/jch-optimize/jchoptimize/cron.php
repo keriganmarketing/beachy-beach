@@ -25,6 +25,8 @@ defined('_JCH_EXEC') or die('Restricted access');
 
 use JchOptimize\Platform\Profiler;
 use JchOptimize\Platform\Cache;
+use JchOptimize\Platform\Settings;
+use JchOptimize\Platform\Utility;
 
 class Cron
 {
@@ -32,17 +34,19 @@ class Cron
         
         /**
          * 
-         * @param type $params
+         * @param Settings $params
          */
         public function __construct($params)
         {
                 $this->params = $params;
         }
-        
-        /**
-         * 
-         * @return string
-         */
+
+	/**
+	 *
+	 * @param Parser $oParser
+	 *
+	 * @return string
+	 */
         public function runCronTasks($oParser)
         {
                 //$this->getAdminObject($oParser);
@@ -50,10 +54,10 @@ class Cron
                 
                 return 'CRON';
         }
-        
-        /**
-         * 
-         */
+
+	/**
+	 * @param Parser $oParser
+	 */
         public function getAdminObject($oParser)
         {
                 JCH_DEBUG ? Profiler::start('GetAdminObject') : null;

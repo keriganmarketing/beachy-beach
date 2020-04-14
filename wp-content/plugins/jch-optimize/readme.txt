@@ -2,8 +2,8 @@
 
 Contributors: codealfa
 Tags: improve performance, optimize download speed, minify, aggregate, pagespeed, gtmetrix, webpagetest, yslow, minification, css, javascript, html, lazy load, seo, search engine optimization, website optimization, download speed, speed up website, optimize css delivery, render blocking, css sprite, gzip, combine css, combine javascript, cdn, content delivery network, website performance, website speed, fast download, web performance, website analysis, speed up download, minimize http requests, reduce bandwidth, caching, cache, page cache, speed up wordpress, http/2 push
-Tested up to: 5.2.4
-Stable tag: 2.5.2
+Tested up to: 5.3.2
+Stable tag: 2.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,7 +61,7 @@ The plugin modifies the generated HTML of your website in ways that makes it fas
 = How do I know if it's working? =
 
 After installing and activating the plugin, combining CSS and javascript files are selected by default so it should start working right away. If you look at your web page and it doesn't look any different that's a good sign...maybe. To confirm if it's working, take a look at the HTML page source. You can do that in most browsers by right clicking on the page and selecting that option. You should see the links to your CSS/Js files removed and replaced by the aggregated file URL in the source that looks like this:
-`/wp-content/plugins/jch-optimize/assets/wp-content/plugins/nz/30/1/63fccd8dc82e3f5da947573d8ded3bd4.css`
+`/wp-content/plugins/jch-optimize/assets/wp-content/plugins/gz/63fccd8dc82e3f5da947573d8ded3bd4.css`
 
 = There's no CSS Formatting after enabling the plugin =
 
@@ -73,6 +73,16 @@ Simply deactivate or uninstall the plugin to reverse any changes it has made. Th
 
 
 == Changelog ==
+
+= 2.6.1 =
+* Bug fix: Combined files delivery using PHP files were broken
+
+= 2.6.0 =
+* New feature: Option to remove unused CSS. This is added as an additional setting in the Optimize CSS Delivery feature. [PRO VERSION]
+* New feature: Setting to disable plugin for logged in users in Miscellaneous Settings on Combine CSS/JS tab.
+* Improvement: Will now generate different hash for multiple combined files. This will help to reduce build-up of cache.
+* Improvement: All excluded and combined javascript files are placed at bottom of page with Premium/Optimum setting.
+* Improvement: Add Image Attributes feature now ignores img elements with existing width and height attributes. If one attribute is found the other will be added using aspect ratio of image.
 
 = 2.5.2 =
 * Bug fix: Add image attributes will use the same type of delimiter for width/height as that used around the url to avoid potential issues
@@ -100,7 +110,7 @@ Simply deactivate or uninstall the plugin to reverse any changes it has made. Th
 
 = 2.4.0 =
 * Minor bug fixes and improvements
-* Improved efficieny of caching policy of static assets
+* Improved efficiency of caching policy of static assets
 * Added Http/2 push feature [PRO VERSION]
 * Added support for srcsets and iframe to Lazyload images feature [PRO VERSION] 
 * Removed font-face from combined CSS file when Optimize CSS Delivery is enabled [PRO VERSION]

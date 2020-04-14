@@ -35,7 +35,7 @@ class WPSEO_Premium {
 	 *
 	 * @var string
 	 */
-	const PLUGIN_VERSION_NAME = '12.2';
+	const PLUGIN_VERSION_NAME = '13.5';
 
 	/**
 	 * Machine readable version for determining whether an upgrade is needed.
@@ -56,7 +56,7 @@ class WPSEO_Premium {
 	 *
 	 * @var WPSEO_WordPress_Integration[]
 	 */
-	private $integrations = array();
+	private $integrations = [];
 
 	/**
 	 * Function that will be executed when plugin is activated.
@@ -94,7 +94,7 @@ class WPSEO_Premium {
 		$prominent_words_unindexed_query = new WPSEO_Premium_Prominent_Words_Unindexed_Post_Query();
 		$prominent_words_support         = new WPSEO_Premium_Prominent_Words_Support();
 
-		$this->integrations = array(
+		$this->integrations = [
 			'premium-metabox'                        => new WPSEO_Premium_Metabox(),
 			'premium-assets'                         => new WPSEO_Premium_Assets(),
 			'prominent-words-registration'           => new WPSEO_Premium_Prominent_Words_Registration(),
@@ -106,7 +106,6 @@ class WPSEO_Premium {
 			'prominent-words-version'                => new WPSEO_Premium_Prominent_Words_Versioning(),
 			'link-suggestions'                       => new WPSEO_Metabox_Link_Suggestions(),
 			'link-suggestions-endpoint'              => new WPSEO_Premium_Link_Suggestions_Endpoint( $link_suggestions_service ),
-			'premium-search-console'                 => new WPSEO_Premium_GSC(),
 			'redirects-endpoint'                     => new WPSEO_Premium_Redirect_EndPoint( new WPSEO_Premium_Redirect_Service() ),
 			'redirect-export-manager'                => new WPSEO_Premium_Redirect_Export_Manager(),
 			'keyword-export-manager'                 => new WPSEO_Premium_Keyword_Export_Manager(),
@@ -124,7 +123,7 @@ class WPSEO_Premium {
 					new WPSEO_Premium_Prominent_Words_Support()
 				)
 			),
-		);
+		];
 
 		if ( WPSEO_Options::get( 'enable_cornerstone_content' ) ) {
 			$this->integrations['stale-cornerstone-content-filter'] = new WPSEO_Premium_Stale_Cornerstone_Content_Filter();
@@ -146,22 +145,22 @@ class WPSEO_Premium {
 		$language_support = new WPSEO_Premium_Prominent_Words_Language_Support();
 
 		if ( $language_support->is_language_supported( $language ) ) {
-			$feature_toggles[] = (object) array(
+			$feature_toggles[] = (object) [
 				'name'            => __( 'Insights', 'wordpress-seo-premium' ),
 				'setting'         => 'enable_metabox_insights',
 				'label'           => __( 'The Insights section in our metabox shows you useful data about your content, like what words you use most often.', 'wordpress-seo-premium' ),
 				'read_more_label' => __( 'Read more about how the insights can help you improve your content.', 'wordpress-seo-premium' ),
 				'read_more_url'   => 'https://yoa.st/2ai',
 				'order'           => 41,
-			);
-			$feature_toggles[] = (object) array(
+			];
+			$feature_toggles[] = (object) [
 				'name'            => __( 'Link suggestions', 'wordpress-seo-premium' ),
 				'setting'         => 'enable_link_suggestions',
 				'label'           => __( 'The link suggestions metabox contains a list of posts on your blog with similar content that might be interesting to link to.', 'wordpress-seo-premium' ),
 				'read_more_label' => __( 'Read more about how internal linking can improve your site structure.', 'wordpress-seo-premium' ),
 				'read_more_url'   => 'https://yoa.st/17g',
 				'order'           => 42,
-			);
+			];
 		}
 
 		return $feature_toggles;
@@ -177,10 +176,12 @@ class WPSEO_Premium {
 
 		$this->redirect_setup();
 
+		add_action( 'init', [ 'WPSEO_Premium_Redirect_Option', 'register_option' ] );
+
 		if ( is_admin() ) {
 			// Make sure priority is below registration of other implementations of the beacon in News, Video, etc.
-			add_action( 'admin_init', array( $this, 'init_helpscout_support' ), 1 );
-			add_filter( 'wpseo_feature_toggles', array( $this, 'add_feature_toggles' ) );
+			add_filter( 'wpseo_helpscout_beacon_settings', [ $this, 'init_helpscout_support' ], 1 );
+			add_filter( 'wpseo_feature_toggles', [ $this, 'add_feature_toggles' ] );
 
 			// Only register the yoast i18n when the page is a Yoast SEO page.
 			if ( $this->is_yoast_seo_premium_page( filter_input( INPUT_GET, 'page' ) ) ) {
@@ -190,19 +191,19 @@ class WPSEO_Premium {
 			add_filter( 'wpseo_enable_tracking', '__return_true', 1 );
 
 			// Disable Yoast SEO.
-			add_action( 'admin_init', array( $this, 'disable_wordpress_seo' ), 1 );
+			add_action( 'admin_init', [ $this, 'disable_wordpress_seo' ], 1 );
 
 			// Add Sub Menu page and add redirect page to admin page array.
 			// This should be possible in one method in the future, see #535.
-			add_filter( 'wpseo_submenu_pages', array( $this, 'add_submenu_pages' ), 9 );
+			add_filter( 'wpseo_submenu_pages', [ $this, 'add_submenu_pages' ], 9 );
 
 			// Add input fields to page meta post types.
 			add_action(
 				'wpseo_admin_page_meta_post_types',
-				array(
+				[
 					$this,
 					'admin_page_meta_post_types_checkboxes',
-				),
+				],
 				10,
 				2
 			);
@@ -210,11 +211,11 @@ class WPSEO_Premium {
 			// Add page analysis fields to variable array key patterns.
 			add_filter(
 				'wpseo_option_titles_variable_array_key_patterns',
-				array( $this, 'add_variable_array_key_pattern' )
+				[ $this, 'add_variable_array_key_pattern' ]
 			);
 
 			// Settings.
-			add_action( 'admin_init', array( $this, 'register_settings' ) );
+			add_action( 'admin_init', [ $this, 'register_settings' ] );
 
 			// Add Premium imports.
 			$this->integrations[] = new WPSEO_Premium_Import_Manager();
@@ -222,19 +223,19 @@ class WPSEO_Premium {
 
 		// Only activate post and term watcher if permalink structure is enabled.
 		if ( get_option( 'permalink_structure' ) ) {
-			add_action( 'admin_init', array( $this, 'init_watchers' ) );
-			add_action( 'rest_api_init', array( $this, 'init_watchers' ) );
+			add_action( 'admin_init', [ $this, 'init_watchers' ] );
+			add_action( 'rest_api_init', [ $this, 'init_watchers' ] );
 		}
 
 		if ( ! is_admin() ) {
 			// Add 404 redirect link to WordPress toolbar.
-			add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 96 );
+			add_action( 'admin_bar_menu', [ $this, 'admin_bar_menu' ], 96 );
 
-			add_filter( 'redirect_canonical', array( $this, 'redirect_canonical_fix' ), 1, 2 );
+			add_filter( 'redirect_canonical', [ $this, 'redirect_canonical_fix' ], 1, 2 );
 		}
 
-		add_action( 'wpseo_premium_indicator_classes', array( $this, 'change_premium_indicator' ) );
-		add_action( 'wpseo_premium_indicator_text', array( $this, 'change_premium_indicator_text' ) );
+		add_action( 'wpseo_premium_indicator_classes', [ $this, 'change_premium_indicator' ] );
+		add_action( 'wpseo_premium_indicator_text', [ $this, 'change_premium_indicator_text' ] );
 
 		// Only initialize the AJAX for all tabs except settings.
 		$facebook_name = new WPSEO_Facebook_Profile();
@@ -253,7 +254,7 @@ class WPSEO_Premium {
 	 * @return bool
 	 */
 	private function is_yoast_seo_premium_page( $page ) {
-		$premium_pages = array( 'wpseo_redirects' );
+		$premium_pages = [ 'wpseo_redirects' ];
 
 		return in_array( $page, $premium_pages, true );
 	}
@@ -265,7 +266,7 @@ class WPSEO_Premium {
 	 */
 	private function register_i18n_promo_class() {
 		new Yoast_I18n_v3(
-			array(
+			[
 				'textdomain'     => 'wordpress-seo-premium',
 				'project_slug'   => 'wordpress-seo-premium',
 				'plugin_name'    => 'Yoast SEO premium',
@@ -274,7 +275,7 @@ class WPSEO_Premium {
 				'glotpress_name' => 'Yoast Translate',
 				'glotpress_logo' => 'https://translate.yoast.com/gp-templates/images/Yoast_Translate.svg',
 				'register_url'   => 'https://yoa.st/translate',
-			)
+			]
 		);
 	}
 
@@ -320,7 +321,7 @@ class WPSEO_Premium {
 		}
 
 		$redirect_url = $redirect->get_origin();
-		if ( '/' === substr( $redirect_url, 0, 1 ) ) {
+		if ( substr( $redirect_url, 0, 1 ) === '/' ) {
 			$redirect_url = home_url( $redirect_url );
 		}
 
@@ -362,11 +363,11 @@ class WPSEO_Premium {
 
 		$old_url = rawurlencode( $old_url );
 
-		$node = array(
+		$node = [
 			'id'    => 'wpseo-premium-create-redirect',
 			'title' => __( 'Create Redirect', 'wordpress-seo-premium' ),
 			'href'  => admin_url( 'admin.php?page=wpseo_redirects&old_url=' . $old_url ),
-		);
+		];
 		$wp_admin_bar->add_menu( $node );
 	}
 
@@ -378,7 +379,7 @@ class WPSEO_Premium {
 	 * @return array
 	 */
 	public function add_variable_array_key_pattern( $patterns ) {
-		if ( true !== in_array( 'page-analyse-extra-', $patterns, true ) ) {
+		if ( in_array( 'page-analyse-extra-', $patterns, true ) === false ) {
 			$patterns[] = 'page-analyse-extra-';
 		}
 
@@ -411,14 +412,14 @@ class WPSEO_Premium {
 		 *
 		 * @api string wpseo_manage_redirects
 		 */
-		$submenu_pages[] = array(
+		$submenu_pages[] = [
 			'wpseo_dashboard',
 			'',
 			__( 'Redirects', 'wordpress-seo-premium' ),
 			'wpseo_manage_redirects',
 			'wpseo_redirects',
-			array( $this->redirects, 'display' ),
-		);
+			[ $this->redirects, 'display' ],
+		];
 
 		return $submenu_pages;
 	}
@@ -428,12 +429,12 @@ class WPSEO_Premium {
 	 *
 	 * @param string[] $classes The current classes for the indicator.
 	 *
-	 * @returns string[] The new classes for the indicator.
+	 * @return string[] The new classes for the indicator.
 	 */
 	public function change_premium_indicator( $classes ) {
 		$class_no = array_search( 'wpseo-premium-indicator--no', $classes, true );
 
-		if ( false !== $class_no ) {
+		if ( $class_no !== false ) {
 			unset( $classes[ $class_no ] );
 
 			$classes[] = 'wpseo-premium-indicator--yes';
@@ -475,50 +476,17 @@ class WPSEO_Premium {
 	}
 
 	/**
-	 * Initializes the helpscout support modal for wpseo settings pages
-	 */
-	public function init_helpscout_support() {
-		$page      = filter_input( INPUT_GET, 'page' );
-		$query_var = '';
-		if ( isset( $page ) && $page !== false ) {
-			$query_var = $page;
-		}
-
-		$is_beacon_page = in_array( strtolower( $query_var ), $this->get_beacon_pages(), true );
-
-		// Only add the helpscout beacon on Yoast SEO pages.
-		if ( WPSEO_Metabox::is_post_edit( $GLOBALS['pagenow'] ) || $is_beacon_page ) {
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_contact_support' ) );
-
-			$beacon = yoast_get_helpscout_beacon( $query_var, 'no_search' );
-			$beacon->add_setting( new WPSEO_Premium_Beacon_Setting() );
-			$beacon->register_hooks();
-		}
-	}
-
-	/**
-	 * Get the pages the Premium beacon should be displayed on
+	 * Initializes the HelpScout support modal for WPSEO settings pages.
 	 *
-	 * @return array
+	 * @param array $helpscout_settings The helpscout settings.
 	 */
-	private function get_beacon_pages() {
-		return array(
-			'wpseo_dashboard',
-			'wpseo_titles',
-			'wpseo_social',
-			'wpseo_xml',
-			'wpseo_advanced',
-			'wpseo_tools',
-			'wpseo_search_console',
-			'wpseo_licenses',
-		);
-	}
+	public function init_helpscout_support( $helpscout_settings ) {
+		$helpscout_settings['beacon_id']   = '1ae02e91-5865-4f13-b220-7daed946ba25';
+		$helpscout_settings['pages'][]     = 'wpseo_redirects';
+		$helpscout_settings['products'][]  = WPSEO_Addon_Manager::PREMIUM_SLUG;
+		$helpscout_settings['ask_consent'] = false;
 
-	/**
-	 * Add the Yoast contact support assets
-	 */
-	public function enqueue_contact_support() {
-		wp_enqueue_script( 'yoast-contact-support' );
+		return $helpscout_settings;
 	}
 
 	/**

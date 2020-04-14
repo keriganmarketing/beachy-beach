@@ -30,7 +30,7 @@ class Plugin implements \JchOptimize\Interfaces\PluginInterface
 
         /**
          * 
-         * @return type
+         * @return void
          */
         public static function getPluginId()
         {
@@ -39,7 +39,7 @@ class Plugin implements \JchOptimize\Interfaces\PluginInterface
 
         /**
          * 
-         * @return type
+         * @return void
          */
         public static function getPlugin()
         {
@@ -48,7 +48,7 @@ class Plugin implements \JchOptimize\Interfaces\PluginInterface
 
         /**
          * 
-         * @param type $params
+         * @param Settings $params
          */
         public static function saveSettings($params)
         {
@@ -59,7 +59,7 @@ class Plugin implements \JchOptimize\Interfaces\PluginInterface
 
         /**
          * 
-         * @return type
+         * @return Settings
          */
         public static function getPluginParams()
         {

@@ -2,8 +2,8 @@
 Contributors: cbutlerjr
 Tags: access, authentication, content, login, member, membership, password, protect, register, registration, restriction, subscriber
 Requires at least: 4.0
-Tested up to: 5.3
-Stable tag: 3.3.0.4
+Tested up to: 5.4
+Stable tag: 3.3.3
 License: GPLv2
 
 == Description ==
@@ -100,7 +100,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.3.0 is a major update. WP-Members 3.3.0.2 is a critical fix for registration/profile fields. See changelog for important details. Minimum WP version is 4.0.
+WP-Members 3.3.0 is a major update. WP-Members 3.3.3 is an improvement release. See changelog for important details. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -124,27 +124,57 @@ WP-Members 3.3.0 is a major update. WP-Members 3.3.0.2 is a critical fix for reg
 
 == Changelog ==
 
-= 3.3.0.4 =
+= 3.3.3 =
 
-* Provides a workaround for a bug in the dialogs setting when custom dialogs are applied. This targets an issue specifically affecting users with the WP-Members Security extension installed.
-* Fixes a bug when products are enabled but no default is set. Allows for no default membership assigned at registration.
-* Fixes a bug that caused the post restricted message to display on the short form when it was in password reset and forgot username state.
-* Added wpmem_get_hidden_posts() API function to return an array of post IDs marked as hidden.
+* If WooCommerce is active, any standard WC user meta fields are removed from the WP-Members additional fields in the User Profile Edit (since they already display in the WC field blocks).
+* When setting hidden posts, don't include posts from post types not set as handled by WP-Members. This prevents previously hidden posts from being included if the post type is no longer included for WP-Members.
+* Set a default product for publishing posts/pages.
+* Updated activation/deactivation processing so that a (admin) user cannot activate or deactivate themselves. Also, if a user has "edit_users" capability, they can log in without being activated.
+* Load email "from" address with main settings rather than when email is sent. This corrects issues with Advanced Options extension, and also keeps the value loaded for use outside of WP-Members email function.
+* WP 5.4 adds the wp_nav_menu_item_custom_fields action, so now WP-Members only loads its custom walker if WP is 5.3 or lower.
+* Image file field type now shows an immediate preview when the "choose file" button is clicked and an image selected (both profile update and new registration).
+* wpmem_login_failed_args updated to pass $args (similar to other _args filters in the plugin, now parses defaults).
 
-= 3.3.0.3 =
+= 3.3.2 =
 
-* Fixes a shortcode issue for the [wpmem_logged_in] shortcode when using the meta_key attribute. 3.3.0 added a "compare" attribute, and with this addition, it broke the original default use of the shortcode. This bug is fixed in the 3.3.0.3 release. 
+* Added back shortcode menu item previously removed in 3.3.0.
+* Added new handling in wpmem_is_blocked() for validating rest api requests.
+* Added new wpmem_is_rest() function to the plugin's API, determines if the request is a rest request.
+* Fixed issue with dropdown, mutliple select, and radio field types that allowed white space in resulting value.
+* Fixed issue with register/profile update validation if email is removed via wpmem_fields filter hook.
+* Fixed issue with prev/next post links to not show hidden posts if user is logged in but does not have a membership.
+* Fixed issue with hidden posts when membership products are used. Hidden posts not assigned a membership remained hidden.
+* Fixed issue with menus where logged in/logged out settings were not applied unless membership products were enabled.
+* Moved wpmem_post_register_data action to fire hooked to user_register at priority 20. Changed email actions to fire at priority 25. See release announcement for more detail of implications.
+* Code improvement to reCAPTCHA.
+* Code improvement to excerpt generation.
+* Code improvement to expiration date generation.
+* Code improvement to hidden posts when using membership products.
+* Code improvement changed user_register hook priority for post_register_data() to "9" to allow for custom meta fields to be available to any user_register function using the default priority (10) or later.
 
-= 3.3.0.2 =
+= 3.3.1 =
 
-* Fixes an issue with registration/profile form fields when used in the profile. It was intended to introduce separate selection of fields for registration and profile update in 3.3.0. However, there is an issue that causes profile fields to both (1) not correctly display and (2) if they do, they do not update correctly. All users who updated to 3.3.x should update to 3.3.0.2 to correct this.
+* Update membership product expiration to allow for a "no gap" expiration (i.e. renewal begins from expiration date, optional) or default (renewal begins from today or expiration date, whichever is later).
+* Update user activation to use wp_set_password().
+* Update display of membership product slugs to text (instead of a form input). They can't be edited.
+* Added empty /inc/dialogs.php for customizations and plugins that try to include the legacy dialogs file.
+* Updates to user profile screen which allows users with 'edit_users' capability (admins) to edit their own profile.
+* Fixes a bug that caused the user profile display for a new user to say "reactivate" instead of "activate".
+* Fixes a bug in the membership renewal that sets the individual date meta forward two periods instead of one.
+* Fixes a bug in the hidden fields lookup that caused hidden posts with a membership limitation to not display to users who had a matching membership.
+* Changed custom menu options to use wp_nav_menu_item_custom_fields action hook. This is a "made up" hook that is not actually part of WP. But somewhere along the line, some menu-focused plugins began using it in their custom walkers. By not using it in WP-Members, that caused some problems for users who also used one of those other plugins or themes. This updates shifts to use this "non-standard" action hook these other themes and plugins are using in order to apply some level of compatibility. 
 
-= 3.3.0.1 = 
-
-* Fixes issue when updating where the stylesheet selector indicates "use_custom" but the actual URL is to a default stylesheet. The problem can be corrected manually, but this fix applies the custom URL to the new standard setting for the defaults.
-* Fixes bug where any stylesheet other than the default reverts to the default ("no float"). This was due to the database version being wiped when settings were updated. This fix correctly applies the database version when updating settings.
-* Fixes bug when captcha is used (unknown validate() function). The validate() function should have been declared and used as a static method. This fix declares validate() as static and then uses it as such.
-* Fixes undefined string variable when successful registration is executed.
+Including all 3.3.0.x patches:
+* Provides a workaround for a bug in the dialogs setting when custom dialogs are applied. This targets an issue specifically affecting users with the WP-Members Security extension installed. (3.3.0.4)
+* Fixes a bug when products are enabled but no default is set. Allows for no default membership assigned at registration. (3.3.0.4)
+* Fixes a bug that caused the post restricted message to display on the short form when it was in password reset and forgot username state. (3.3.0.4)
+* Added wpmem_get_hidden_posts() API function to return an array of post IDs marked as hidden. (3.3.0.4)
+* Fixes a shortcode issue for the [wpmem_logged_in] shortcode when using the meta_key attribute. 3.3.0 added a "compare" attribute, and with this addition, it broke the original default use of the shortcode. (3.3.0.3)
+* Fixes an issue with registration/profile form fields when used in the profile. It was intended to introduce separate selection of fields for registration and profile update in 3.3.0. However, there is an issue that causes profile fields to both (1) not correctly display and (2) if they do, they do not update correctly. (3.3.0.2)
+* Fixes issue when updating where the stylesheet selector indicates "use_custom" but the actual URL is to a default stylesheet. The problem can be corrected manually, but this fix applies the custom URL to the new standard setting for the defaults. (3.3.0.1)
+* Fixes bug where any stylesheet other than the default reverts to the default ("no float"). This was due to the database version being wiped when settings were updated. This fix correctly applies the database version when updating settings. (3.3.0.1)
+* Fixes bug when captcha is used (unknown validate() function). The validate() function should have been declared and used as a static method. This fix declares validate() as static and then uses it as such. (3.3.0.1)
+* Fixes undefined string variable when successful registration is executed. (3.3.0.1)
 
 = 3.3.0 =
 

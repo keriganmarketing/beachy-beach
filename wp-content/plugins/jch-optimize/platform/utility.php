@@ -4,9 +4,9 @@
  * JCH Optimize - Joomla! plugin to aggregate and minify external resources for
  * optmized downloads
  *
- * @author Samuel Marshall <sdmarshall73@gmail.com>
+ * @author    Samuel Marshall <sdmarshall73@gmail.com>
  * @copyright Copyright (c) 2014 Samuel Marshall
- * @license GNU/GPLv3, See LICENSE file
+ * @license   GNU/GPLv3, See LICENSE file
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,102 +23,86 @@
 
 namespace JchOptimize\Platform;
 
+use JchOptimize\Interfaces\UtilityInterface;
+
 defined('_WP_EXEC') or die('Restricted access');
 
-class Utility implements \JchOptimize\Interfaces\UtilityInterface
+class Utility implements UtilityInterface
 {
 
-        /**
-         * 
-         * @param type $text
-         * @return type
-         */
-        public static function translate($text)
-        {
-                return __($text, 'jch-optimize');
-        }
+	/**
+	 *
+	 * @param   string  $text
+	 *
+	 * @return string
+	 */
+	public static function translate($text)
+	{
+		return __($text, 'jch-optimize');
+	}
 
-        /**
-         * 
-         * @param type $time
-         * @param type $timezone
-         * @return type
-         */
-        public static function unixCurrentDate()
-        {
-                return current_time('timestamp', TRUE);
-        }
+	/**
+	 *
+	 * @return integer
+	 */
+	public static function unixCurrentDate()
+	{
+		return current_time('timestamp', true);
+	}
 
-        /*
-         * 
-         */
+	/*
+	 *
+	 */
 
-        public static function getEditorName()
-        {
-                return '';
-        }
+	public static function getEditorName()
+	{
+		return '';
+	}
 
-        /**
-         * 
-         * @param type $message
-         * @param type $category
-         */
-        public static function log($message, $priority, $filename)
-        {
-                $file = Utility::getLogsPath() . '/jch-optimize.log';
+	/**
+	 *
+	 * @param   string  $message
+	 * @param   string  $priority
+	 * @param   string  $filename
+	 */
+	public static function log($message, $priority, $filename)
+	{
+		$file = Utility::getLogsPath() . '/jch-optimize.log';
 
-                error_log($message . "\n", 3, $file);
-        }
+		error_log($message . "\n", 3, $file);
+	}
 
-        /**
-         * 
-         * @return type
-         */
-        public static function lnEnd()
-        {
-                return "\n";
-        }
+	/**
+	 *
+	 * @return string
+	 */
+	public static function lnEnd()
+	{
+		return "\n";
+	}
 
-        /**
-         * 
-         * @return type
-         */
-        public static function tab()
-        {
-                return "\t";
-        }
+	/**
+	 *
+	 * @return string
+	 */
+	public static function tab()
+	{
+		return "\t";
+	}
 
-        /**
-         * 
-         * @param type $path
-         */
-        public static function createFolder($path)
-        {
+	/**
+	 *
+	 * @param   string  $path
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 */
+	public static function createFolder($path)
+	{
 		//Create all necessary parent folders
-		if(!is_dir(dirname($path)))
-		{ 
-			if(!self::createFolder(dirname($path)))
-			{
-				return false;
-			}
-		}
-
-                $wp_filesystem = Cache::getWpFileSystem();
-
-                return $wp_filesystem->mkdir($path);
-        }
-
-        /**
-         * 
-         * @param type $file
-         * @param type $contents
-         */
-        public static function write($file, $contents)
-        {
-		//Make sure parent folder exists
-		if(!file_exists(dirname($file)))
+		if (!is_dir(dirname($path)))
 		{
-			if(!self::createFolder(dirname($file)))
+			if (!self::createFolder(dirname($path)))
 			{
 				return false;
 			}
@@ -126,210 +110,243 @@ class Utility implements \JchOptimize\Interfaces\UtilityInterface
 
                 $wp_filesystem = Cache::getWpFileSystem();
 
-                return $wp_filesystem->put_contents($file, $contents);
-        }
+		return $wp_filesystem->mkdir($path);
+	}
 
-        /**
-         * 
-         * @param type $value
-         * @return type
-         */
-        public static function decrypt($value)
-        {
-                return self::encrypt_decrypt($value, 'decrypt');
-        }
+	/**
+	 *
+	 * @param   string  $file
+	 * @param   string  $contents
+	 *
+	 * @return bool
+	 * @throws \JchOptimize\Core\Exception
+	 * @throws \Exception
+	 */
+	public static function write($file, $contents)
+	{
+		//Make sure parent folder exists
+		if (!file_exists(dirname($file)))
+		{
+			if (!self::createFolder(dirname($file)))
+			{
+				return false;
+			}
+		}
 
-        /**
-         * 
-         * @param type $value
-         * @return type
-         */
-        public static function encrypt($value)
-        {
-                return self::encrypt_decrypt($value, 'encrypt');
-        }
+		$wp_filesystem = Cache::getWpFileSystem();
 
-        /**
-         * 
-         * @param type $value
-         * @param type $action
-         * @return type
-         */
-        private static function encrypt_decrypt($value, $action)
-        {
+		return $wp_filesystem->put_contents($file, $contents);
+	}
 
-                $output = false;
+	/**
+	 *
+	 * @param   string  $value
+	 *
+	 * @return string
+	 */
+	public static function decrypt($value)
+	{
+		return self::encrypt_decrypt($value, 'decrypt');
+	}
 
-                $encrypt_method = "AES-256-CBC";
-                $secret_key     = AUTH_KEY;
-                $secret_iv      = AUTH_SALT;
+	/**
+	 *
+	 * @param   string  $value
+	 *
+	 * @return string
+	 */
+	public static function encrypt($value)
+	{
+		return self::encrypt_decrypt($value, 'encrypt');
+	}
 
-                // hash
-                $key = hash('sha256', $secret_key);
+	/**
+	 *
+	 * @param   string  $value
+	 * @param   string  $action
+	 *
+	 * @return string
+	 */
+	private static function encrypt_decrypt($value, $action)
+	{
 
-                // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
-                $iv = substr(hash('sha256', $secret_iv), 0, 16);
+		$output = false;
 
-                if ($action == 'encrypt')
-                {
-                        if (version_compare(PHP_VERSION, '5.3.3', '<'))
-                        {
-                                $output = @openssl_encrypt($value, $encrypt_method, $key, 0);
-                        }
-                        else
-                        {
-                                $output = openssl_encrypt($value, $encrypt_method, $key, 0, $iv);
-                        }
-                        $output = base64_encode($output);
-                }
-                else if ($action == 'decrypt')
-                {
-                        if (version_compare(PHP_VERSION, '5.3.3', '<'))
-                        {
-                                $output = @openssl_decrypt(base64_decode($value), $encrypt_method, $key, 0);
-                        }
-                        else
-                        {
-                                $output = openssl_decrypt(base64_decode($value), $encrypt_method, $key, 0, $iv);
-                        }
-                }
+		$encrypt_method = "AES-256-CBC";
+		$secret_key     = AUTH_KEY;
+		$secret_iv      = AUTH_SALT;
 
-                return $output;
-        }
+		// hash
+		$key = hash('sha256', $secret_key);
 
-        /**
-         * 
-         * @param type $value
-         * @param type $default
-         * @param type $filter
-         * @param type $method
-         */
-        public static function get($value, $default = '', $filter = 'cmd', $method = 'request')
-        {
-                $request = '_' . strtoupper($method);
-                
-                if (!isset($GLOBALS[$request][$value]))
-                {
-                        $GLOBALS[$request][$value] = $default;
-                }
+		// iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+		$iv = substr(hash('sha256', $secret_iv), 0, 16);
 
-                switch ($filter)
-                {
-                        case 'int':
-                                $filter = FILTER_SANITIZE_NUMBER_INT;
+		if ($action == 'encrypt')
+		{
+			if (version_compare(PHP_VERSION, '5.3.3', '<'))
+			{
+				$output = @openssl_encrypt($value, $encrypt_method, $key, 0);
+			}
+			else
+			{
+				$output = openssl_encrypt($value, $encrypt_method, $key, 0, $iv);
+			}
+			$output = base64_encode($output);
+		}
+		else if ($action == 'decrypt')
+		{
+			if (version_compare(PHP_VERSION, '5.3.3', '<'))
+			{
+				$output = @openssl_decrypt(base64_decode($value), $encrypt_method, $key, 0);
+			}
+			else
+			{
+				$output = openssl_decrypt(base64_decode($value), $encrypt_method, $key, 0, $iv);
+			}
+		}
 
-                                break;
+		return $output;
+	}
 
-                        case 'array':
-                        case 'json':
-                                return (array) $GLOBALS[$request][$value];
-                        case 'string':
-                        case 'cmd':
-                        default :
-                                $filter = FILTER_SANITIZE_STRING;
+	/**
+	 *
+	 *
+	 * @param   string  $value
+	 * @param   string  $default
+	 * @param   string  $filter
+	 * @param   string  $method
+	 *
+	 * @return mixed
+	 */
+	public static function get($value, $default = '', $filter = 'cmd', $method = 'request')
+	{
+		$request = '_' . strtoupper($method);
 
-                                break;
-                }
+		if (!isset($GLOBALS[$request][$value]))
+		{
+			$GLOBALS[$request][$value] = $default;
+		}
 
-                switch ($method)
-                {
-                        case 'get':
-                                $type = INPUT_GET;
+		switch ($filter)
+		{
+			case 'int':
+				$filter = FILTER_SANITIZE_NUMBER_INT;
 
-                                break;
+				break;
 
-                        case 'post':
-                                $type = INPUT_POST;
+			case 'array':
+			case 'json':
+				return (array) $GLOBALS[$request][$value];
+			case 'string':
+			case 'cmd':
+			default :
+				$filter = FILTER_SANITIZE_STRING;
 
-                                break;
+				break;
+		}
 
-                        default:
+		switch ($method)
+		{
+			case 'get':
+				$type = INPUT_GET;
 
-                                return filter_var($_REQUEST[$value], $filter);
-                }
+				break;
+
+			case 'post':
+				$type = INPUT_POST;
+
+				break;
+
+			default:
+
+				return filter_var($_REQUEST[$value], $filter);
+		}
 
 
-                $input = filter_input($type, $value, $filter);
+		$input = filter_input($type, $value, $filter);
 
-                return is_null($input) ? $default : $input;
-        }
+		return is_null($input) ? $default : $input;
+	}
 
-        /**
-         * 
-         */
-        public static function getLogsPath()
-        {
-                return JCH_PLUGIN_DIR . 'logs';
-        }
+	/**
+	 *
+	 */
+	public static function getLogsPath()
+	{
+		return JCH_PLUGIN_DIR . 'logs';
+	}
 
-        /**
-         * 
-         * @param type $url
-         */
-        public static function loadAsync($url)
-        {
-                
-        }
+	/**
+	 *
+	 * @param   string  $url
+	 */
+	public static function loadAsync($url)
+	{
 
-        /**
-         * 
-         */
-        public static function menuId()
-        {
-                
-        }
+	}
 
-        /**
-         * 
-         * @param type $path
-         * @param type $filter
-         * @param type $recurse
-         * @param type $exclude
-         * @return array
-         */
-        public static function lsFiles($path, $filter = '.', $recurse = false, $exclude = array())
-        {
-                $wp_filesystem = Cache::getWpFileSystem();
+	/**
+	 *
+	 */
+	public static function menuId()
+	{
 
-                $items = $wp_filesystem->dirlist($path, false, $recurse);
+	}
 
-                $files = array();
+	/**
+	 *
+	 * @param   string  $path
+	 * @param   string  $filter
+	 * @param   bool    $recurse
+	 * @param   array   $exclude
+	 *
+	 * @return array
+	 * @throws \JchOptimize\Core\Exception
+	 */
+	public static function lsFiles($path, $filter = '.', $recurse = false, $exclude = array())
+	{
+		$wp_filesystem = Cache::getWpFileSystem();
 
-		if(!empty($items))
+		$items = $wp_filesystem->dirlist($path, false, $recurse);
+
+		$files = array();
+
+		if (!empty($items))
 		{
 			self::filterItems($path, $filter, $items, $files);
 		}
 
-                return $files;
-        }
+		return $files;
+	}
 
-        /**
-         * 
-         * @param type $path
-         * @param type $filter
-         * @param type $items
-         * @param string $files
-         */
-        protected static function filterItems($path, $filter, $items, &$files)
-        {
-                foreach ($items as $item)
-                {
+	/**
+	 *
+	 * @param   string  $path
+	 * @param   string  $filter
+	 * @param   array   $items
+	 * @param   array   $files
+	 */
+	protected static function filterItems($path, $filter, $items, &$files)
+	{
+		foreach ($items as $item)
+		{
 			if ($item['name'] == 'jch_optimize_backup_images')
 			{
 				continue;
 			}
 
-                        if ($item['type'] == 'f' && preg_match('#' . $filter . '#', $item['name']))
-                        {
-                                $files[] = $path . '/' . $item['name'];
-                        }
+			if ($item['type'] == 'f' && preg_match('#' . $filter . '#', $item['name']))
+			{
+				$files[] = $path . '/' . $item['name'];
+			}
 
-                        if ($item['type'] == 'd' && !empty($item['files']))
-                        {
-                                self::filterItems($path . '/' . $item['name'], $filter, $item['files'], $files);
-                        }
-                }
-        }
+			if ($item['type'] == 'd' && !empty($item['files']))
+			{
+				self::filterItems($path . '/' . $item['name'], $filter, $item['files'], $files);
+			}
+		}
+	}
 
 	/**
 	 * Checks if user is not logged in

@@ -26,5 +26,10 @@ defined('_JCH_EXEC') or die('Restricted access');
 
 interface HTMLInterface
 {
+	/**
+	 * Returns HTML of the front page
+	 *
+	 * @return string
+	 */
         public function getOriginalHtml();
 }
