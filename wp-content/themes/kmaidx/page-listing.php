@@ -46,8 +46,6 @@ if (isset($_GET['mls'])) {
 
 }
 
-//echo '<pre>', print_r($openHouses), '</pre>';
-
 get_header(); ?>
     <div id="content">
         <article id="post-<?php echo $listingInfo->mls_account; ?>" class="listing">
