@@ -38,6 +38,7 @@ add_filter('wpseo_opengraph_url', function () {
     return 'https://beachybeach.com' . preg_replace("/&pg=\d+/", "", $_SERVER['REQUEST_URI']) . (isset($_GET['qs']) ? '' : '?browse=true');
 }, 100, 1);
 
+
 get_header(); ?>
 <div id="content">
     <div id="primary" class="content-area">
