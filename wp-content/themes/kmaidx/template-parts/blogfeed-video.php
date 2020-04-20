@@ -13,8 +13,10 @@ preg_match('/\[embed(.*)](.*)\[\/embed]/', $post->post_content, $video);
         <div class="blog-image">
             <div class="embed-responsive embed-responsive-16by9">
             <?php 
+                if(isset($video[2])){
                 //echo do_shortcode($video[0]); 
                 echo wp_oembed_get($video[2]);
+                }
                 ?>
             </div>
         </div>
