@@ -655,7 +655,12 @@ add_filter('wpseo_opengraph_image', function () {
     if ( get_post_format() == 'video' ) {
         $post = get_post();
         preg_match('/\[embed(.*)](.*)\[\/embed]/', $post->post_content, $video);
-        $videoParts = explode('/',$video[2]);
-        return 'https://img.youtube.com/vi/'.$videoParts[3].'/maxresdefault.jpg';
+        if(isset($video[2])){
+            $videoParts = explode('/',$video[2]);
+
+            if(isset($videoParts[3])){
+                return 'https://img.youtube.com/vi/'.$videoParts[3].'/maxresdefault.jpg';
+            }
+        }
     }
 });
