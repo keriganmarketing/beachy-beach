@@ -21,4 +21,4 @@ wp-content/uploads
 wp-content/plugins
 wp-admin/
 wp-includes/
-wp-content/plugins/
+# wp-content/plugins/

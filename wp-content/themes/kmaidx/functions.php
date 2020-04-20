@@ -639,11 +639,12 @@ function yoast_add_og_video() {
     if ( get_post_format() == 'video' ) {
         $post = get_post();
         preg_match('/\[embed(.*)](.*)\[\/embed]/', $post->post_content, $video);
-        $videoParts = explode('/',$video[2]);
-        echo '<meta property="og:video" content="' .  $video[2] . '" />', "\n";
-        echo '<meta property="og:video:secure_url" content="' .  str_replace('http://','https://' , $video[2]) . '" />', "\n";
-        echo '<meta property="og:video:height" content="1080" />', "\n";
-        echo '<meta property="og:video:width" content="1920" />', "\n";
+        if(isset($video[2])){
+            echo '<meta property="og:video" content="' .  $video[2] . '" />', "\n";
+            echo '<meta property="og:video:secure_url" content="' .  str_replace('http://','https://' , $video[2]) . '" />', "\n";
+            echo '<meta property="og:video:height" content="1080" />', "\n";
+            echo '<meta property="og:video:width" content="1920" />', "\n";
+        }
         //echo '<meta property="og:image" content="https://img.youtube.com/vi/'.$videoParts[3].'/maxresdefault.jpg" />', "\n";
     }
 }
