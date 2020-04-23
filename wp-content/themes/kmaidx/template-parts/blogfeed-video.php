@@ -6,16 +6,18 @@
  *
  * @package KMA_IDX
  */
-preg_match('/\[embed(.*)](.*)\[\/embed]/', $post->post_content, $video);
+// echo '<pre>',$post->post_content,'</pre>';
+preg_match('/(?:youtube\.com\/\S*(?:(?:\/e(?:mbed))?\/|watch\?(?:\S*?&?v\=))|youtu\.be\/)([a-zA-Z0-9_-]{6,11})/', $post->post_content, $video);
+// echo '</pre>',print_r($video),'</pre>';
 ?>
 <div class="col-sm-6 col-lg-4 col-xl-3 text-center">
-    <div class="blog-article">
+    <div class="blog-article" style="min-height:420px">
         <div class="blog-image">
             <div class="embed-responsive embed-responsive-16by9">
             <?php 
-                if(isset($video[2])){
+                if(isset($video[0])){
                 //echo do_shortcode($video[0]); 
-                echo wp_oembed_get($video[2]);
+                echo wp_oembed_get('https://' .$video[0]);
                 }
                 ?>
             </div>
@@ -34,6 +36,6 @@ preg_match('/\[embed(.*)](.*)\[\/embed]/', $post->post_content, $video);
 
     </div>
     <div class="blog-link">
-        <a href="<?php echo get_permalink($post->ID); ?>">Read article</a>
+        <a href="<?php echo get_permalink($post->ID); ?>">WATCH EPISODE</a>
     </div><!-- .entry-content -->
 </div>
